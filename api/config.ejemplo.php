@@ -3,9 +3,9 @@
 return [
     // La base queda FUERA de public_html para que no se pueda descargar.
     'db'              => dirname(__DIR__, 2) . '/patagonia_datos/patagonia.sqlite',
-    'sitio'           => 'https://patagoniachilena.cl/',
-    'correo_de'       => 'no-responder@patagoniachilena.cl',   // crear esta casilla en cPanel
-    'correo_contacto' => 'contacto@patagoniachilena.cl',
+    'sitio'           => 'https://patagoniadechile.cl/',
+    'correo_de'       => 'no-responder@patagoniadechile.cl',   // crear esta casilla en cPanel
+    'correo_contacto' => 'contacto@patagoniadechile.cl',
     'meta'            => 100000,
     'clp_por_ha'      => 280000,   // referencia: US$ 294/ha (predio de Cochamó) × dólar ~950
     'sal'             => 'CAMBIAR-POR-UNA-FRASE-LARGA-Y-SECRETA',

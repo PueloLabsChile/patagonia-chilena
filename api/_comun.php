@@ -147,6 +147,6 @@ function plantilla_correo(string $nombre, string $enlace, string $baja, bool $ya
 <tr><td style="padding:18px 0 8px;font:400 30px Georgia,serif;color:#ffffff">' . $titulo . ', ' . $n . '</td></tr>
 <tr><td style="font:16px/1.6 Arial;color:#cfe0e7;padding-bottom:26px">' . $texto . '</td></tr>
 <tr><td><a href="' . $enlace . '" style="display:inline-block;background:#d52b1e;color:#ffffff;text-decoration:none;font:700 16px Arial;padding:15px 28px;border-radius:30px">' . $boton . '</a></td></tr>
-<tr><td style="font:13px/1.6 Arial;color:#a3b3d1;padding-top:28px">Primera Asamblea Ciudadana: sábado 5 de diciembre, 19:00 horas, en patagoniachilena.cl/asamblea.html<br><br>Si no fuiste tú, ignora este correo. <a href="' . $baja . '" style="color:#a3b3d1">Darme de baja y borrar mis datos</a>.</td></tr>
+<tr><td style="font:13px/1.6 Arial;color:#a3b3d1;padding-top:28px">Primera Asamblea Ciudadana: sábado 5 de diciembre, 19:00 horas, en patagoniadechile.cl/asamblea.html<br><br>Si no fuiste tú, ignora este correo. <a href="' . $baja . '" style="color:#a3b3d1">Darme de baja y borrar mis datos</a>.</td></tr>
 </table></td></tr></table></body></html>';
 }

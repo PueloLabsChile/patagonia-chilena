@@ -1,4 +1,4 @@
-# Patagonia Chilena · patagoniachilena.cl
+# Patagonia Chilena · patagoniadechile.cl
 
 Sitio del movimiento ciudadano que busca formar una cooperativa para recuperar tierra patagónica.
 **Etapa 1:** inscripción gratuita, sin monto. Se pide nombre, correo y comuna, y se confirma por correo.
@@ -46,6 +46,6 @@ CShapes 2.0 (ETH Zürich y PRIO) tiene licencia CC BY-NC-SA 4.0: uso no comercia
 ## Publicar en cPanel
 1. Subir todo **menos** `dev/`, `scripts/`, `.git`, `LEEME.md` y el `api/config.php` local.
 2. En `api/`, copiar `config.ejemplo.php` como `config.php` y completar la sal, los correos y el enlace del video.
-3. Crear la casilla `no-responder@patagoniachilena.cl`. La base queda en `~/patagonia_datos/` (fuera de `public_html`) y se crea sola.
+3. Crear la casilla `no-responder@patagoniadechile.cl`. La base queda en `~/patagonia_datos/` (fuera de `public_html`) y se crea sola.
 4. Crear los moderadores por consola y enviarle a cada uno su enlace.
 5. Probar una inscripción real y revisar que el correo no caiga en spam (configurar SPF y DKIM en cPanel → Email Deliverability).

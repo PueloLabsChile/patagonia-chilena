@@ -531,7 +531,7 @@ async function dibujarTarjeta(cv, { numero, comuna, nombre, compromiso }) {
   // sello con estrella
   sello(g, W - 190, H - 250, 110);
   g.fillStyle = ROJO; roundRect(g, M, 1110, 560, 96, 48); g.fill();
-  g.fillStyle = '#fff'; g.font = '700 36px Geist'; g.fillText('patagoniachilena.cl', M + 52, 1171);
+  g.fillStyle = '#fff'; g.font = '700 36px Geist'; g.fillText('patagoniadechile.cl', M + 52, 1171);
   g.fillStyle = 'rgba(248,246,240,.55)'; g.font = '500 23px "Geist Mono"'; g.fillText('Súmate gratis · cooperativa ciudadana', M, 1268);
 }
 function estrella(g, cx, cy, r, color) {

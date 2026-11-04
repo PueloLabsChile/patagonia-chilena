@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#040b12">
 <meta property="og:title" content="La Asamblea · Patagonia Chilena">
 <meta property="og:description" content="Un asiento para cada chileno que se suma a recuperar la Patagonia.">
-<meta property="og:image" content="https://patagoniachilena.cl/assets/img/og.jpg">
+<meta property="og:image" content="https://patagoniadechile.cl/assets/img/og.jpg">
 <link rel="icon" href="assets/img/icono.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,7 +118,7 @@
   <div class="envoltorio pie-grid">
     <div><a class="marca" href="./"><svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 31 L13 15 L18 22 L24 9 L37 31 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M21 15 L24 9 L27 15" fill="currentColor"/><circle cx="31" cy="9" r="2.2" fill="var(--rojo)"/></svg><span>Patagonia <em>Chilena</em></span></a></div>
     <div><h4>Sobre la sala</h4><p>Los asientos se ordenan por región, de Arica (a la izquierda) a Magallanes (a la derecha), y se llenan desde adelante. Tu número de socio fundador no cambia.</p></div>
-    <div><h4>Contacto</h4><p><a href="mailto:contacto@patagoniachilena.cl">contacto@patagoniachilena.cl</a><br><a href="privacidad.html">Política de privacidad</a></p></div>
+    <div><h4>Contacto</h4><p><a href="mailto:contacto@patagoniadechile.cl">contacto@patagoniadechile.cl</a><br><a href="privacidad.html">Política de privacidad</a></p></div>
   </div>
 </footer>
 

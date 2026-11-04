@@ -4,8 +4,8 @@ $sitio = rtrim(getenv('RENDER_EXTERNAL_URL') ?: 'http://localhost:10000', '/') .
 return [
     'db'              => '/var/www/datos/demo.sqlite',
     'sitio'           => $sitio,
-    'correo_de'       => 'no-responder@patagoniachilena.cl',
-    'correo_contacto' => 'contacto@patagoniachilena.cl',
+    'correo_de'       => 'no-responder@patagoniadechile.cl',
+    'correo_contacto' => 'contacto@patagoniadechile.cl',
     'meta'            => 100000,
     'clp_por_ha'      => 280000,   // referencia: US$ 294/ha (predio de Cochamó) × dólar ~950
     'sal'             => getenv('DEMO_CLAVE') ?: 'demo',
