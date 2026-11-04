@@ -127,39 +127,28 @@
 </section>
 
 <!-- Historia del territorio -->
-<section class="bloque historia" id="historia">
-  <div class="envoltorio">
-    <div class="historia-cab">
-      <div>
-        <p class="antetitulo">Historia</p>
-        <h2 class="titulo-bloque">Así se formó el territorio.<br><em>Y así se repartió la tierra.</em></h2>
-      </div>
-      <div class="historia-filtros" aria-hidden="true">
-        <span class="filtro-ley"><i class="ley-frontera"></i>Fronteras</span>
-        <span class="filtro-ley"><i class="ley-tierra"></i>Propiedad de la tierra</span>
-      </div>
-    </div>
-    <div class="historia-escena">
-      <div class="historia-mapa-marco">
-        <div id="mapa-historia" role="img" aria-label="Mapa esquemático de Chile según el año"></div>
-        <div class="historia-anio" aria-hidden="true" id="h-anio-grande"></div>
-        <div class="rapanui-aviso" id="h-rapanui" hidden>← Rapa Nui · 3.700 km al oeste</div>
-      </div>
-      <article class="historia-texto" aria-live="polite">
-        <p class="h-tipo" id="h-tipo">Frontera</p>
-        <h3 id="h-titulo">—</h3>
-        <p id="h-texto"></p>
-        <p class="fuente" id="h-fuente"></p>
-        <div class="h-controles">
-          <button class="boton boton-vidrio boton-chico" type="button" id="h-ant" aria-label="Hito anterior">←</button>
-          <button class="boton boton-vidrio boton-chico" type="button" id="h-play">Pausar</button>
-          <button class="boton boton-vidrio boton-chico" type="button" id="h-sig" aria-label="Hito siguiente">→</button>
-        </div>
-      </article>
-    </div>
-    <ol class="linea" id="h-linea" aria-label="Línea de tiempo"></ol>
-    <p class="fuente historia-nota">Esquema dibujado con las regiones actuales (INE, Censo 2024). No representa límites históricos exactos. Textos basados en los tratados citados y en Memoria Chilena (Biblioteca Nacional).</p>
+<section class="historia" id="historia">
+  <div class="historia-intro">
+    <p class="antetitulo">Historia</p>
+    <h2 class="titulo-bloque">Así se formó el territorio.<br><em>Y así se repartió la tierra.</em></h2>
+    <p class="lead">Doscientos años de fronteras en un mapa. Baja para recorrerlos.</p>
   </div>
+  <div class="historia-escenario">
+    <div id="mapa-historia" role="img" aria-label="Mapa histórico de los límites de Chile"></div>
+    <canvas id="h-chispas" aria-hidden="true"></canvas>
+    <div class="h-velo" aria-hidden="true"></div>
+    <div class="h-dial" aria-hidden="true"><span id="h-dial"></span></div>
+    <ul class="h-leyenda" aria-label="Simbología">
+      <li><i class="s-solido"></i>Territorio de Chile</li>
+      <li><i class="s-administrado"></i>Ocupado o administrado</li>
+      <li><i class="s-reclamado"></i>Reclamado o en disputa</li>
+      <li><i class="s-mapuche"></i>Pueblos originarios</li>
+      <li><i class="s-ajeno"></i>Otro Estado</li>
+    </ul>
+    <ol class="linea" id="h-linea" aria-label="Línea de tiempo"></ol>
+  </div>
+  <div class="historia-pasos" id="h-pasos"></div>
+  <p class="fuente historia-nota">Fronteras internacionales desde 1886: CShapes 2.0 (ETH Zürich y PRIO, CC BY-NC-SA 4.0). Antes de 1886 y los cortes internos (paralelo 24, río Loa, Biobío, Toltén) son esquemas basados en los tratados citados. Textos apoyados en Memoria Chilena (Biblioteca Nacional) y en <i>Cartografía histórica de Chile</i> (Rosenblitt y Sanhueza, 2010).</p>
 </section>
 
 <!-- Pasos -->
@@ -235,9 +224,10 @@
 <section class="bloque asamblea-banda" id="asamblea">
   <canvas id="mini-hemiciclo" aria-hidden="true"></canvas>
   <div class="envoltorio asamblea-banda-in">
-    <p class="aviso-pronto"><span class="punto-vivo"></span>Próximamente · la fecha se fijará según la coyuntura</p>
+    <p class="aviso-pronto"><span class="punto-vivo"></span>Primera Asamblea Ciudadana · sábado 5 de diciembre · 19:00</p>
     <h2 class="titulo-bloque">La Asamblea.<br><em>Un asiento para cada uno.</em></h2>
-    <p class="lead">Cada persona inscrita ya tiene su asiento en la sala virtual de la cooperativa. Ahí propondremos, votaremos y la constituiremos. Mírala desde arriba y encuentra el tuyo.</p>
+    <div class="cuenta-mini" id="cuenta-mini" aria-label="Cuenta regresiva"><b data-cm="d">--</b><span>días</span><b data-cm="h">--</b><span>horas</span><b data-cm="m">--</b><span>min</span></div>
+    <p class="lead">Cada persona inscrita tiene su asiento en la sala virtual. Tu asiento se enciende cuando te conectas, destella cuando escribes en el chat y toma el color de tu voto. La primera sesión es consultiva y se transmite en vivo.</p>
     <div class="acciones">
       <a class="boton boton-rojo" href="asamblea.html">Entrar a la Asamblea <span aria-hidden="true">→</span></a>
       <a class="boton boton-vidrio" href="#sumate">Reservar mi asiento</a>

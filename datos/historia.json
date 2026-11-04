@@ -1,100 +1,169 @@
 {
-  "nota": "Esquema dibujado con las regiones actuales (INE, Censo 2024). No representa límites históricos exactos.",
+  "nota": "Fronteras internacionales desde 1886: CShapes 2.0 (ETH Zürich / PRIO, CC BY-NC-SA 4.0). Antes de 1886 y cortes internos: esquema según los tratados citados.",
+  "rotulos": {
+    "araucania": [[-72.6, -38.45], "Territorio mapuche"],
+    "chiloe": [[-73.9, -42.6], "Realistas"],
+    "litoral": [[-69.4, -22.7], "Bolivia"],
+    "tarapaca": [[-69.6, -20.3], "Perú"],
+    "patagonia_ar": [[-68.2, -46.5], "Reclamada por Chile"],
+    "tacna": [[-70.2, -17.75], "Tacna"],
+    "puna": [[-67.6, -24.9], "Puna de Atacama"],
+    "valles": [[-71.6, -46.2], "Valles en disputa"],
+    "arica": [[-69.8, -18.6], "Arica"]
+  },
   "pasos": [
     {
       "anio": "Antes de 1540", "tipo": "tierra", "titulo": "Una tierra con dueños antiguos",
-      "texto": "Durante miles de años, aonikenk, selk'nam, kawésqar, yaganes y chonos recorrieron la estepa, los canales y los fiordos del sur. No había fronteras estatales.",
-      "regiones": [], "destacar": [11, 12], "fuente": "Memoria Chilena, Biblioteca Nacional"
+      "texto": "Durante miles de años, aonikenk, selk'nam, kawésqar, yaganes, chonos y mapuche habitaron el sur. No había fronteras estatales: la tierra se recorría por estaciones.",
+      "reiniciar": true,
+      "estados": { "centro": "originario", "araucania": "originario", "valdivia": "originario", "chiloe": "originario", "aysen": "originario", "valles": "originario", "magallanes": "originario", "patagonia_ar": "originario" },
+      "camara": { "center": [-69.5, -42], "zoom": 3.35, "pitch": 30, "bearing": 0 },
+      "fuente": "Memoria Chilena, Biblioteca Nacional"
     },
     {
       "anio": "1818", "tipo": "frontera", "titulo": "Nace la República",
-      "texto": "Con la independencia, el Estado controla en la práctica el territorio entre el despoblado de Atacama y el Biobío, con Valdivia como enclave. Chiloé sigue en manos realistas.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14], "destacar": [], "fuente": "Acta de Independencia, 1818"
+      "texto": "Con la independencia, el Estado controla el valle central y Valdivia. Al sur del Biobío se extiende el territorio mapuche, Chiloé sigue en manos realistas y la Patagonia es una reclamación en el mapa.",
+      "reiniciar": true,
+      "estados": { "centro": "solido", "valdivia": "solido", "araucania": "mapuche", "chiloe": "realista", "aysen": "reclamado", "valles": "reclamado", "magallanes": "reclamado", "patagonia_ar": "reclamado" },
+      "ganado": ["centro", "valdivia"],
+      "camara": { "center": [-71.2, -34], "zoom": 4.4, "pitch": 48, "bearing": -12 },
+      "fuente": "Acta de Independencia, 1818"
     },
     {
       "anio": "1826", "tipo": "frontera", "titulo": "Chiloé se incorpora",
-      "texto": "Tras las campañas de Freire, el Tratado de Tantauco incorpora Chiloé a la República.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10], "destacar": [10], "fuente": "Tratado de Tantauco, 1826"
+      "texto": "Tras las campañas de Freire, el Tratado de Tantauco pone fin al último bastión realista. El archipiélago pasa a ser parte de la República.",
+      "estados": { "chiloe": "solido" }, "ganado": ["chiloe"],
+      "camara": { "center": [-73.6, -42.4], "zoom": 6.2, "pitch": 58, "bearing": 15 },
+      "fuente": "Tratado de Tantauco, 1826"
     },
     {
       "anio": "1843", "tipo": "frontera", "titulo": "Chile llega al Estrecho",
-      "texto": "La goleta Ancud toma posesión del Estrecho de Magallanes el 21 de septiembre y se levanta el Fuerte Bulnes. Es el primer paso del Estado en la Patagonia.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12], "destacar": [12], "punto": [-70.97, -53.63], "rotulo": "Fuerte Bulnes", "fuente": "Memoria Chilena: Fuerte Bulnes"
+      "texto": "El 21 de septiembre, la goleta Ancud toma posesión del Estrecho de Magallanes y se levanta el Fuerte Bulnes. Es la primera huella del Estado en la Patagonia.",
+      "estados": { "magallanes": "solido" }, "ganado": ["magallanes"],
+      "punto": [-70.97, -53.63], "rotulo": "Fuerte Bulnes",
+      "camara": { "center": [-71.3, -53.2], "zoom": 6.1, "pitch": 62, "bearing": 25 },
+      "fuente": "Memoria Chilena: Fuerte Bulnes"
+    },
+    {
+      "anio": "1866–1874", "tipo": "frontera", "titulo": "El paralelo 24",
+      "texto": "Los tratados de 1866 y 1874 fijan el límite con Bolivia en el paralelo 24° sur. Más al norte, el litoral es boliviano y Tarapacá es peruana.",
+      "estados": { "litoral": "ajeno", "tarapaca": "ajeno", "puna": "ajeno" },
+      "punto": [-70.45, -24.0], "rotulo": "Paralelo 24° S",
+      "camara": { "center": [-69.6, -22.6], "zoom": 5.4, "pitch": 55, "bearing": -10 },
+      "fuente": "Tratados de Límites con Bolivia de 1866 y 1874"
     },
     {
       "anio": "1881", "tipo": "frontera", "titulo": "Tratado de Límites con Argentina",
-      "texto": "La frontera se fija en las altas cumbres de los Andes que dividen las aguas. Chile conserva el Estrecho y la Patagonia occidental, y renuncia a la oriental.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11], "destacar": [11, 12], "fuente": "Tratado de Límites de 1881, BCN"
+      "texto": "La frontera se fija en las altas cumbres de los Andes que dividen las aguas. Chile conserva el Estrecho y la Patagonia occidental, y renuncia a la oriental. Algunos valles quedan en disputa.",
+      "estados": { "aysen": "solido", "valles": "reclamado", "patagonia_ar": null }, "ganado": ["aysen"], "perdido": ["patagonia_ar"],
+      "camara": { "center": [-69.8, -47.5], "zoom": 4.0, "pitch": 42, "bearing": 0 },
+      "fuente": "Tratado de Límites de 1881, BCN"
     },
     {
-      "anio": "1883", "tipo": "frontera", "titulo": "La Araucanía y Tarapacá",
-      "texto": "El Estado completa la ocupación de la Araucanía. Ese mismo año, el Tratado de Ancón con Perú le entrega Tarapacá.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1], "destacar": [9, 1], "fuente": "Tratado de Ancón, 1883"
+      "anio": "1883", "tipo": "frontera", "titulo": "La Araucanía y el Norte Grande",
+      "texto": "El Estado completa la ocupación de la Araucanía. Tras la Guerra del Pacífico, el Tratado de Ancón le entrega Tarapacá; Arica y Tacna quedan bajo administración chilena, y el litoral boliviano, ocupado.",
+      "estados": { "araucania": "solido", "tarapaca": "solido", "litoral": "administrado", "puna": "administrado", "arica": "administrado", "tacna": "administrado" },
+      "ganado": ["araucania", "tarapaca"],
+      "camara": { "center": [-70.2, -27], "zoom": 3.9, "pitch": 45, "bearing": -8 },
+      "fuente": "Tratado de Ancón, 1883"
     },
     {
       "anio": "1888", "tipo": "frontera", "titulo": "Rapa Nui",
       "texto": "El 9 de septiembre, Policarpo Toro firma con el pueblo rapanui el Acuerdo de Voluntades. La isla, a 3.700 km del continente, pasa a ser parte de Chile.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1], "destacar": [], "rapanui": true, "fuente": "Acuerdo de Voluntades, 1888"
+      "estados": { "rapanui": "solido" }, "ganado": ["rapanui"],
+      "camara": { "center": [-109.35, -27.12], "zoom": 9.3, "pitch": 55, "bearing": 30 },
+      "fuente": "Acuerdo de Voluntades, 1888"
     },
     {
-      "anio": "1893", "tipo": "tierra", "titulo": "La tierra se entrega en grandes paños",
+      "anio": "1893", "tipo": "tierra", "titulo": "La estepa se entrega en grandes paños",
       "texto": "El Estado remata y arrienda la estepa magallánica en lotes enormes. La Sociedad Explotadora de Tierra del Fuego llega a controlar millones de hectáreas a ambos lados de la frontera. En esos años, el pueblo selk'nam queda casi exterminado.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1], "destacar": [12], "fuente": "Memoria Chilena: Sociedad Explotadora de Tierra del Fuego"
+      "destacar": ["magallanes"],
+      "camara": { "center": [-70.4, -52.6], "zoom": 5.6, "pitch": 55, "bearing": 30 },
+      "fuente": "Memoria Chilena: Sociedad Explotadora de Tierra del Fuego"
+    },
+    {
+      "anio": "1899", "tipo": "frontera", "titulo": "La Puna de Atacama",
+      "texto": "Un arbitraje entrega a Argentina la mayor parte de la Puna de Atacama, un altiplano que Chile administraba desde la guerra.",
+      "estados": { "puna": null }, "perdido": ["puna"],
+      "camara": { "center": [-67.9, -24.7], "zoom": 6.0, "pitch": 58, "bearing": -20 },
+      "fuente": "Arbitraje de la Puna de Atacama, 1899"
     },
     {
       "anio": "1902", "tipo": "frontera", "titulo": "El laudo británico",
-      "texto": "El rey Eduardo VII dicta el fallo arbitral que traza la frontera en la Patagonia, incluidos los valles de Aysén. Con los Pactos de Mayo se evita una guerra con Argentina.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1], "destacar": [11], "fuente": "Laudo arbitral de 1902"
+      "texto": "El rey Eduardo VII dicta el fallo arbitral sobre los valles en disputa de la Patagonia. Chile recibe cerca de 45 mil km² en Aysén y Magallanes. Con los Pactos de Mayo se evita una guerra.",
+      "estados": { "valles": "solido" }, "ganado": ["valles"],
+      "camara": { "center": [-71.7, -46.3], "zoom": 5.5, "pitch": 58, "bearing": 10 },
+      "fuente": "Laudo arbitral de 1902; CShapes 2.0"
     },
     {
       "anio": "1903", "tipo": "tierra", "titulo": "Aysén, en concesión",
-      "texto": "Grandes concesiones ganaderas, como la de la Sociedad Industrial de Aysén, abren la región. Llegan colonos chilenos desde Argentina y Chiloé, que fundan pueblos como Coyhaique (1929).",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1], "destacar": [11], "punto": [-72.07, -45.57], "rotulo": "Coyhaique", "fuente": "Memoria Chilena: Colonización de Aysén"
+      "texto": "Grandes concesiones ganaderas, como la Sociedad Industrial de Aysén, abren la región. Llegan colonos chilenos desde Argentina y Chiloé, que fundan pueblos como Coyhaique (1929).",
+      "destacar": ["aysen", "valles"], "punto": [-72.07, -45.57], "rotulo": "Coyhaique",
+      "camara": { "center": [-72.1, -45.8], "zoom": 6.3, "pitch": 60, "bearing": -15 },
+      "fuente": "Memoria Chilena: Colonización de Aysén"
     },
     {
       "anio": "1904", "tipo": "frontera", "titulo": "Paz con Bolivia",
-      "texto": "El Tratado de Paz y Amistad reconoce como chileno el litoral de Antofagasta.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2], "destacar": [2], "fuente": "Tratado de 1904, BCN"
+      "texto": "El Tratado de Paz y Amistad reconoce como chileno el antiguo litoral boliviano, con Antofagasta.",
+      "estados": { "litoral": "solido" }, "ganado": ["litoral"],
+      "camara": { "center": [-69.8, -22.8], "zoom": 5.6, "pitch": 55, "bearing": 10 },
+      "fuente": "Tratado de Paz y Amistad con Bolivia, 1904"
     },
     {
       "anio": "1929", "tipo": "frontera", "titulo": "Arica",
-      "texto": "El Tratado de Lima con Perú resuelve la cuestión de Tacna y Arica: Arica queda en Chile.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [15], "fuente": "Tratado de Lima, 1929"
+      "texto": "El Tratado de Lima con Perú cierra la cuestión de Tacna y Arica: Arica queda en Chile y Tacna vuelve a Perú.",
+      "estados": { "arica": "solido", "tacna": null }, "ganado": ["arica"], "perdido": ["tacna"],
+      "camara": { "center": [-70.0, -18.2], "zoom": 7.0, "pitch": 58, "bearing": 0 },
+      "fuente": "Tratado de Lima, 1929"
     },
     {
       "anio": "1940", "tipo": "frontera", "titulo": "Territorio Chileno Antártico",
       "texto": "Un decreto fija los límites del Territorio Chileno Antártico entre los meridianos 53° y 90° oeste.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [], "antartica": true, "fuente": "Decreto 1.747 de 1940"
+      "estados": { "antartica": "solido" }, "ganado": ["antartica"],
+      "camara": { "center": [-71, -58.5], "zoom": 2.9, "pitch": 25, "bearing": 0 },
+      "fuente": "Decreto 1.747 de 1940"
     },
     {
       "anio": "1965–1973", "tipo": "tierra", "titulo": "Las grandes estancias se dividen",
-      "texto": "Las estancias magallánicas y aiseninas se fraccionan y la tierra pasa al Estado, a cooperativas y a colonos. El mapa de la propiedad del sur cambia por completo.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [11, 12], "fuente": "Memoria Chilena: la tierra en Magallanes"
+      "texto": "Las estancias magallánicas y aiseninas se fraccionan, y la tierra pasa al Estado, a cooperativas y a colonos. El mapa de la propiedad del sur cambia por completo.",
+      "destacar": ["aysen", "valles", "magallanes"],
+      "camara": { "center": [-71.3, -49.5], "zoom": 4.6, "pitch": 45, "bearing": 0 },
+      "fuente": "Memoria Chilena: la tierra en Magallanes"
     },
     {
       "anio": "1984", "tipo": "frontera", "titulo": "Beagle: paz con Argentina",
       "texto": "Tras la mediación papal, el Tratado de Paz y Amistad confirma como chilenas las islas Picton, Lennox y Nueva.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [12], "antartica": true, "punto": [-66.9, -55.2], "rotulo": "Picton, Lennox y Nueva", "fuente": "Tratado de Paz y Amistad, 1984"
+      "punto": [-66.9, -55.2], "rotulo": "Picton, Lennox y Nueva",
+      "camara": { "center": [-67.4, -55.05], "zoom": 7.6, "pitch": 58, "bearing": 30 },
+      "fuente": "Tratado de Paz y Amistad, 1984"
     },
     {
       "anio": "1994", "tipo": "frontera", "titulo": "Laguna del Desierto",
-      "texto": "Un tribunal arbitral latinoamericano falla a favor de Argentina en el sector de Laguna del Desierto, en el límite de Aysén.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [11], "antartica": true, "punto": [-72.93, -49.05], "rotulo": "Laguna del Desierto", "fuente": "Laudo de 1994"
+      "texto": "Un tribunal arbitral latinoamericano falla a favor de Argentina en el sector de Laguna del Desierto, en el límite de Aysén y Magallanes.",
+      "punto": [-72.93, -49.05], "rotulo": "Laguna del Desierto",
+      "camara": { "center": [-72.95, -49.1], "zoom": 8.6, "pitch": 65, "bearing": -25 },
+      "fuente": "Laudo de 1994"
     },
     {
       "anio": "1998", "tipo": "frontera", "titulo": "Campo de Hielo Sur",
       "texto": "Chile y Argentina acuerdan el límite en el Campo de Hielo Patagónico Sur. Un tramo sigue pendiente de demarcación hasta hoy.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [11, 12], "antartica": true, "punto": [-73.4, -49.6], "rotulo": "Campo de Hielo Sur", "fuente": "Acuerdo de 1998"
+      "punto": [-73.4, -49.6], "rotulo": "Tramo sin demarcar",
+      "camara": { "center": [-73.35, -49.6], "zoom": 7.2, "pitch": 65, "bearing": 20 },
+      "fuente": "Acuerdo de 1998"
     },
     {
       "anio": "2018", "tipo": "tierra", "titulo": "La Red de Parques de la Patagonia",
-      "texto": "Una donación privada de más de 400 mil hectáreas, sumada a tierras fiscales, crea cinco parques nacionales nuevos. Mostró que la tierra puede volver a ser de todos.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [11, 12], "antartica": true, "fuente": "Ministerio de Bienes Nacionales, 2018"
+      "texto": "Una donación privada de más de 400 mil hectáreas, sumada a tierras fiscales, crea cinco parques nacionales nuevos. Demostró que la tierra puede volver a ser de todos.",
+      "destacar": ["aysen", "valles", "magallanes"],
+      "camara": { "center": [-72.5, -48], "zoom": 4.9, "pitch": 50, "bearing": -10 },
+      "fuente": "Ministerio de Bienes Nacionales, 2018"
     },
     {
       "anio": "Hoy", "tipo": "tierra", "titulo": "La Patagonia vuelve al mercado",
-      "texto": "Predios con lagos y volcanes se ofrecen al mejor postor, y el Estado vende inmuebles fiscales. La próxima página de esta historia la podemos escribir nosotros.",
-      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [11, 12], "antartica": true, "punto": [-72.40, -41.84], "rotulo": "En venta", "fuente": "BioBioChile, 3-nov-2026"
+      "texto": "Predios con lagos y volcanes se ofrecen al mejor postor y el Estado vende inmuebles fiscales. La próxima página de esta historia la podemos escribir nosotros.",
+      "punto": [-72.40, -41.84], "rotulo": "En venta · 25.468 ha",
+      "camara": { "center": [-72.4, -41.84], "zoom": 8.6, "pitch": 62, "bearing": 20 },
+      "fuente": "BioBioChile, 3-nov-2026"
     }
   ]
 }

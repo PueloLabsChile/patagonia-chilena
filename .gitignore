@@ -3,3 +3,5 @@ dev/dev.sqlite*
 scripts/cache/
 scripts/*.log
 __pycache__/
+dev/moderadores-local.txt
+dev/forzar.txt

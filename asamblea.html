@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>La Asamblea · Patagonia Chilena</title>
-<meta name="description" content="La sala virtual de la cooperativa Patagonia Chilena: un asiento para cada persona inscrita. Próximamente, propuestas y votaciones.">
+<meta name="description" content="Primera Asamblea Ciudadana de Patagonia Chilena: sábado 5 de diciembre, 19:00. Un asiento para cada persona inscrita, chat abierto y votaciones consultivas.">
 <meta name="theme-color" content="#040b12">
 <meta property="og:title" content="La Asamblea · Patagonia Chilena">
-<meta property="og:description" content="Un asiento para cada chileno que se suma a recuperar la Patagonia.">
+<meta property="og:description" content="Primera Asamblea Ciudadana: sábado 5 de diciembre, 19:00. Un asiento para cada chileno que se suma.">
 <meta property="og:image" content="https://patagoniachilena.cl/assets/img/og.jpg">
 <link rel="icon" href="assets/img/icono.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,7 +27,7 @@
   <nav class="menu" aria-label="Secciones">
     <a href="./#territorio">El territorio</a>
     <a href="./#historia">Historia</a>
-    <a href="#participar">Participar</a>
+    <a href="#participar">Cómo participar</a>
     <a href="asamblea.html" class="menu-asamblea" aria-current="page"><span class="punto-vivo"></span>Asamblea</a>
   </nav>
   <a class="boton boton-rojo boton-chico" href="./#sumate" id="cta-barra">Sumarme</a>
@@ -35,89 +35,122 @@
 
 <main>
 <section class="sala" aria-label="Sala de la Asamblea">
-  <canvas id="sala" aria-label="Hemiciclo de la Asamblea visto desde arriba; cada punto es un asiento"></canvas>
-  <div class="sala-velo" aria-hidden="true"></div>
+  <div class="sala-escena">
+    <canvas id="sala" aria-label="Hemiciclo de la Asamblea visto desde arriba; cada punto es un asiento"></canvas>
+    <div class="sala-velo" aria-hidden="true"></div>
 
-  <div class="sala-panel">
-    <p class="aviso-pronto"><span class="punto-vivo"></span>Próximamente · la fecha se fijará según la coyuntura</p>
-    <h1>La Asamblea</h1>
-    <p class="sala-bajada">La sala virtual de la cooperativa. Cada punto de luz es una persona inscrita, sentada con su región. Cuando la sala se llene, aquí propondremos, votaremos y constituiremos la cooperativa.</p>
-    <div class="sala-cifras">
-      <div><b data-a="total">0</b><span>asientos ocupados</span></div>
-      <div><b data-a="capacidad">100.000</b><span>asientos en la sala</span></div>
-      <div><b data-a="regiones">0</b><span>regiones presentes</span></div>
+    <div class="sala-panel">
+      <p class="aviso-pronto" id="aviso"><span class="punto-vivo"></span><span id="aviso-txt">Primera Asamblea · sábado 5 de diciembre · 19:00</span></p>
+      <h1>La Asamblea</h1>
+      <div class="cuenta" id="cuenta" aria-live="off">
+        <div><b data-c="d">--</b><span>días</span></div>
+        <div><b data-c="h">--</b><span>horas</span></div>
+        <div><b data-c="m">--</b><span>min</span></div>
+        <div><b data-c="s">--</b><span>seg</span></div>
+      </div>
+      <p class="sala-bajada" id="bajada">Cada punto de luz es una persona inscrita, sentada con su región. Los asientos se encienden cuando su dueño está conectado y destellan cuando escribe.</p>
+      <div class="sala-cifras">
+        <div><b data-a="presentes">0</b><span>conectados ahora</span></div>
+        <div><b data-a="total">0</b><span>asientos ocupados</span></div>
+        <div><b data-a="acreditados">0</b><span>confirmaron asistencia</span></div>
+      </div>
+      <div class="sala-acciones">
+        <button class="boton boton-rojo" type="button" id="acreditar" hidden>Confirmo mi asistencia</button>
+        <button class="boton boton-vidrio" type="button" id="ir-asiento" hidden>Ir a mi asiento</button>
+        <a class="boton boton-rojo" href="./#sumate" id="reservar">Reservar mi asiento</a>
+      </div>
     </div>
-    <div class="sala-acciones">
-      <button class="boton boton-rojo" type="button" id="ir-asiento" hidden>Ir a mi asiento</button>
-      <a class="boton boton-rojo" href="./#sumate" id="reservar">Reservar mi asiento</a>
-      <a class="boton boton-vidrio" href="#participar">Cómo participar ↓</a>
+
+    <div class="mi-asiento" id="mi-asiento" hidden>
+      <span class="mi-asiento-n">Asiento <b data-a="numero"></b></span>
+      <span data-a="lugar"></span>
+    </div>
+    <div class="sala-tip" id="tip" hidden></div>
+
+    <div class="votacion" id="votacion" hidden>
+      <p class="votacion-tipo">Votación consultiva <span id="v-estado"></span></p>
+      <h3 id="v-pregunta"></h3>
+      <div class="v-opciones" id="v-opciones"></div>
+      <p class="v-nota" id="v-nota"></p>
     </div>
   </div>
 
-  <div class="mi-asiento" id="mi-asiento" hidden>
-    <span class="mi-asiento-n">Asiento <b data-a="numero"></b></span>
-    <span data-a="lugar"></span>
+  <div class="sala-pie">
+    <div class="sala-leyenda" id="leyenda" aria-label="Regiones, de norte a sur"></div>
+    <div class="sala-vistas" role="group" aria-label="Vista de la sala">
+      <button type="button" data-vista="cenital" aria-pressed="true">Desde arriba</button>
+      <button type="button" data-vista="tribuna" aria-pressed="false">Tribuna</button>
+      <button type="button" data-vista="giro" aria-pressed="false">Girar</button>
+    </div>
   </div>
 
-  <div class="sala-vistas" role="group" aria-label="Vista de la sala">
-    <button type="button" data-vista="cenital" aria-pressed="true">Desde arriba</button>
-    <button type="button" data-vista="tribuna" aria-pressed="false">Desde la tribuna</button>
-    <button type="button" data-vista="giro" aria-pressed="false">Girar</button>
-  </div>
-
-  <div class="sala-leyenda" id="leyenda" aria-label="Regiones, de norte a sur"></div>
-  <div class="sala-tip" id="tip" hidden></div>
-  <p class="sala-ayuda">Arrastra para girar · rueda o pellizco para acercarte</p>
+  <aside class="chat" id="chat" aria-label="Conversación">
+    <div class="video" id="video" hidden></div>
+    <div class="chat-cab">
+      <div class="chat-pestanas" role="tablist">
+        <button role="tab" aria-selected="true" data-sala="plaza">La Plaza</button>
+        <button role="tab" aria-selected="false" data-sala="sesion" id="tab-sesion">Sesión <small id="sesion-estado">cerrada</small></button>
+      </div>
+      <p class="chat-sub" id="chat-sub">Conversación abierta de los socios. Sé respetuoso: hay moderación.</p>
+    </div>
+    <ol class="mensajes" id="mensajes" aria-live="polite"></ol>
+    <div class="chat-acciones" id="acciones-sesion" hidden>
+      <button type="button" class="chip" id="b-palabra">✋ Pedir la palabra</button>
+      <button type="button" class="chip" id="b-aplauso">👏 Aplaudir</button>
+      <span class="palabra-fila" id="palabra-fila"></span>
+    </div>
+    <div class="redactar" id="redactar">
+      <!-- se rellena según el estado: sin inscripción, sin apodo o listo para escribir -->
+    </div>
+  </aside>
 </section>
 
 <section class="participar" id="participar">
   <div class="envoltorio">
-    <p class="antetitulo">Participar</p>
-    <h2 class="titulo-bloque">Todo lo que haremos juntos<br><em>pasa por esta sala</em></h2>
-    <p class="lead">Cada forma de participar se abre cuando la sala alcanza su cifra. Hasta que la cooperativa exista legalmente, las votaciones serán consultivas. Para las decisiones con valor legal verificaremos la identidad de cada socio.</p>
-
-    <div class="etapas" id="etapas">
-      <article class="etapa" data-umbral="1000">
-        <div class="etapa-cab"><span class="etapa-ico">✎</span><span class="etapa-estado"></span></div>
-        <h3>Propón y comenta</h3>
-        <p>Marca en el mapa lugares de la Patagonia que deberíamos proteger, sube fotos y explica por qué.</p>
-        <div class="etapa-barra"><i></i></div><p class="etapa-falta"></p>
-      </article>
-      <article class="etapa" data-umbral="10000">
-        <div class="etapa-cab"><span class="etapa-ico">◐</span><span class="etapa-estado"></span></div>
-        <h3>Vota la prioridad</h3>
-        <p>La sala elige qué zonas y predios estudiar primero. Cada asiento se enciende con su voto y se ve cómo se forma la mayoría.</p>
-        <div class="etapa-barra"><i></i></div><p class="etapa-falta"></p>
-      </article>
-      <article class="etapa" data-umbral="50000">
-        <div class="etapa-cab"><span class="etapa-ico">§</span><span class="etapa-estado"></span></div>
-        <h3>Asamblea constituyente</h3>
-        <p>Votamos los estatutos, elegimos al primer consejo y constituimos la cooperativa ante la ley.</p>
-        <div class="etapa-barra"><i></i></div><p class="etapa-falta"></p>
-      </article>
-      <article class="etapa" data-umbral="100000">
-        <div class="etapa-cab"><span class="etapa-ico">▦</span><span class="etapa-estado"></span></div>
-        <h3>Tu parcela simbólica</h3>
-        <p>Con los primeros aportes compramos el primer predio. Cada socio tendrá su celda en el mapa y su certificado.</p>
-        <div class="etapa-barra"><i></i></div><p class="etapa-falta"></p>
-      </article>
+    <p class="antetitulo">Cómo participar</p>
+    <h2 class="titulo-bloque">Una asamblea virtual,<br><em>con reglas claras</em></h2>
+    <div class="reglas">
+      <div><span>1</span><h3>Entra con tu enlace</h3><p>El enlace que te llegó al correo es tu llave. No hay contraseñas. Si lo perdiste, inscríbete de nuevo con el mismo correo y te lo reenviamos.</p></div>
+      <div><span>2</span><h3>Elige tu apodo</h3><p>En el chat apareces con tu apodo, tu número de socio y tu comuna. Tu nombre real nunca se muestra.</p></div>
+      <div><span>3</span><h3>Confirma tu asistencia</h3><p>Antes del 5 de diciembre, confirma que vendrás. Tu asiento se marcará como acreditado.</p></div>
+      <div><span>4</span><h3>Habla, pide la palabra y vota</h3><p>Durante la sesión, tu asiento destella cuando escribes, se vuelve ámbar cuando pides la palabra y toma el color de tu voto.</p></div>
     </div>
-
     <div class="convocatoria">
       <div>
-        <h3>¿Cuándo se convoca?</h3>
-        <p>La fecha de la primera sesión se fijará según la coyuntura: el avance de las ventas de tierras, la discusión pública y el ritmo con que se llene la sala. Toda persona inscrita recibirá la convocatoria por correo con anticipación.</p>
+        <h3>Primera Asamblea Ciudadana</h3>
+        <p><b>Sábado 5 de diciembre de 2026, 19:00 horas</b> (Chile continental), en esta página. Será <b>consultiva</b>: hasta que la cooperativa exista legalmente, sus votaciones orientan las decisiones del grupo promotor. Habrá transmisión en video de la mesa.</p>
       </div>
-      <a class="boton boton-rojo" href="./#sumate" id="cta-convocatoria">Inscribirme para recibirla</a>
+      <a class="boton boton-rojo" href="./#sumate" id="cta-convocatoria">Inscribirme para participar</a>
+    </div>
+
+    <h3 class="sub-etapas">Lo que se abre al crecer</h3>
+    <div class="etapas" id="etapas">
+      <article class="etapa" data-umbral="1000"><div class="etapa-cab"><span class="etapa-ico">✎</span><span class="etapa-estado"></span></div><h3>Propón lugares</h3><p>Marca en el mapa lugares de la Patagonia que deberíamos proteger, con fotos y razones.</p><div class="etapa-barra"><i></i></div><p class="etapa-falta"></p></article>
+      <article class="etapa" data-umbral="10000"><div class="etapa-cab"><span class="etapa-ico">◐</span><span class="etapa-estado"></span></div><h3>Vota la prioridad</h3><p>La sala elige qué zonas y predios estudiar primero.</p><div class="etapa-barra"><i></i></div><p class="etapa-falta"></p></article>
+      <article class="etapa" data-umbral="50000"><div class="etapa-cab"><span class="etapa-ico">§</span><span class="etapa-estado"></span></div><h3>Asamblea constituyente</h3><p>Votamos los estatutos y constituimos la cooperativa ante la ley.</p><div class="etapa-barra"><i></i></div><p class="etapa-falta"></p></article>
+      <article class="etapa" data-umbral="100000"><div class="etapa-cab"><span class="etapa-ico">▦</span><span class="etapa-estado"></span></div><h3>Tu parcela simbólica</h3><p>Cada socio tendrá su celda en el primer predio y su certificado.</p><div class="etapa-barra"><i></i></div><p class="etapa-falta"></p></article>
     </div>
   </div>
 </section>
 </main>
 
+<!-- elegir apodo -->
+<div class="modal" id="modal-apodo" hidden role="dialog" aria-modal="true" aria-labelledby="ap-titulo">
+  <form class="modal-caja modal-chica" id="form-apodo">
+    <button class="modal-cerrar" type="button" data-cerrar aria-label="Cerrar">×</button>
+    <p class="antetitulo">Tu identidad en la Asamblea</p>
+    <h2 id="ap-titulo">Elige tu apodo</h2>
+    <p>Así te verán en el chat, junto a tu número de socio y tu comuna. Tu nombre real nunca se muestra.</p>
+    <div class="campo"><label for="ap-input">Apodo (3 a 24 caracteres)</label><input id="ap-input" maxlength="24" autocomplete="off" placeholder="Ej.: Cóndor del Baker"></div>
+    <button class="boton boton-rojo boton-ancho" type="submit">Guardar apodo</button>
+    <p class="form-msg" id="ap-msg"></p>
+  </form>
+</div>
+
 <footer class="pie">
   <div class="envoltorio pie-grid">
     <div><a class="marca" href="./"><svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 31 L13 15 L18 22 L24 9 L37 31 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M21 15 L24 9 L27 15" fill="currentColor"/><circle cx="31" cy="9" r="2.2" fill="var(--rojo)"/></svg><span>Patagonia <em>Chilena</em></span></a></div>
-    <div><h4>Sobre la sala</h4><p>Los asientos se ordenan por región, de Arica (a la izquierda) a Magallanes (a la derecha), y se llenan desde adelante. Tu número de socio fundador no cambia.</p></div>
+    <div><h4>Reglas del chat</h4><p>Respeto, sin insultos ni enlaces. Modo lento: un mensaje cada 20 segundos en La Plaza. Los moderadores pueden ocultar mensajes y suspender cuentas; con cinco denuncias, un mensaje se oculta solo.</p></div>
     <div><h4>Contacto</h4><p><a href="mailto:contacto@patagoniachilena.cl">contacto@patagoniachilena.cl</a><br><a href="privacidad.html">Política de privacidad</a></p></div>
   </div>
 </footer>

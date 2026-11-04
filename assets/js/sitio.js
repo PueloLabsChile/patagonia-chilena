@@ -47,6 +47,13 @@ pDatos.then(() => {
 
 /* ------------------------------------------------------------------ estadísticas en vivo */
 let estad = { total: 0, meta: 100000, comunas: [] };
+let inicioAsamblea = Date.parse('2026-12-05T19:00:00-03:00');
+function cuentaMini() {
+  const f = Math.max(0, inicioAsamblea - Date.now());
+  const pon = (k, v) => { const el = document.querySelector(`[data-cm="${k}"]`); if (el) el.textContent = String(v).padStart(2, '0'); };
+  pon('d', Math.floor(f / 864e5)); pon('h', Math.floor(f / 36e5) % 24); pon('m', Math.floor(f / 6e4) % 60);
+}
+setInterval(cuentaMini, 20000); cuentaMini();
 async function cargarEstadisticas() {
   try { estad = await json(API + 'estadisticas.php'); } catch (e) { console.warn('estadísticas', e); }
   const { total, meta } = estad;
@@ -54,6 +61,7 @@ async function cargarEstadisticas() {
   pintarCifra('meta', meta);
   pintarCifra('falta', total >= meta ? '¡Meta cumplida!' : `faltan ${fmt(meta - total)}`);
   $('[data-barra]').style.width = Math.min(100, total / meta * 100) + '%';
+  if (estad.asamblea) inicioAsamblea = estad.asamblea.inicio_ts * 1000;
   $$('.desb').forEach(d => {
     const u = Number(d.dataset.umbral), k = Math.min(1, total / u);
     d.querySelector('.desb-barra i').style.width = (k * 100) + '%';

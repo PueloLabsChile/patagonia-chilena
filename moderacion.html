@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Moderación · Patagonia Chilena</title>
+<link rel="icon" href="assets/img/icono.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="assets/css/sitio.css" rel="stylesheet">
+<style>
+body{background:#06111b}
+.mod{max-width:1280px;margin:0 auto;padding:calc(var(--barra-alto) + 24px) 16px 60px}
+.mod h1{font-size:46px;margin:0 0 6px}
+.mod-cab{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px}
+.mod-cab p{margin:0;color:var(--niebla)}
+.grid{display:grid;grid-template-columns:1.6fr 1fr;gap:18px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.caja{background:rgba(233,242,245,.04);border:1px solid rgba(233,242,245,.1);border-radius:16px;padding:18px}
+.caja h2{font-size:26px;margin:0 0 12px}
+.msj{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px;border-bottom:1px solid rgba(233,242,245,.07);font-size:14.5px}
+.msj.oculto{opacity:.45}
+.msj.denunciado{background:rgba(216,38,28,.1);border-radius:10px}
+.msj small{display:block;font:400 11.5px/1.4 var(--mono);color:var(--niebla)}
+.msj .acc{display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap;justify-content:flex-end}
+.b{all:unset;cursor:pointer;padding:6px 10px;border-radius:8px;background:rgba(233,242,245,.08);font:600 12.5px/1 var(--sans)}
+.b.rojo{background:var(--rojo)}
+.b:focus-visible{outline:2px solid var(--hielo-2)}
+.lista{max-height:62vh;overflow:auto}
+label{display:block;font:600 13px var(--sans);margin:10px 0 6px}
+input,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(233,242,245,.18);background:rgba(233,242,245,.05);color:#fff;font:15px var(--sans)}
+.pill{display:inline-block;padding:4px 8px;border-radius:99px;font:500 11px var(--mono);background:rgba(233,242,245,.08)}
+.err{color:#ff9d93}
+.res{display:flex;justify-content:space-between;font:400 13px var(--mono);color:var(--niebla)}
+</style>
+</head>
+<body>
+<header class="barra solida"><a class="marca" href="./"><span>Patagonia <em>Chilena</em></span></a><nav class="menu"><a href="asamblea.html" target="_blank">Abrir la sala ↗</a></nav></header>
+<main class="mod">
+  <div class="mod-cab">
+    <div><p class="antetitulo">Moderación</p><h1 id="hola">Panel de moderación</h1><p id="estado"></p></div>
+    <button class="b" id="recargar">Actualizar</button>
+  </div>
+  <p class="err" id="err"></p>
+  <div class="grid" id="panel" hidden>
+    <section class="caja">
+      <h2>Mensajes <span class="pill" id="n-den"></span></h2>
+      <div class="lista" id="mensajes"></div>
+    </section>
+    <div style="display:grid;gap:18px;align-content:start">
+      <section class="caja">
+        <h2>Piden la palabra</h2>
+        <div id="palabra"></div>
+        <button class="b" id="limpiar" style="margin-top:10px">Bajar todas las manos</button>
+      </section>
+      <section class="caja">
+        <h2>Votación consultiva</h2>
+        <form id="f-vot">
+          <label for="v-preg">Pregunta</label><input id="v-preg" maxlength="200" placeholder="¿Qué zona estudiamos primero?">
+          <label for="v-ops">Opciones (una por línea, de 2 a 6)</label><textarea id="v-ops" rows="4">Sí
+No
+Abstención</textarea>
+          <button class="b rojo" type="submit" style="margin-top:10px">Abrir votación</button>
+        </form>
+        <div id="votaciones" style="margin-top:14px"></div>
+      </section>
+      <section class="caja"><h2>Suspendidos</h2><div id="suspendidos"></div></section>
+      <section class="caja"><h2>Bitácora</h2><div id="bitacora" style="font:400 12px/1.6 var(--mono);color:var(--niebla)"></div></section>
+    </div>
+  </div>
+</main>
+<script>
+const m = new URLSearchParams(location.search).get('m');
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const hora = t => new Date(t * 1000).toLocaleString('es-CL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+async function accion(a, d = {}) {
+  const r = await fetch('api/moderar.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ m, accion: a, ...d }) });
+  const j = await r.json(); if (!j.ok) alert(j.error || 'Error'); cargar();
+}
+async function cargar() {
+  const r = await fetch('api/moderar.php?m=' + encodeURIComponent(m || ''), { cache: 'no-cache' });
+  const d = await r.json();
+  if (!d.ok) { $('#err').textContent = d.error || 'Sin acceso'; return; }
+  $('#panel').hidden = false;
+  $('#hola').textContent = 'Hola, ' + d.moderador;
+  $('#estado').textContent = `${d.asamblea.titulo}: ${d.asamblea.estado.replace('_', ' ')} · ${d.presentes} conectados ahora`;
+  const den = d.mensajes.filter(x => x.denuncias > 0 && !x.oculto).length;
+  $('#n-den').textContent = den ? den + ' con denuncias' : 'sin denuncias pendientes';
+  $('#mensajes').innerHTML = d.mensajes.map(x => `<div class="msj ${x.oculto ? 'oculto' : ''} ${x.denuncias && !x.oculto ? 'denunciado' : ''}">
+    <div><b>${esc(x.apodo)}</b> <small>n.º ${x.numero} · ${x.sala} · ${hora(x.creado)}${x.denuncias ? ' · ' + x.denuncias + ' denuncias' : ''}${x.oculto ? ' · oculto por ' + esc(x.moderador) : ''}${x.suspendido ? ' · SUSPENDIDO' : ''}</small>${esc(x.texto)}</div>
+    <div class="acc">${x.oculto ? `<button class="b" onclick="accion('mostrar',{mensaje:${x.id}})">Mostrar</button>` : `<button class="b" onclick="accion('ocultar',{mensaje:${x.id}})">Ocultar</button>`}
+    ${x.suspendido ? '' : `<button class="b rojo" onclick="if(confirm('¿Suspender al socio n.º ${x.numero} y ocultar todos sus mensajes?'))accion('suspender',{numero:${x.numero},ocultar_todo:1})">Suspender</button>`}</div></div>`).join('') || '<p>No hay mensajes.</p>';
+  $('#palabra').innerHTML = d.palabra.map((p, i) => `<div class="msj"><div>${i + 1}. <b>${esc(p.apodo || 'socio')}</b> <small>n.º ${p.numero} · desde ${hora(p.palabra)}</small></div><div class="acc"><button class="b" onclick="accion('quitar_palabra',{numero:${p.numero}})">Ya habló</button></div></div>`).join('') || '<p style="color:var(--niebla)">Nadie ha pedido la palabra.</p>';
+  $('#votaciones').innerHTML = d.votaciones.map(v => { const t = v.conteo.reduce((a, b) => a + b, 0); return `<div class="msj"><div><b>${esc(v.pregunta)}</b> <span class="pill">${v.abierta ? 'abierta' : 'cerrada'}</span>${v.opciones.map((o, k) => `<div class="res"><span>${esc(o)}</span><span>${v.conteo[k]} (${t ? Math.round(v.conteo[k] / t * 100) : 0} %)</span></div>`).join('')}</div><div class="acc">${v.abierta ? `<button class="b rojo" onclick="accion('cerrar_votacion',{votacion:${v.id}})">Cerrar</button>` : ''}</div></div>`; }).join('');
+  $('#suspendidos').innerHTML = d.suspendidos.map(s => `<div class="msj"><div><b>${esc(s.apodo || 'socio')}</b> <small>n.º ${s.numero}</small></div><div class="acc"><button class="b" onclick="accion('reactivar',{numero:${s.numero}})">Reactivar</button></div></div>`).join('') || '<p style="color:var(--niebla)">Nadie.</p>';
+  $('#bitacora').innerHTML = d.bitacora.map(b => `${hora(b.creado)} · ${esc(b.moderador)} · ${esc(b.accion)} ${esc(b.detalle)}`).join('<br>') || 'Sin acciones todavía.';
+}
+$('#recargar').onclick = cargar;
+$('#limpiar').onclick = () => accion('limpiar_palabra');
+$('#f-vot').onsubmit = e => { e.preventDefault(); accion('abrir_votacion', { pregunta: $('#v-preg').value, opciones: $('#v-ops').value.split('\n') }); };
+cargar(); setInterval(cargar, 10000);
+</script>
+</body>
+</html>

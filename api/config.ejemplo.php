@@ -8,6 +8,16 @@ return [
     'correo_contacto' => 'contacto@patagoniachilena.cl',
     'meta'            => 100000,
     'sal'             => 'CAMBIAR-POR-UNA-FRASE-LARGA-Y-SECRETA',
-    // Límites anti-abuso
     'max_por_ip_hora' => 12,
+    'dev'             => false,   // true solo en el computador de desarrollo: no envía correos y devuelve el enlace
+    'asamblea'        => [
+        'titulo'        => 'Primera Asamblea Ciudadana',
+        'inicio'        => '2026-12-05T19:00:00-03:00',   // sábado 5 de diciembre, 19:00 de Chile continental
+        'duracion_min'  => 150,
+        'video'         => '',            // enlace de YouTube en vivo (https://www.youtube.com/watch?v=…) cuando exista
+        'forzar_estado' => '',            // '', 'antes', 'en_vivo' o 'despues' (para ensayos)
+    ],
+    // segundos entre mensajes por persona
+    'pausa_plaza'     => 20,
+    'pausa_sesion'    => 8,
 ];

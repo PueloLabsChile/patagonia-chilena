@@ -5,3 +5,7 @@ Options -Indexes
 <FilesMatch "\.(sqlite|db|log)$">
   Require all denied
 </FilesMatch>
+
+<IfModule mod_alias.c>
+  RedirectMatch 404 ^/api/herramientas/
+</IfModule>

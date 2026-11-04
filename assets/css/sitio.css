@@ -344,3 +344,57 @@ a.desb:hover{transform:translateY(-4px);box-shadow:0 24px 50px -30px rgba(12,26,
 @media (max-width:760px){.asamblea-banda::after{background:linear-gradient(0deg,rgba(4,11,18,.96) 30%,rgba(4,11,18,.5) 100%)}.asamblea-banda{align-items:flex-end}}
 .ranking li.mia{background:rgba(201,164,103,.1);border-radius:8px}
 .historia-anio.largo{font-size:clamp(40px,5vw,72px)}
+
+/* ===== Historia v3: recorrido sobre mapa 3D ===== */
+.historia{position:relative;background:#050d15;overflow:visible;padding:0}
+.historia-intro{padding:clamp(80px,11vw,140px) clamp(16px,6vw,96px) 40px;max-width:1180px;margin:0 auto}
+.historia-escenario{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;z-index:0}
+#mapa-historia{position:absolute;inset:0}
+#h-chispas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.h-velo{position:absolute;inset:0;pointer-events:none;z-index:1;background:linear-gradient(90deg,rgba(5,13,21,.85) 0%,rgba(5,13,21,.25) 40%,rgba(5,13,21,0) 60%),linear-gradient(0deg,rgba(5,13,21,.9) 0%,rgba(5,13,21,0) 25%),linear-gradient(180deg,rgba(5,13,21,.85) 0%,rgba(5,13,21,0) 18%)}
+.h-dial{position:absolute;right:clamp(16px,4vw,56px);top:calc(var(--barra-alto) + 10px);z-index:3;font:italic 400 clamp(64px,10vw,150px)/1 var(--serif);color:var(--c,#a9dbe8);text-shadow:0 0 40px rgba(169,219,232,.25);letter-spacing:-.03em;pointer-events:none;overflow:hidden}
+.h-dial span.largo{font-size:clamp(40px,5.5vw,84px)}
+.h-dial span{display:block}
+.h-dial span.gira{animation:dial .9s cubic-bezier(.2,.8,.2,1)}
+@keyframes dial{0%{transform:translateY(60%) rotateX(70deg);opacity:0;filter:blur(8px)}100%{transform:none;opacity:1;filter:none}}
+.h-leyenda{position:absolute;right:clamp(16px,4vw,56px);bottom:96px;z-index:3;list-style:none;margin:0;padding:12px 14px;border-radius:12px;background:rgba(5,13,21,.7);border:1px solid rgba(233,242,245,.1);backdrop-filter:blur(8px);display:grid;gap:7px;font:400 11.5px/1.2 var(--mono);color:var(--niebla)}
+.h-leyenda li{display:flex;align-items:center;gap:9px}
+.h-leyenda i{width:16px;height:11px;border-radius:3px;flex:none}
+.s-solido{background:#4d93ad;box-shadow:0 0 0 1px #cfeef7 inset}
+.s-administrado{background:repeating-linear-gradient(135deg,rgba(169,219,232,.7) 0 2px,rgba(63,125,149,.25) 2px 6px)}
+.s-reclamado{background:repeating-linear-gradient(135deg,rgba(233,242,245,.5) 0 1px,transparent 1px 5px);box-shadow:0 0 0 1px rgba(233,242,245,.4) inset}
+.s-mapuche{background:repeating-linear-gradient(135deg,rgba(227,198,144,.8) 0 2px,rgba(201,164,103,.15) 2px 6px)}
+.s-ajeno{border:1px dashed rgba(233,242,245,.6)}
+.historia .linea{position:absolute;left:clamp(16px,4vw,56px);right:clamp(16px,4vw,56px);bottom:22px;z-index:3;margin:0;padding:10px 6px 0;background:linear-gradient(0deg,rgba(5,13,21,.6),transparent);border-radius:12px}
+.historia .linea::before{top:19px}
+.linea button.pasado::before{background:var(--c);opacity:.55}
+.historia-pasos{position:relative;z-index:4;margin-top:-100vh;margin-top:-100svh;pointer-events:none;padding:0 clamp(16px,6vw,96px) 30vh}
+.h-paso{min-height:92vh;display:flex;align-items:center}
+.h-paso:first-child{min-height:100vh}
+.h-tarjeta{pointer-events:auto;max-width:470px;padding:28px 30px;border-radius:22px;background:rgba(5,13,21,.78);border:1px solid rgba(233,242,245,.12);border-left:3px solid var(--c);backdrop-filter:blur(14px);box-shadow:var(--sombra);opacity:.28;transform:translateY(20px) scale(.98);transition:opacity .6s,transform .6s}
+.h-paso.activo .h-tarjeta{opacity:1;transform:none}
+.h-tarjeta h3{font-size:clamp(32px,3.4vw,46px);margin-bottom:12px}
+.h-tarjeta>p:not(.fuente):not(.h-tipo){color:rgba(233,242,245,.86);font-size:17px;margin:0 0 12px}
+.historia-nota{position:relative;z-index:4;max-width:1180px;margin:0 auto;padding:0 clamp(16px,6vw,96px) 80px}
+.h-rotulo{font:500 11.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 9px;border-radius:7px;background:rgba(5,13,21,.82);border:1px solid rgba(233,242,245,.3);color:var(--hielo);white-space:nowrap;pointer-events:none;animation:aparece .8s both}
+.h-rotulo-mapuche,.h-rotulo-originario{border-color:rgba(227,198,144,.6);color:var(--estepa-2)}
+.h-rotulo-realista{border-color:rgba(239,120,110,.6);color:#ffb3ac}
+.h-rotulo-administrado{border-color:rgba(169,219,232,.6);color:var(--hielo-2)}
+@keyframes aparece{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.h-punto{display:flex;align-items:center;gap:8px;pointer-events:none;animation:aparece .8s both}
+.h-punto i{width:14px;height:14px;border-radius:50%;background:var(--c);box-shadow:0 0 0 0 var(--c);animation:latido 1.8s infinite}
+.h-punto span{font:600 13px/1.2 var(--sans);color:#fff;background:rgba(5,13,21,.85);border:1px solid var(--c);padding:6px 10px;border-radius:8px;white-space:nowrap}
+@media (max-width:760px){
+  .h-velo{background:linear-gradient(0deg,rgba(5,13,21,.95) 0%,rgba(5,13,21,.4) 50%,rgba(5,13,21,.2) 100%)}
+  .h-leyenda{display:none}
+  .h-dial{top:calc(var(--barra-alto) + 4px);right:16px}
+  .h-paso{align-items:flex-end;padding-bottom:12vh}
+  .h-tarjeta{padding:20px;max-width:none}
+  .h-tarjeta h3{font-size:30px}
+  .h-tarjeta>p:not(.fuente):not(.h-tipo){font-size:15.5px}
+  .historia .linea{bottom:8px}
+}
+.h-dial span{color:var(--c,#a9dbe8)}
+.cuenta-mini{display:flex;align-items:baseline;gap:6px 10px;margin:-6px 0 22px;flex-wrap:wrap}
+.cuenta-mini b{font:400 46px/1 var(--serif);font-variant-numeric:tabular-nums;color:var(--estepa-2)}
+.cuenta-mini span{font:400 11px/1 var(--mono);color:var(--niebla);text-transform:uppercase;letter-spacing:.08em;margin-right:8px}

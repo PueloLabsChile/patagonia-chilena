@@ -23,7 +23,7 @@ $db = db();
 $ip = ip_hash();
 $hace1h = gmdate('Y-m-d H:i:s', time() - 3600);
 $q = $db->prepare('SELECT COUNT(*) FROM socios WHERE ip = ? AND creado > ?'); $q->execute([$ip, $hace1h]);
-if ((int)$q->fetchColumn() >= cfg('max_por_ip_hora')) responder(['ok' => false, 'error' => 'Demasiadas inscripciones desde esta conexión. Prueba en una hora.'], 429);
+if ((int)$q->fetchColumn() >= (int)cfg('max_por_ip_hora')) responder(['ok' => false, 'error' => 'Demasiadas inscripciones desde esta conexión. Prueba en una hora.'], 429);
 
 $q = $db->prepare('SELECT * FROM socios WHERE correo = ?'); $q->execute([$correo]);
 $s = $q->fetch();
@@ -55,4 +55,4 @@ $asunto = $confirmado ? 'Tu acceso a Patagonia Chilena' : 'Confirma tu inscripci
 $okCorreo = enviar_correo($correo, $asunto, plantilla_correo($nombre, $enlace, $base . 'baja.php?t=' . $token, $confirmado));
 if (!$okCorreo) responder(['ok' => false, 'error' => 'No pudimos enviar el correo. Intenta de nuevo en unos minutos.'], 502);
 
-responder(['ok' => true]);
+responder(cfg('dev') ? ['ok' => true, 'dev_enlace' => $enlace] : ['ok' => true]);

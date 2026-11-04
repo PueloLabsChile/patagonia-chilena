@@ -6,9 +6,11 @@ $t = (string)($_REQUEST['t'] ?? '');
 $valido = preg_match('/^[A-Za-z0-9_-]{20,64}$/', $t);
 $hecho = false;
 if ($valido && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $q = db()->prepare('SELECT id FROM socios WHERE token = ?'); $q->execute([$t]); $id = $q->fetchColumn();
+    if ($id) { db()->prepare('DELETE FROM mensajes WHERE socio_id = ?')->execute([$id]); db()->prepare('DELETE FROM votos WHERE socio_id = ?')->execute([$id]); }
     $q = db()->prepare('DELETE FROM socios WHERE token = ?'); $q->execute([$t]);
     $hecho = $q->rowCount() > 0;
-    @unlink(sys_get_temp_dir() . '/pc_estadisticas.json');
+    invalidar_cache();
 }
 $tt = htmlspecialchars($t, ENT_QUOTES, 'UTF-8');
 header('Content-Type: text/html; charset=utf-8');
