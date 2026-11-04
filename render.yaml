@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: patagonia-chilena-demo
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/estadisticas.php
+    envVars:
+      - key: DEMO_CLAVE
+        sync: false
+      - key: DEMO_ESTADO
+        value: ""
+      - key: DEMO_VIDEO
+        value: ""
+      - key: DEMO_MODERADORES
+        sync: false

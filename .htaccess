@@ -10,4 +10,4 @@ AddType application/geo+json .geojson
   ExpiresByType text/javascript "access plus 1 day"
   ExpiresByType image/svg+xml "access plus 30 days"
 </IfModule>
-RedirectMatch 404 ^/(dev|scripts|\.git)(/|$)
+RedirectMatch 404 ^/(dev|scripts|docker|\.git)(/|$)

@@ -1,0 +1,8 @@
+.git
+scripts
+dev/dev.sqlite*
+dev/moderadores-local.txt
+dev/forzar.txt
+dev/*.bak
+api/config.php
+**/__pycache__
