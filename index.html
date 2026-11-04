@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Patagonia Chilena · Recuperémosla entre todos</title>
+<meta name="description" content="Un movimiento ciudadano para formar una cooperativa y volver a poner la Patagonia en manos chilenas y colectivas. Inscríbete gratis: hoy solo necesitamos tu nombre.">
+<meta name="theme-color" content="#06111b">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Patagonia Chilena · Recuperémosla entre todos">
+<meta property="og:description" content="Nos estamos agrupando para formar una cooperativa ciudadana que compre y proteja tierra patagónica. Súmate gratis.">
+<meta property="og:image" content="https://patagoniachilena.cl/assets/img/og.jpg">
+<meta property="og:url" content="https://patagoniachilena.cl/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/img/icono.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..600&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
+<link href="assets/css/sitio.css" rel="stylesheet">
+</head>
+<body>
+
+<a class="saltar" href="#sumate">Ir a la inscripción</a>
+
+<!-- Barra superior -->
+<header class="barra" id="barra">
+  <a class="marca" href="#inicio" aria-label="Patagonia Chilena, inicio">
+    <svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 31 L13 15 L18 22 L24 9 L37 31 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M21 15 L24 9 L27 15" fill="currentColor"/><circle cx="31" cy="9" r="2.2" fill="var(--rojo)"/></svg>
+    <span>Patagonia <b>Chilena</b></span>
+  </a>
+  <nav class="menu" aria-label="Secciones">
+    <a href="#territorio">El territorio</a>
+    <a href="#cooperativa">La cooperativa</a>
+    <a href="#chile">Quiénes se suman</a>
+    <a href="#preguntas">Preguntas</a>
+  </nav>
+  <a class="boton boton-rojo boton-chico" href="#sumate">Sumarme</a>
+</header>
+
+<!-- Mapa fijo de fondo para el relato -->
+<div class="escenario" id="escenario" aria-hidden="true">
+  <div id="mapa"></div>
+  <div class="velo"></div>
+  <div class="grano"></div>
+</div>
+
+<main>
+
+<!-- 0 · Portada -->
+<section class="portada capitulo" id="inicio" data-camara="portada">
+  <div class="portada-txt">
+    <p class="antetitulo"><span class="punto-vivo"></span> Movimiento ciudadano · Etapa 1: nos agrupamos</p>
+    <h1>Recuperemos la Patagonia.<br><em>Entre todos.</em></h1>
+    <p class="bajada">Mientras la Patagonia se vende por partes, proponemos lo contrario: que miles de chilenos formemos una <b>cooperativa</b> y la compremos juntos, para que vuelva a manos chilenas y colectivas, y quede protegida.</p>
+    <div class="contador" aria-live="polite">
+      <div class="contador-cifra"><span data-cifra="total">0</span><small>chilenos ya se sumaron</small></div>
+      <div class="meta">
+        <div class="meta-barra"><i data-barra></i></div>
+        <div class="meta-txt"><span>Meta: <b data-cifra="meta">100.000</b></span><span data-cifra="falta"></span></div>
+      </div>
+    </div>
+    <div class="acciones">
+      <a class="boton boton-rojo" href="#sumate">Sumarme gratis <span aria-hidden="true">→</span></a>
+      <a class="boton boton-vidrio" href="#territorio">Ver el territorio</a>
+    </div>
+    <p class="nota-chica">Hoy no pedimos dinero. Solo tu nombre, tu correo y tu comuna.</p>
+  </div>
+  <a class="bajar" href="#territorio" aria-label="Seguir bajando"><span></span></a>
+</section>
+
+<!-- 1-5 · Relato sobre el mapa -->
+<section class="relato" id="territorio" aria-label="El territorio">
+
+  <article class="capitulo tarjeta" data-camara="territorio"><div class="tarjeta-in">
+    <p class="cap-num">01 · Un territorio inmenso</p>
+    <h2>Aysén y Magallanes suman <span class="dato" data-cifra="km2_total">—</span> km²</h2>
+    <p>Es cerca de <b data-cifra="pct_chile">—</b> de Chile, sin contar la Antártica, y la habitan cerca de 270 mil personas. Fiordos, estepa, bosques y montañas que, para la mayoría de los chilenos, siguen siendo un lugar lejano.</p>
+    <dl class="mini-cifras">
+      <div><dt>Aysén</dt><dd><span data-cifra="km2_aysen">—</span> km²</dd></div>
+      <div><dt>Magallanes</dt><dd><span data-cifra="km2_magallanes">—</span> km²</dd></div>
+      <div><dt>Comunas</dt><dd data-cifra="n_comunas">—</dd></div>
+    </dl>
+    <p class="fuente">Límites: INE, Censo 2024. Superficie calculada sin territorio antártico.</p>
+  </div></article>
+
+  <article class="capitulo tarjeta" data-camara="hielo"><div class="tarjeta-in">
+    <p class="cap-num">02 · Hielo y agua</p>
+    <h2>Aquí están los Campos de Hielo Norte y Sur</h2>
+    <p>Juntos forman la mayor masa de hielo continental del hemisferio sur fuera de la Antártica. Es una reserva de agua dulce que vale más que cualquier precio por hectárea.</p>
+    <dl class="mini-cifras">
+      <div><dt>Glaciares mapeados</dt><dd><span data-cifra="km2_glaciar">—</span> km²</dd></div>
+    </dl>
+    <p class="fuente">Glaciares: © colaboradores de OpenStreetMap (ODbL).</p>
+  </div></article>
+
+  <article class="capitulo tarjeta" data-camara="protegido"><div class="tarjeta-in">
+    <p class="cap-num">03 · Protegido, pero no todo</p>
+    <h2>Buena parte es parque nacional. El resto puede venderse.</h2>
+    <p>Los parques y reservas cubren cerca de <b data-cifra="pct_protegido">—</b> de Aysén y Magallanes. Fuera de ellos hay valles, costas, lagos y estancias que cambian de dueño en el mercado como cualquier mercancía.</p>
+    <ul class="leyenda">
+      <li><i style="--c:var(--verde)"></i>Parque nacional</li>
+      <li><i style="--c:var(--estepa)"></i>Reserva y monumento</li>
+      <li><i style="--c:var(--hielo-2)"></i>Glaciares</li>
+    </ul>
+    <p class="fuente">Áreas protegidas: © colaboradores de OpenStreetMap (ODbL). Cifra aproximada.</p>
+  </div></article>
+
+  <article class="capitulo tarjeta tarjeta-alerta" data-camara="venta"><div class="tarjeta-in">
+    <p class="cap-num">04 · Se vende</p>
+    <h2>25.468 hectáreas con lago y volcán, por US$ 7,5 millones</h2>
+    <p>En noviembre de 2026 se puso a la venta un predio en Cochamó y Hualaihué, en la puerta norte de la Patagonia. Incluye el lago Cabrera completo y parte del volcán Yate. Según la prensa, su dueña es una sociedad controlada desde Estados Unidos.</p>
+    <p>Ese mismo año, Bienes Nacionales anunció la venta de 234 inmuebles fiscales. Aysén y Magallanes concentran el 23 % del patrimonio fiscal del país.</p>
+    <p class="fuente">Fuentes: <a href="https://www.biobiochile.cl/noticias/nacional/region-de-los-lagos/2026/11/03/ponen-a-la-venta-un-pedazo-de-la-patagonia-chilena-por-us75-millones-incluye-lago-y-volcan.shtml" target="_blank" rel="noopener">BioBioChile, 3-nov-2026</a> · <a href="https://www.emol.com/noticias/Economia/2026/09/02/1210319/venta-islas-estado.html" target="_blank" rel="noopener">Emol, 2-sep-2026</a> · <a href="https://www.bienesnacionales.cl/wp-content/uploads/2026/08/Documento-Cuenta-P%C3%BAblica-PARA-COSOC-MBN-07.07.2026.pdf" target="_blank" rel="noopener">Cuenta pública MBN 2026</a>. Ubicación en el mapa: aproximada.</p>
+  </div></article>
+
+  <article class="capitulo tarjeta tarjeta-clave" data-camara="nosotros"><div class="tarjeta-in">
+    <p class="cap-num">05 · La cuenta que nos cambia todo</p>
+    <h2>100.000 chilenos ×&nbsp;US$&nbsp;75 = <span class="dato">ese predio completo</span></h2>
+    <p>No es un sueño: es aritmética. Una hectárea patagónica puede costar menos que una cena para dos. Lo que nos falta no es plata, sino <b>organizarnos</b>. Por eso la primera etapa es solo esa: juntarnos.</p>
+    <a class="boton boton-rojo" href="#sumate">Quiero ser parte <span aria-hidden="true">→</span></a>
+    <p class="fuente">Cálculo ilustrativo con el precio publicado del predio de Cochamó. Hoy no se recauda dinero.</p>
+  </div></article>
+
+</section>
+
+<!-- Pasos -->
+<section class="bloque bloque-claro" id="como">
+  <div class="envoltorio">
+    <p class="antetitulo oscuro">Cómo lo hacemos</p>
+    <h2 class="titulo-bloque">Tres pasos. El primero es gratis y toma 30 segundos.</h2>
+    <ol class="pasos">
+      <li class="paso activo">
+        <span class="paso-n">1</span>
+        <h3>Nos agrupamos</h3>
+        <p>Te inscribes con tu nombre, tu correo y tu comuna, y recibes tu número de socio fundador. Cada persona que invitas acerca la meta.</p>
+        <span class="paso-estado">Ahora</span>
+      </li>
+      <li class="paso">
+        <span class="paso-n">2</span>
+        <h3>Formamos la cooperativa</h3>
+        <p>Con masa crítica convocamos a una asamblea, votamos los estatutos y la constituimos legalmente. Una persona, un voto, ponga lo que ponga.</p>
+        <span class="paso-estado">Al llegar a la meta</span>
+      </li>
+      <li class="paso">
+        <span class="paso-n">3</span>
+        <h3>Compramos y protegemos</h3>
+        <p>La cooperativa reúne aportes, la comunidad vota qué tierra comprar y cada peso se ve en el mapa. La tierra queda en manos de todos, para siempre.</p>
+        <span class="paso-estado">Después</span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- Cooperativa -->
+<section class="bloque bloque-noche" id="cooperativa">
+  <div class="envoltorio dos-col">
+    <div>
+      <p class="antetitulo">Por qué una cooperativa</p>
+      <h2 class="titulo-bloque">No es una empresa ni una ONG.<br><em>Es de quienes la forman.</em></h2>
+      <p class="lead">Una cooperativa es la forma legal chilena para que muchas personas sean dueñas de algo en común. La rige la Ley General de Cooperativas y la fiscaliza el Ministerio de Economía.</p>
+    </div>
+    <ul class="principios">
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><div><h3>Una persona, un voto</h3><p>Quien pone más no manda más. Las decisiones grandes se toman en asamblea.</p></div></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18M12 3v18"/><circle cx="12" cy="12" r="9"/></svg><div><h3>Puertas abiertas</h3><p>Puede entrar cualquier chileno o chilena que comparta el propósito.</p></div></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10l8-6 8 6v10z"/><path d="M10 20v-6h4v6"/></svg><div><h3>La tierra no se reparte ni se revende</h3><p>Lo que se compra queda como patrimonio común y protegido. Lo fijaremos en los estatutos.</p></div></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h18v18H3z"/><path d="M7 15l3-3 3 3 4-5"/></svg><div><h3>Cuentas abiertas</h3><p>Cada aporte, gasto y compra será público y estará en el mapa.</p></div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- Mapa de inscritos -->
+<section class="bloque bloque-noche-2" id="chile">
+  <div class="envoltorio inscritos">
+    <div class="inscritos-txt">
+      <p class="antetitulo">Quiénes se suman</p>
+      <h2 class="titulo-bloque">Chile entero mirando al sur</h2>
+      <p class="lead">Cada punto es una comuna con personas inscritas. Nunca mostramos nombres: solo cuántos se han sumado en cada comuna.</p>
+      <div class="ranking-cab"><span>Comunas que más aportan gente</span><span class="mono" data-cifra="n_comunas_con">—</span></div>
+      <ol class="ranking" id="ranking"><li class="vacio">Sé el primero de tu comuna.</li></ol>
+      <div class="regiones-barras" id="regiones-barras"></div>
+    </div>
+    <div class="mapa-chile-marco">
+      <div id="mapa-chile" role="img" aria-label="Mapa de Chile con la cantidad de inscritos por comuna"></div>
+      <p class="fuente">Límites: INE, Censo 2024.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Lo que viene -->
+<section class="bloque bloque-claro" id="viene">
+  <div class="envoltorio">
+    <p class="antetitulo oscuro">Lo que se abre al crecer</p>
+    <h2 class="titulo-bloque">Esto no es solo una lista. Es una comunidad que decide.</h2>
+    <div class="desbloqueos">
+      <div class="desb" data-umbral="1000"><span class="desb-umbral">1.000</span><h3>Propón y comenta</h3><p>Marca en el mapa lugares que te importan, sube fotos y cuéntanos por qué deberíamos protegerlos.</p><div class="desb-barra"><i></i></div></div>
+      <div class="desb" data-umbral="10000"><span class="desb-umbral">10.000</span><h3>Vota la prioridad</h3><p>La comunidad elige qué zonas y predios estudiar primero, con su ficha técnica en el visor.</p><div class="desb-barra"><i></i></div></div>
+      <div class="desb" data-umbral="50000"><span class="desb-umbral">50.000</span><h3>Asamblea constituyente</h3><p>Votamos los estatutos y constituimos la cooperativa ante la ley.</p><div class="desb-barra"><i></i></div></div>
+      <div class="desb" data-umbral="100000"><span class="desb-umbral">100.000</span><h3>Tu parcela simbólica</h3><p>Cada aporte se convierte en una celda real del primer predio, con tu nombre y tu certificado.</p><div class="desb-barra"><i></i></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Inscripción -->
+<section class="bloque sumate" id="sumate">
+  <div class="sumate-fondo" aria-hidden="true"></div>
+  <div class="envoltorio sumate-caja">
+    <div class="sumate-txt">
+      <p class="antetitulo">Etapa 1 · Inscripción gratuita</p>
+      <h2 class="titulo-bloque">Súmate.<br><em>La Patagonia nos necesita juntos.</em></h2>
+      <ul class="check">
+        <li>Sin pagos ni compromisos de dinero</li>
+        <li>Recibes tu número de socio fundador</li>
+        <li>Votarás en cada decisión importante</li>
+        <li>Puedes darte de baja cuando quieras</li>
+      </ul>
+    </div>
+
+    <form class="formulario" id="formulario" novalidate>
+      <div class="campo">
+        <label for="f-nombre">Nombre</label>
+        <input id="f-nombre" name="nombre" autocomplete="name" required maxlength="80" placeholder="Tu nombre y apellido">
+      </div>
+      <div class="campo">
+        <label for="f-correo">Correo</label>
+        <input id="f-correo" name="correo" type="email" autocomplete="email" inputmode="email" required maxlength="120" placeholder="nombre@correo.cl">
+      </div>
+      <div class="campo campo-comuna">
+        <label for="f-comuna">Comuna donde vives</label>
+        <input id="f-comuna" name="comuna_txt" autocomplete="off" required placeholder="Empieza a escribir…" role="combobox" aria-expanded="false" aria-controls="f-comuna-lista" aria-autocomplete="list">
+        <input type="hidden" name="comuna" id="f-comuna-cut">
+        <ul class="sugerencias" id="f-comuna-lista" role="listbox" hidden></ul>
+      </div>
+      <label class="casilla">
+        <input type="checkbox" name="fundador" value="1" checked>
+        <span>Quiero ser <b>socio fundador</b> de la cooperativa cuando se constituya</span>
+      </label>
+      <label class="casilla casilla-chica">
+        <input type="checkbox" name="acepto" value="1" required>
+        <span>Acepto la <a href="privacidad.html" target="_blank">política de privacidad</a>. Mi nombre nunca será público.</span>
+      </label>
+      <div class="trampa" aria-hidden="true"><label>Sitio web <input name="sitio" tabindex="-1" autocomplete="off"></label></div>
+      <button class="boton boton-rojo boton-ancho" type="submit"><span class="btn-txt">Sumarme a Patagonia Chilena</span><span class="btn-cargando" hidden>Enviando…</span></button>
+      <p class="form-msg" id="form-msg" role="status"></p>
+    </form>
+
+    <!-- Paso 2: revisa tu correo -->
+    <div class="estado-form" id="revisa" hidden>
+      <div class="sobre" aria-hidden="true">✉</div>
+      <h3>Revisa tu correo</h3>
+      <p>Te enviamos un enlace a <b data-correo></b>. Ábrelo para confirmar tu inscripción y recibir tu número de socio fundador.</p>
+      <p class="nota-chica">¿No llegó? Mira en spam o promociones. <button class="enlace" type="button" id="reintentar">Volver a enviar</button></p>
+      <p class="dev-enlace" id="dev-enlace" hidden></p>
+    </div>
+  </div>
+</section>
+
+<!-- Bienvenida (tras confirmar) -->
+<div class="modal" id="bienvenida" hidden role="dialog" aria-modal="true" aria-labelledby="bv-titulo">
+  <div class="modal-caja">
+    <button class="modal-cerrar" type="button" data-cerrar aria-label="Cerrar">×</button>
+    <p class="antetitulo">Inscripción confirmada</p>
+    <h2 id="bv-titulo">Eres el chileno n.º <span data-socio-n>—</span></h2>
+    <p>Gracias, <b data-socio-nombre></b>. Ya estás dentro. Ahora lo más importante es <b>sumar a otros</b>: cada persona que invites acerca la meta.</p>
+    <canvas id="tarjeta" width="1080" height="1350" aria-label="Tarjeta para compartir"></canvas>
+    <div class="compartir">
+      <a class="boton boton-verde" id="c-whatsapp" target="_blank" rel="noopener">Compartir por WhatsApp</a>
+      <button class="boton boton-vidrio" type="button" id="c-compartir">Compartir imagen</button>
+      <button class="boton boton-vidrio" type="button" id="c-copiar">Copiar mi enlace</button>
+    </div>
+    <p class="nota-chica">Tu enlace para invitar: <code id="c-enlace"></code><br>Personas que se sumaron gracias a ti: <b data-socio-invitados>0</b></p>
+  </div>
+</div>
+
+<!-- Preguntas -->
+<section class="bloque bloque-claro" id="preguntas">
+  <div class="envoltorio angosto">
+    <p class="antetitulo oscuro">Preguntas frecuentes</p>
+    <h2 class="titulo-bloque">Hablemos claro</h2>
+    <div class="faq">
+      <details><summary>¿Tengo que poner dinero ahora?</summary><p>No. La primera etapa es solo juntarnos. No recibimos dinero hasta que exista la cooperativa legalmente constituida, con estatutos votados por sus socios y cuentas públicas.</p></details>
+      <details><summary>¿Quiénes están detrás?</summary><p>Un grupo de ciudadanos que se conoció y se organiza en redes sociales. No hay empresa, partido ni financista detrás. Cuando la cooperativa se constituya, sus directivos serán elegidos por votación de todos los socios.</p></details>
+      <details><summary>¿Qué pasa con mis datos?</summary><p>Usamos tu correo solo para avisarte de cada etapa y de las votaciones. Tu nombre nunca se publica: en el mapa solo aparece cuántas personas hay por comuna. Puedes pedir la baja y el borrado en cualquier momento desde el enlace de cada correo.</p></details>
+      <details><summary>¿Es legal comprar tierra entre muchos?</summary><p>Sí. La cooperativa es una persona jurídica que puede comprar, administrar y proteger bienes en nombre de sus socios, según la Ley General de Cooperativas. Antes de comprar cualquier predio se harán estudios de títulos y se publicará el informe.</p></details>
+      <details><summary>¿Qué tierra vamos a comprar?</summary><p>La decidirá la comunidad. El visor mostrará las opciones con su información técnica (superficie, agua, glaciares, accesos y protección) y los socios votarán cuáles priorizar.</p></details>
+      <details><summary>¿Y si no llegamos a la meta?</summary><p>No se pierde nada: nadie habrá puesto dinero. Una comunidad organizada de miles de personas ya tiene voz para incidir en cómo se cuida y se vende el territorio.</p></details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="pie">
+  <div class="envoltorio pie-grid">
+    <div>
+      <a class="marca" href="#inicio"><svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 31 L13 15 L18 22 L24 9 L37 31 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M21 15 L24 9 L27 15" fill="currentColor"/><circle cx="31" cy="9" r="2.2" fill="var(--rojo)"/></svg><span>Patagonia <b>Chilena</b></span></a>
+      <p>Movimiento ciudadano para formar una cooperativa que recupere la Patagonia para todos los chilenos.</p>
+    </div>
+    <div>
+      <h4>Fuentes del visor</h4>
+      <p>Límites comunales y regionales: INE, Censo 2024 · Glaciares y áreas protegidas: © colaboradores de OpenStreetMap (ODbL) · Imagen satelital: Esri, Maxar, Earthstar Geographics · Relieve: Terrain Tiles (AWS Open Data, Mapzen).</p>
+    </div>
+    <div>
+      <h4>Contacto</h4>
+      <p><a href="mailto:contacto@patagoniachilena.cl">contacto@patagoniachilena.cl</a><br><a href="privacidad.html">Política de privacidad</a></p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+<script src="assets/js/sitio.js" type="module"></script>
+</body>
+</html>

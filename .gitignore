@@ -1,0 +1,5 @@
+api/config.php
+dev/dev.sqlite*
+scripts/cache/
+scripts/*.log
+__pycache__/
