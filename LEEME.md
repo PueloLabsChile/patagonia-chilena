@@ -3,6 +3,9 @@
 Sitio del movimiento ciudadano que busca formar una cooperativa para recuperar tierra patagónica.
 **Etapa 1:** inscripción gratuita, sin monto. Se pide nombre, correo y comuna, y se confirma por correo.
 
+## Demo
+https://patagonia-chilena-demo.onrender.com (Render, plan gratuito). Usa datos de prueba que se regeneran en cada reinicio, no envía correos (muestra el enlace de confirmación en pantalla) y se duerme tras 15 minutos sin visitas: la primera carga puede tardar cerca de un minuto. Los enlaces de moderación del demo aparecen en los registros del servicio en Render.
+
 ## Estructura
 | Ruta | Qué es |
 |---|---|
