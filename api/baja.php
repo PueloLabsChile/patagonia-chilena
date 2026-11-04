@@ -15,7 +15,7 @@ if ($valido && $_SERVER['REQUEST_METHOD'] === 'POST') {
 $tt = htmlspecialchars($t, ENT_QUOTES, 'UTF-8');
 header('Content-Type: text/html; charset=utf-8');
 ?><!doctype html><html lang="es-CL"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Darse de baja · Patagonia Chilena</title>
-<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#06111b;color:#e9f2f5;font:17px/1.6 system-ui,sans-serif;padding:16px}div{max-width:460px;background:#0f2c40;border-radius:18px;padding:34px}h1{font:400 28px Georgia,serif;margin:0 0 12px}button{background:#d8261c;color:#fff;border:0;border-radius:30px;padding:14px 24px;font:700 16px system-ui;cursor:pointer}a{color:#a9dbe8}</style></head><body><div>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#071a45;color:#f8f6f0;font:17px/1.6 system-ui,sans-serif;padding:16px}div{max-width:460px;background:#0d2c6e;border-radius:18px;padding:34px}h1{font:400 28px Georgia,serif;margin:0 0 12px}button{background:#d52b1e;color:#fff;border:0;border-radius:30px;padding:14px 24px;font:700 16px system-ui;cursor:pointer}a{color:#c6d6ee}</style></head><body><div>
 <?php if ($hecho): ?>
 <h1>Listo, borramos tus datos</h1><p>Ya no eres parte de la lista y no te escribiremos más. Si cambias de opinión, puedes volver a inscribirte cuando quieras.</p><p><a href="<?= htmlspecialchars(cfg('sitio')) ?>">Volver al sitio</a></p>
 <?php elseif ($valido): ?>

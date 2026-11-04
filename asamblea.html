@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>La Asamblea · Patagonia Chilena</title>
 <meta name="description" content="Primera Asamblea Ciudadana de Patagonia Chilena: sábado 5 de diciembre, 19:00. Un asiento para cada persona inscrita, chat abierto y votaciones consultivas.">
-<meta name="theme-color" content="#040b12">
+<meta name="theme-color" content="#051234">
 <meta property="og:title" content="La Asamblea · Patagonia Chilena">
 <meta property="og:description" content="Primera Asamblea Ciudadana: sábado 5 de diciembre, 19:00. Un asiento para cada chileno que se suma.">
 <meta property="og:image" content="https://patagoniachilena.cl/assets/img/og.jpg">
@@ -15,13 +15,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="assets/css/sitio.css" rel="stylesheet">
 <link href="assets/css/asamblea.css" rel="stylesheet">
+<link href="assets/css/nacional.css" rel="stylesheet">
 <script type="importmap">{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }</script>
 </head>
 <body class="pagina-asamblea">
 
 <header class="barra solida" id="barra">
   <a class="marca" href="./" aria-label="Patagonia Chilena, inicio">
-    <svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 31 L13 15 L18 22 L24 9 L37 31 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M21 15 L24 9 L27 15" fill="currentColor"/><circle cx="31" cy="9" r="2.2" fill="var(--rojo)"/></svg>
+    <img class="marca-icono" src="assets/img/icono.svg" alt="">
     <span>Patagonia <em>Chilena</em></span>
   </a>
   <nav class="menu" aria-label="Secciones">
@@ -53,6 +54,7 @@
         <div><b data-a="presentes">0</b><span>conectados ahora</span></div>
         <div><b data-a="total">0</b><span>asientos ocupados</span></div>
         <div><b data-a="acreditados">0</b><span>confirmaron asistencia</span></div>
+        <div><b data-a="comprometidos">0</b><span>★ Fondo Patagonia</span></div>
       </div>
       <div class="sala-acciones">
         <button class="boton boton-rojo" type="button" id="acreditar" hidden>Confirmo mi asistencia</button>
@@ -149,7 +151,7 @@
 
 <footer class="pie">
   <div class="envoltorio pie-grid">
-    <div><a class="marca" href="./"><svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 31 L13 15 L18 22 L24 9 L37 31 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M21 15 L24 9 L27 15" fill="currentColor"/><circle cx="31" cy="9" r="2.2" fill="var(--rojo)"/></svg><span>Patagonia <em>Chilena</em></span></a></div>
+    <div><a class="marca" href="./"><img class="marca-icono" src="assets/img/icono.svg" alt=""><span>Patagonia <em>Chilena</em></span></a></div>
     <div><h4>Reglas del chat</h4><p>Respeto, sin insultos ni enlaces. Modo lento: un mensaje cada 20 segundos en La Plaza. Los moderadores pueden ocultar mensajes y suspender cuentas; con cinco denuncias, un mensaje se oculta solo.</p></div>
     <div><h4>Contacto</h4><p><a href="mailto:contacto@patagoniachilena.cl">contacto@patagoniachilena.cl</a><br><a href="privacidad.html">Política de privacidad</a></p></div>
   </div>

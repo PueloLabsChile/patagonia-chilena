@@ -1,7 +1,7 @@
 <?php
 // POST {t, accion, …} → acciones de un socio en la Asamblea:
 //   apodo {apodo} · mensaje {texto, sala: plaza|sesion} · palabra {pedir: bool} · votar {votacion, opcion}
-//   aplauso · denunciar {mensaje} · acreditar
+//   aplauso · denunciar {mensaje} · acreditar · compromiso {monto} (0 lo cancela; aún no se cobra)
 require __DIR__ . '/_comun.php';
 solo_post();
 $d = entrada();
@@ -25,6 +25,13 @@ if ($accion === 'apodo') {
 $s = exigir_socio();
 
 switch ($accion) {
+    case 'compromiso':
+        $m = monto_compromiso($d['monto'] ?? 0);
+        if ($m === null) error('El compromiso mensual mínimo es de $1.000.');
+        $db->prepare('UPDATE socios SET compromiso = ?, compromiso_fecha = ? WHERE id = ?')->execute([$m ?: null, $m ? ahora() : null, $s['id']]);
+        invalidar_cache();
+        responder(['ok' => true, 'compromiso' => $m]);
+
     case 'mensaje':
         if (!$s['apodo']) error('Elige un apodo antes de escribir.');
         $sala = ($d['sala'] ?? '') === 'sesion' ? 'sesion' : 'plaza';

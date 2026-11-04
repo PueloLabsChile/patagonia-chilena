@@ -7,6 +7,7 @@ return [
     'correo_de'       => 'no-responder@patagoniachilena.cl',
     'correo_contacto' => 'contacto@patagoniachilena.cl',
     'meta'            => 100000,
+    'clp_por_ha'      => 280000,   // referencia: US$ 294/ha (predio de Cochamó) × dólar ~950
     'sal'             => getenv('DEMO_CLAVE') ?: 'demo',
     'max_por_ip_hora' => 200,
     'dev'             => true,

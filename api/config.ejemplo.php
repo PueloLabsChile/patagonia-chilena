@@ -7,6 +7,7 @@ return [
     'correo_de'       => 'no-responder@patagoniachilena.cl',   // crear esta casilla en cPanel
     'correo_contacto' => 'contacto@patagoniachilena.cl',
     'meta'            => 100000,
+    'clp_por_ha'      => 280000,   // referencia: US$ 294/ha (predio de Cochamó) × dólar ~950
     'sal'             => 'CAMBIAR-POR-UNA-FRASE-LARGA-Y-SECRETA',
     'max_por_ip_hora' => 12,
     'dev'             => false,   // true solo en el computador de desarrollo: no envía correos y devuelve el enlace

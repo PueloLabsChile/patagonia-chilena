@@ -20,7 +20,7 @@ async function recorrido(prefijo) {
     await js(ch, `(() => { const c = document.querySelectorAll('.relato .capitulo')[${i}]; scrollTo({ top: c.offsetTop + c.offsetHeight / 2 - innerHeight / 2, behavior: 'instant' }); })()`);
     await espera(6000); await foto(`${prefijo}-${i + 1}-cap`);
   }
-  for (const id of ['historia', 'como', 'cooperativa', 'chile', 'asamblea', 'viene', 'sumate']) {
+  for (const id of ['como', 'cooperativa', 'chile', 'asamblea', 'fondo', 'viene', 'sumate', 'preguntas']) {
     await js(ch, `document.getElementById('${id}').scrollIntoView({ behavior: 'instant' })`); await espera(['chile', 'historia', 'asamblea'].includes(id) ? 4500 : 1200); await foto(`${prefijo}-z-${id}`);
   }
 }

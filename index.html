@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Patagonia Chilena · Recuperémosla entre todos</title>
 <meta name="description" content="Un movimiento ciudadano para formar una cooperativa y volver a poner la Patagonia en manos chilenas y colectivas. Inscríbete gratis: hoy solo necesitamos tu nombre.">
-<meta name="theme-color" content="#06111b">
+<meta name="theme-color" content="#071a45">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Patagonia Chilena · Recuperémosla entre todos">
 <meta property="og:description" content="Nos estamos agrupando para formar una cooperativa ciudadana que compre y proteja tierra patagónica. Súmate gratis.">
@@ -18,6 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
 <link href="assets/css/sitio.css" rel="stylesheet">
+<link href="assets/css/nacional.css" rel="stylesheet">
 </head>
 <body>
 
@@ -26,14 +27,14 @@
 <!-- Barra superior -->
 <header class="barra" id="barra">
   <a class="marca" href="#inicio" aria-label="Patagonia Chilena, inicio">
-    <svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 31 L13 15 L18 22 L24 9 L37 31 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M21 15 L24 9 L27 15" fill="currentColor"/><circle cx="31" cy="9" r="2.2" fill="var(--rojo)"/></svg>
+    <img class="marca-icono" src="assets/img/icono.svg" alt="">
     <span>Patagonia <em>Chilena</em></span>
   </a>
   <nav class="menu" aria-label="Secciones">
     <a href="#territorio">El territorio</a>
     <a href="#historia">Historia</a>
     <a href="#cooperativa">La cooperativa</a>
-    <a href="#chile">Quiénes se suman</a>
+    <a href="#fondo">Fondo Patagonia</a>
     <a href="asamblea.html" class="menu-asamblea"><span class="punto-vivo"></span>Asamblea</a>
   </nav>
   <a class="boton boton-rojo boton-chico" href="#sumate">Sumarme</a>
@@ -69,6 +70,7 @@
     <p class="nota-chica">Hoy no pedimos dinero. Solo tu nombre, tu correo y tu comuna.</p>
   </div>
   <a class="bajar" href="#territorio" aria-label="Seguir bajando"><span></span></a>
+  <img class="condor" src="assets/img/condor.svg" alt="" aria-hidden="true">
 </section>
 
 <!-- 1-5 · Relato sobre el mapa -->
@@ -236,6 +238,42 @@
   </div>
 </section>
 
+<!-- Fondo Patagonia: compromiso mensual (aún no se cobra) -->
+<section class="bloque fondo" id="fondo">
+  <div class="envoltorio fondo-grid">
+    <div class="fondo-txt">
+      <p class="antetitulo">Fondo Patagonia</p>
+      <h2 class="titulo-bloque">Con $1.000 al mes,<br><em>entre todos compramos el sur.</em></h2>
+      <p class="lead">Comprométete con un aporte mensual pequeño. <b>Todavía no se cobra:</b> cuando exista la cooperativa te pediremos confirmarlo, y podrás cambiarlo o cancelarlo cuando quieras.</p>
+      <div class="fondo-montos" role="group" aria-label="Elige tu compromiso mensual">
+        <button type="button" class="monto" data-monto="1000">$1.000<small>al mes</small></button>
+        <button type="button" class="monto" data-monto="2000">$2.000<small>al mes</small></button>
+        <button type="button" class="monto" data-monto="5000">$5.000<small>al mes</small></button>
+        <label class="monto monto-otro"><span>Otro</span><input type="number" min="1000" step="500" inputmode="numeric" placeholder="$" id="monto-otro" aria-label="Otro monto mensual, mínimo 1.000 pesos"></label>
+      </div>
+      <p class="fondo-equivale" id="fondo-equivale">Elige un monto para ver cuánta Patagonia significa.</p>
+      <button type="button" class="boton boton-rojo" id="b-comprometer" disabled>Me comprometo</button>
+      <p class="form-msg" id="fondo-msg" role="status"></p>
+    </div>
+    <div class="fondo-panel">
+      <div class="fondo-cifra">
+        <span class="fondo-etq">Comprometido cada mes</span>
+        <b data-fondo="mensual">$0</b>
+        <span class="fondo-sub"><b data-fondo="personas">0</b> chilenos comprometidos</span>
+      </div>
+      <div class="fondo-ha">
+        <div><b data-fondo="ha_anio">0</b><span>hectáreas al año</span></div>
+        <div><b data-fondo="m2">0</b><span>m² por cada $1.000 al mes, en un año</span></div>
+      </div>
+      <div class="fondo-destino">
+        <h3>¿En qué se usará?</h3>
+        <p>Mientras la cooperativa no exista, con los aportes <b>solo se pagarán los servicios jurídicos</b> para constituirla y la <b>mantención de este sitio</b>. Todo lo demás se guarda para comprar tierra, y cada peso se publicará.</p>
+      </div>
+      <p class="fuente">Equivalencia referencial con el precio publicado del predio de Cochamó (US$ 7,5 millones por 25.468 ha) y un dólar de referencia. No es una oferta de compra.</p>
+    </div>
+  </div>
+</section>
+
 <!-- Lo que viene -->
 <section class="bloque bloque-claro" id="viene">
   <div class="envoltorio">
@@ -259,7 +297,7 @@
       <p class="antetitulo">Etapa 1 · Inscripción gratuita</p>
       <h2 class="titulo-bloque">Súmate.<br><em>La Patagonia nos necesita juntos.</em></h2>
       <ul class="check">
-        <li>Sin pagos ni compromisos de dinero</li>
+        <li>Sin pagos: el compromiso mensual es opcional y aún no se cobra</li>
         <li>Recibes tu número de socio fundador</li>
         <li>Votarás en cada decisión importante</li>
         <li>Puedes darte de baja cuando quieras</li>
@@ -280,6 +318,15 @@
         <input id="f-comuna" name="comuna_txt" autocomplete="off" required placeholder="Empieza a escribir…" role="combobox" aria-expanded="false" aria-controls="f-comuna-lista" aria-autocomplete="list">
         <input type="hidden" name="comuna" id="f-comuna-cut">
         <ul class="sugerencias" id="f-comuna-lista" role="listbox" hidden></ul>
+      </div>
+      <div class="campo">
+        <label for="f-compromiso">Compromiso mensual <span class="opcional">(opcional · aún no se cobra)</span></label>
+        <select id="f-compromiso" name="compromiso">
+          <option value="0">Por ahora, solo inscribirme</option>
+          <option value="1000">$1.000 al mes</option>
+          <option value="2000">$2.000 al mes</option>
+          <option value="5000">$5.000 al mes</option>
+        </select>
       </div>
       <label class="casilla">
         <input type="checkbox" name="fundador" value="1" checked>
@@ -312,7 +359,11 @@
     <p class="antetitulo">Inscripción confirmada</p>
     <h2 id="bv-titulo">Eres el chileno n.º <span data-socio-n>—</span></h2>
     <p>Gracias, <b data-socio-nombre></b>. Ya estás dentro. Ahora lo más importante es <b>sumar a otros</b>: cada persona que invites acerca la meta.</p>
-    <canvas id="tarjeta" width="1080" height="1350" aria-label="Tarjeta para compartir"></canvas>
+    <div class="bv-compromiso" id="bv-compromiso" hidden>
+      <p><b>¿Te sumas al Fondo Patagonia?</b> Comprométete desde $1.000 al mes. Aún no se cobra.</p>
+      <div class="fondo-montos chico"><button type="button" class="monto" data-bv="1000">$1.000</button><button type="button" class="monto" data-bv="2000">$2.000</button><button type="button" class="monto" data-bv="5000">$5.000</button></div>
+    </div>
+    <canvas id="tarjeta" width="1080" height="1350" aria-label="Tarjeta de socio fundador para compartir"></canvas>
     <div class="compartir">
       <a class="boton boton-verde" id="c-whatsapp" target="_blank" rel="noopener">Compartir por WhatsApp</a>
       <button class="boton boton-vidrio" type="button" id="c-compartir">Compartir imagen</button>
@@ -329,7 +380,8 @@
     <p class="antetitulo oscuro">Preguntas frecuentes</p>
     <h2 class="titulo-bloque">Hablemos claro</h2>
     <div class="faq">
-      <details><summary>¿Tengo que poner dinero ahora?</summary><p>No. La primera etapa es solo juntarnos. No recibimos dinero hasta que exista la cooperativa legalmente constituida, con estatutos votados por sus socios y cuentas públicas.</p></details>
+      <details><summary>¿Tengo que poner dinero ahora?</summary><p>No. La primera etapa es juntarnos. Puedes dejar un compromiso mensual, pero no recibimos dinero hasta que exista la cooperativa legalmente constituida, con estatutos votados por sus socios y cuentas públicas.</p></details>
+      <details><summary>¿Qué es el compromiso mensual?</summary><p>Es una promesa de aporte desde $1.000 al mes. Hoy no se cobra nada. Cuando la cooperativa exista te pediremos confirmarlo. Mientras tanto, con los aportes solo se pagarán los servicios jurídicos para constituirla y la mantención del sitio; el resto se guarda para comprar tierra, y todo se publicará.</p></details>
       <details><summary>¿Quiénes están detrás?</summary><p>Un grupo de ciudadanos que se conoció y se organiza en redes sociales. No hay empresa, partido ni financista detrás. Cuando la cooperativa se constituya, sus directivos serán elegidos por votación de todos los socios.</p></details>
       <details><summary>¿Qué pasa con mis datos?</summary><p>Usamos tu correo solo para avisarte de cada etapa y de las votaciones. Tu nombre nunca se publica: en el mapa solo aparece cuántas personas hay por comuna. Puedes pedir la baja y el borrado en cualquier momento desde el enlace de cada correo.</p></details>
       <details><summary>¿Es legal comprar tierra entre muchos?</summary><p>Sí. La cooperativa es una persona jurídica que puede comprar, administrar y proteger bienes en nombre de sus socios, según la Ley General de Cooperativas. Antes de comprar cualquier predio se harán estudios de títulos y se publicará el informe.</p></details>
@@ -344,7 +396,7 @@
 <footer class="pie">
   <div class="envoltorio pie-grid">
     <div>
-      <a class="marca" href="#inicio"><svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 31 L13 15 L18 22 L24 9 L37 31 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M21 15 L24 9 L27 15" fill="currentColor"/><circle cx="31" cy="9" r="2.2" fill="var(--rojo)"/></svg><span>Patagonia <em>Chilena</em></span></a>
+      <a class="marca" href="#inicio"><img class="marca-icono" src="assets/img/icono.svg" alt=""><span>Patagonia <em>Chilena</em></span></a>
       <p>Movimiento ciudadano para formar una cooperativa que recupere la Patagonia para todos los chilenos.</p>
     </div>
     <div>

@@ -1,5 +1,6 @@
 // Patagonia Chilena · relato con mapa, historia, contador, mapa de inscritos, anticipo de la Asamblea e inscripción
 import { iniciarViento } from './viento.js';
+import { iniciarRelieve } from './relieve.js';
 import { iniciarHistoria } from './historia.js';
 import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js';
 const $ = (s, r = document) => r.querySelector(s);
@@ -62,6 +63,7 @@ async function cargarEstadisticas() {
   pintarCifra('falta', total >= meta ? '¡Meta cumplida!' : `faltan ${fmt(meta - total)}`);
   $('[data-barra]').style.width = Math.min(100, total / meta * 100) + '%';
   if (estad.asamblea) inicioAsamblea = estad.asamblea.inicio_ts * 1000;
+  if (estad.fondo) pintarFondo(estad.fondo);
   $$('.desb').forEach(d => {
     const u = Number(d.dataset.umbral), k = Math.min(1, total / u);
     d.querySelector('.desb-barra i').style.width = (k * 100) + '%';
@@ -147,9 +149,9 @@ const ESTILO = {
     satelite: { type: 'raster', tileSize: 256, maxzoom: 17, tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'], attribution: 'Imagen © Esri, Maxar, Earthstar Geographics' },
     relieve: { type: 'raster-dem', encoding: 'terrarium', tileSize: 256, maxzoom: 13, tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], attribution: 'Relieve: Terrain Tiles (AWS, Mapzen)' },
   },
-  sky: { 'sky-color': '#0d2a40', 'horizon-color': '#9cc4d3', 'fog-color': '#0a1c2b', 'sky-horizon-blend': .55, 'horizon-fog-blend': .65, 'fog-ground-blend': .55, 'atmosphere-blend': .8 },
+  sky: { 'sky-color': '#0c2a66', 'horizon-color': '#b9c9e6', 'fog-color': '#071a45', 'sky-horizon-blend': .55, 'horizon-fog-blend': .65, 'fog-ground-blend': .55, 'atmosphere-blend': .8 },
   layers: [
-    { id: 'fondo', type: 'background', paint: { 'background-color': '#06111b' } },
+    { id: 'fondo', type: 'background', paint: { 'background-color': '#071a45' } },
     { id: 'satelite', type: 'raster', source: 'satelite', paint: { 'raster-saturation': -.25, 'raster-contrast': .08, 'raster-brightness-max': .92 } },
   ],
 };
@@ -171,10 +173,10 @@ function crearMapa() {
     ];
     for (const [id, url] of capas) mapa.addSource(id, { type: 'geojson', data: url });
     const T = { duration: 900 };
-    mapa.addLayer({ id: 'regiones-tinte', type: 'fill', source: 'regiones', paint: { 'fill-color': ['match', ['get', 'cod'], 11, '#a9dbe8', '#e3c690'], 'fill-opacity': 0, 'fill-opacity-transition': T } });
+    mapa.addLayer({ id: 'regiones-tinte', type: 'fill', source: 'regiones', paint: { 'fill-color': ['match', ['get', 'cod'], 11, '#c6d6ee', '#e9c46a'], 'fill-opacity': 0, 'fill-opacity-transition': T } });
     mapa.addLayer({ id: 'glaciares-relleno', type: 'fill', source: 'glaciares', paint: { 'fill-color': '#dff6ff', 'fill-opacity': 0, 'fill-opacity-transition': T } });
-    mapa.addLayer({ id: 'glaciares-borde', type: 'line', source: 'glaciares', paint: { 'line-color': '#a9dbe8', 'line-width': 1, 'line-opacity': 0, 'line-opacity-transition': T } });
-    const colorArea = ['match', ['get', 'tipo'], 'Parque nacional', '#5fae8b', '#c9a467'];
+    mapa.addLayer({ id: 'glaciares-borde', type: 'line', source: 'glaciares', paint: { 'line-color': '#c6d6ee', 'line-width': 1, 'line-opacity': 0, 'line-opacity-transition': T } });
+    const colorArea = ['match', ['get', 'tipo'], 'Parque nacional', '#5fae8b', '#d4a943'];
     mapa.addLayer({ id: 'areas-relleno', type: 'fill', source: 'areas', paint: { 'fill-color': colorArea, 'fill-opacity': 0, 'fill-opacity-transition': T } });
     mapa.addLayer({ id: 'areas-borde', type: 'line', source: 'areas', paint: { 'line-color': colorArea, 'line-width': 1.4, 'line-opacity': 0, 'line-opacity-transition': T } });
     mapa.addLayer({ id: 'comunas-borde', type: 'line', source: 'regiones', paint: { 'line-color': '#ffffff', 'line-width': ['interpolate', ['linear'], ['zoom'], 4, .5, 8, 1.4], 'line-opacity': 0, 'line-opacity-transition': T } });
@@ -241,7 +243,7 @@ addEventListener('resize', () => capActual && irA(capActual, true));
 /* ------------------------------------------------------------------ mapa de inscritos: regiones que se encienden y arcos hacia el sur */
 let mapaChile, chileListo = false, pasoArco = 0;
 const DESTINO = [-73.2, -49.2];
-const ESCALA = ['#173246', '#2a5a72', '#5c8fa3', '#c9a467', '#e3c690', '#fff3d6'];
+const ESCALA = ['#10295f', '#2a5a72', '#4a6fb8', '#d4a943', '#e9c46a', '#fff1cc'];
 function centroRegion(r) {
   let sx = 0, sy = 0, sp = 0;
   for (const c of datos.comunas || []) if (c.r === r && c.p) { sx += c.x * c.p; sy += c.y * c.p; sp += c.p; }
@@ -266,12 +268,12 @@ function crearMapaChile() {
     mapaChile.addSource('focos', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
     const k = ['coalesce', ['feature-state', 'k'], 0];
     mapaChile.addLayer({ id: 'reg', type: 'fill', source: 'regiones', paint: { 'fill-color': ['interpolate', ['linear'], k, 0, ESCALA[0], .15, ESCALA[1], .35, ESCALA[2], .6, ESCALA[3], .85, ESCALA[4], 1, ESCALA[5]], 'fill-opacity': .92 } });
-    mapaChile.addLayer({ id: 'reg-halo', type: 'line', source: 'regiones', paint: { 'line-color': ['interpolate', ['linear'], k, 0, 'rgba(169,219,232,0)', 1, 'rgba(255,243,214,.7)'], 'line-width': 6, 'line-blur': 6 } });
-    mapaChile.addLayer({ id: 'reg-b', type: 'line', source: 'regiones', paint: { 'line-color': '#06111b', 'line-width': .8 } });
-    mapaChile.addLayer({ id: 'arcos-base', type: 'line', source: 'arcos', layout: { 'line-cap': 'round' }, paint: { 'line-color': '#e3c690', 'line-opacity': .18, 'line-width': ['get', 'w'] } });
-    mapaChile.addLayer({ id: 'arcos-flujo', type: 'line', source: 'arcos', layout: { 'line-cap': 'round' }, paint: { 'line-color': '#fff3d6', 'line-opacity': .85, 'line-width': ['get', 'w'], 'line-dasharray': SECUENCIA[0] } });
-    mapaChile.addLayer({ id: 'focos', type: 'circle', source: 'focos', paint: { 'circle-radius': ['get', 'r'], 'circle-color': '#fff3d6', 'circle-blur': .8, 'circle-opacity': .55 } });
-    mapaChile.addLayer({ id: 'destino', type: 'circle', source: { type: 'geojson', data: { type: 'Point', coordinates: DESTINO } }, paint: { 'circle-radius': 14, 'circle-color': '#a9dbe8', 'circle-blur': 1, 'circle-opacity': .8 } });
+    mapaChile.addLayer({ id: 'reg-halo', type: 'line', source: 'regiones', paint: { 'line-color': ['interpolate', ['linear'], k, 0, 'rgba(198,214,238,0)', 1, 'rgba(255,241,204,.7)'], 'line-width': 6, 'line-blur': 6 } });
+    mapaChile.addLayer({ id: 'reg-b', type: 'line', source: 'regiones', paint: { 'line-color': '#071a45', 'line-width': .8 } });
+    mapaChile.addLayer({ id: 'arcos-base', type: 'line', source: 'arcos', layout: { 'line-cap': 'round' }, paint: { 'line-color': '#e9c46a', 'line-opacity': .18, 'line-width': ['get', 'w'] } });
+    mapaChile.addLayer({ id: 'arcos-flujo', type: 'line', source: 'arcos', layout: { 'line-cap': 'round' }, paint: { 'line-color': '#fff1cc', 'line-opacity': .85, 'line-width': ['get', 'w'], 'line-dasharray': SECUENCIA[0] } });
+    mapaChile.addLayer({ id: 'focos', type: 'circle', source: 'focos', paint: { 'circle-radius': ['get', 'r'], 'circle-color': '#fff1cc', 'circle-blur': .8, 'circle-opacity': .55 } });
+    mapaChile.addLayer({ id: 'destino', type: 'circle', source: { type: 'geojson', data: { type: 'Point', coordinates: DESTINO } }, paint: { 'circle-radius': 14, 'circle-color': '#c6d6ee', 'circle-blur': 1, 'circle-opacity': .8 } });
     const pop = new maplibregl.Popup({ closeButton: false, closeOnClick: false, className: 'pop-chile' });
     mapaChile.on('mousemove', 'reg', e => {
       const r = e.features[0].properties.cod, f = filasRegiones().find(x => x.r === r);
@@ -310,7 +312,7 @@ function pintarMini() {
   const cel = W < 760, R = cel ? W * .62 : Math.min(W * .5, H * .95), cx = cel ? W / 2 : W * .7, cy = cel ? H * .52 : H * .93;
   miniOcup = ocupar(SALA, porRegionDesde(estad.comunas));
   const t = Math.max(1.1, SALA.paso * R * .62);
-  g.fillStyle = 'rgba(169,219,232,.13)';
+  g.fillStyle = 'rgba(198,214,238,.13)';
   for (let i = 0; i < SALA.n; i++) if (!miniOcup[i]) g.fillRect(cx + SALA.x[i] * R - t / 2, cy - SALA.y[i] * R - t / 2, t, t);
   g.shadowBlur = 6;
   for (const r of ORDEN_REGIONES) {
@@ -320,7 +322,7 @@ function pintarMini() {
   g.shadowBlur = 0;
   // mesa central
   const gr = g.createRadialGradient(cx, cy, 0, cx, cy, R * .22);
-  gr.addColorStop(0, 'rgba(216,38,28,.55)'); gr.addColorStop(1, 'rgba(216,38,28,0)');
+  gr.addColorStop(0, 'rgba(213,43,30,.55)'); gr.addColorStop(1, 'rgba(213,43,30,0)');
   g.fillStyle = gr; g.beginPath(); g.arc(cx, cy, R * .22, Math.PI, 0); g.fill();
 }
 new IntersectionObserver(([e]) => { if (e.isIntersecting) pDatos.then(pintarMini); }, { rootMargin: '300px' }).observe(mini);
@@ -413,7 +415,7 @@ form.addEventListener('submit', async e => {
   }
   const btn = form.querySelector('button[type=submit]');
   btn.disabled = true; $('.btn-txt', btn).hidden = true; $('.btn-cargando', btn).hidden = false;
-  ultimoEnvio = { nombre: form.nombre.value.trim(), correo: form.correo.value.trim().toLowerCase(), comuna: Number(inCut.value), fundador: form.fundador.checked ? 1 : 0, acepto: 1, sitio: form.sitio.value, ref: ref() };
+  ultimoEnvio = { nombre: form.nombre.value.trim(), correo: form.correo.value.trim().toLowerCase(), comuna: Number(inCut.value), fundador: form.fundador.checked ? 1 : 0, acepto: 1, sitio: form.sitio.value, ref: ref(), compromiso: Number(form.compromiso.value || 0) };
   try {
     const j = await enviar(ultimoEnvio);
     form.hidden = true; $('#revisa').hidden = false; $('[data-correo]').textContent = ultimoEnvio.correo;
@@ -441,6 +443,14 @@ async function bienvenida(token) {
   await pDatos;
   const comuna = datos.porCut?.get(s.comuna)?.n || '';
   try { localStorage.setItem('pc_token', token); } catch { }
+  miSocio = s;
+  let pendiente = 0; try { pendiente = Number(localStorage.getItem('pc_compromiso') || 0); localStorage.removeItem('pc_compromiso'); } catch { }
+  if (pendiente >= 1000 && !s.compromiso) { const rc = await comprometer(pendiente); if (rc.ok) s.compromiso = pendiente; }
+  $('#bv-compromiso').hidden = !!s.compromiso;
+  $$('[data-bv]').forEach(b => b.onclick = async () => {
+    const rc = await comprometer(+b.dataset.bv);
+    if (rc.ok) { s.compromiso = +b.dataset.bv; $('#bv-compromiso').innerHTML = `<p>Gracias. Quedó tu compromiso de <b>$${fmt(s.compromiso)} al mes</b> (aún no se cobra).</p>`; await dibujarTarjeta($('#tarjeta'), { numero: s.numero, comuna: datos.porCut?.get(s.comuna)?.n || '', nombre: s.nombre.split(' ')[0], compromiso: s.compromiso }); }
+  });
   miRegion = s.region || regionDeComuna(s.comuna); pintarRanking();
   $('#c-asiento').href = 'asamblea.html?s=' + encodeURIComponent(token);
   $('[data-socio-n]').textContent = fmt(s.numero);
@@ -453,7 +463,7 @@ async function bienvenida(token) {
   $('#c-copiar').onclick = async () => { try { await navigator.clipboard.writeText(enlace); $('#c-copiar').textContent = '¡Enlace copiado!'; } catch { prompt('Copia tu enlace:', enlace); } };
   modal.hidden = false; document.body.style.overflow = 'hidden';
   const canvas = $('#tarjeta');
-  await dibujarTarjeta(canvas, { numero: s.numero, comuna, nombre: s.nombre.split(' ')[0] });
+  await dibujarTarjeta(canvas, { numero: s.numero, comuna, nombre: s.nombre.split(' ')[0], compromiso: s.compromiso });
   $('#c-compartir').onclick = () => canvas.toBlob(async b => {
     const archivo = new File([b], `patagonia-chilena-${s.numero}.png`, { type: 'image/png' });
     if (navigator.canShare?.({ files: [archivo] })) { try { await navigator.share({ files: [archivo], text: texto }); return; } catch { } }
@@ -462,46 +472,137 @@ async function bienvenida(token) {
   cargarEstadisticas();
 }
 
-async function dibujarTarjeta(cv, { numero, comuna, nombre }) {
+async function dibujarTarjeta(cv, { numero, comuna, nombre, compromiso }) {
   try { await Promise.all(['400 120px "Instrument Serif"', 'italic 400 80px "Instrument Serif"', '600 30px Geist', '500 26px "Geist Mono"'].map(f => document.fonts.load(f))); } catch { }
-  const g = cv.getContext('2d'), W = cv.width, H = cv.height;
-  const fondo = g.createLinearGradient(0, 0, W, H); fondo.addColorStop(0, '#163d57'); fondo.addColorStop(.55, '#0a1b29'); fondo.addColorStop(1, '#06111b');
-  g.fillStyle = fondo; g.fillRect(0, 0, W, H);
-  // silueta de la Patagonia a la derecha
+  const g = cv.getContext('2d'), W = cv.width, H = cv.height, AZUL = '#0039a6', ROJO = '#d52b1e', NIEVE = '#f8f6f0', ORO = '#e9c46a';
+  // fondo azul turquí
+  const f = g.createLinearGradient(0, 0, W, H); f.addColorStop(0, '#15398a'); f.addColorStop(.5, '#0b2257'); f.addColorStop(1, '#051234');
+  g.fillStyle = f; g.fillRect(0, 0, W, H);
+  // trama de seguridad tipo billete (guilloché)
+  g.save(); g.globalAlpha = .13; g.strokeStyle = '#c6d6ee'; g.lineWidth = 1;
+  for (let k = 0; k < 46; k++) {
+    g.beginPath();
+    for (let x = 0; x <= W; x += 6) { const y = 230 + k * 24 + Math.sin(x / 70 + k * .35) * 14 + Math.sin(x / 23 + k) * 4; x ? g.lineTo(x, y) : g.moveTo(x, y); }
+    g.stroke();
+  }
+  // roseta simétrica alrededor del sello
+  const cxR = W - 190, cyR = H - 250;
+  g.globalAlpha = .22;
+  for (let k = 0; k < 14; k++) {
+    g.beginPath();
+    for (let t = 0; t <= Math.PI * 2 + .005; t += .005) { const rr = 150 + 22 * Math.sin(12 * t) * Math.cos(k * .22) + k * 4; const x = cxR + rr * Math.cos(t + k * .045), y = cyR + rr * Math.sin(t + k * .045); t ? g.lineTo(x, y) : g.moveTo(x, y); }
+    g.stroke();
+  }
+  g.restore();
+  // silueta de la Patagonia
   try {
     const geo = datos.patagonia || (datos.patagonia = await json('datos/patagonia-comunas.geojson'));
-    const bb = [-76, -56.2, -66.3, -43.6], k = Math.cos(50 * Math.PI / 180);
-    const alto = H * .92, esc = alto / (bb[3] - bb[1]), x0 = W - (bb[2] - bb[0]) * k * esc - 10, y0 = H * .04;
+    const bb = [-76, -56.2, -66.3, -43.6], k = Math.cos(50 * Math.PI / 180), alto = H * .62, esc = alto / (bb[3] - bb[1]);
+    const x0 = W - (bb[2] - bb[0]) * k * esc - 40, y0 = H * .3;
     const P = ([x, y]) => [x0 + (x - bb[0]) * k * esc, y0 + (bb[3] - y) * esc];
-    g.save(); g.globalAlpha = .9;
-    for (const f of geo.features) {
-      const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+    g.save(); g.globalAlpha = .55;
+    for (const ft of geo.features) {
+      const polys = ft.geometry.type === 'Polygon' ? [ft.geometry.coordinates] : ft.geometry.coordinates;
       g.beginPath();
-      for (const pol of polys) for (const anillo of pol) anillo.forEach((c, i) => { const [x, y] = P(c); i ? g.lineTo(x, y) : g.moveTo(x, y); });
-      g.fillStyle = f.properties.cod === 11 ? 'rgba(169,219,232,.16)' : 'rgba(227,198,144,.14)'; g.fill('evenodd');
-      g.strokeStyle = 'rgba(233,242,245,.32)'; g.lineWidth = 1.2; g.stroke();
+      for (const pol of polys) for (const an of pol) an.forEach((c, i) => { const [x, y] = P(c); i ? g.lineTo(x, y) : g.moveTo(x, y); });
+      g.fillStyle = 'rgba(198,214,238,.10)'; g.fill('evenodd'); g.strokeStyle = 'rgba(248,246,240,.35)'; g.lineWidth = 1.1; g.stroke();
     }
     g.restore();
   } catch { }
-  const vel = g.createLinearGradient(0, 0, W * .75, 0); vel.addColorStop(0, 'rgba(6,17,27,.92)'); vel.addColorStop(1, 'rgba(6,17,27,0)');
+  const vel = g.createLinearGradient(0, 0, W * .8, 0); vel.addColorStop(0, 'rgba(5,18,52,.92)'); vel.addColorStop(1, 'rgba(5,18,52,0)');
   g.fillStyle = vel; g.fillRect(0, 0, W, H);
-  // texto
+  // bandera arriba
+  g.fillStyle = NIEVE; g.fillRect(0, 0, W, 34); g.fillStyle = ROJO; g.fillRect(0, 34, W, 34); g.fillStyle = AZUL; g.fillRect(0, 0, 150, 34);
+  estrella(g, 75, 17, 12, NIEVE);
+  // encabezado
   const M = 86;
-  g.fillStyle = '#d8261c'; g.beginPath(); g.arc(M + 9, 128, 9, 0, 7); g.fill();
-  g.fillStyle = '#a9dbe8'; g.font = '500 26px "Geist Mono"'; g.fillText('SOCIO FUNDADOR · ETAPA 1', M + 34, 137);
-  g.fillStyle = '#e9f2f5'; g.font = '400 62px "Instrument Serif"'; g.fillText('Soy el chileno', M, 400);
-  g.font = '400 62px "Instrument Serif"'; g.fillText('n.º', M, 600);
-  g.fillStyle = '#e3c690'; g.font = `italic 400 ${numero > 99999 ? 170 : 210}px "Instrument Serif"`; g.fillText(fmt(numero), M + 92, 600);
-  g.fillStyle = '#e9f2f5'; g.font = '400 62px "Instrument Serif"';
-  ['que quiere recuperar', 'la Patagonia para', 'todos los chilenos.'].forEach((t, i) => g.fillText(t, M, 740 + i * 70));
-  g.fillStyle = 'rgba(233,242,245,.7)'; g.font = '600 30px Geist';
-  if (comuna) g.fillText(`${nombre} · ${comuna}`, M, 1010);
-  g.fillStyle = '#d8261c'; roundRect(g, M, 1110, 560, 96, 48); g.fill();
+  g.fillStyle = '#c6d6ee'; g.font = '500 25px "Geist Mono"'; g.fillText('MOVIMIENTO CIUDADANO · PATAGONIA CHILENA', M, 150);
+  g.fillStyle = NIEVE; g.font = '400 64px "Instrument Serif"'; g.fillText('Socio fundador', M, 236);
+  g.fillStyle = ORO; g.font = '500 24px "Geist Mono"'; g.fillText('N.º DE SERIE  PAT-2026-' + String(numero).padStart(6, '0'), M, 286);
+  // número
+  g.fillStyle = NIEVE; g.font = '400 60px "Instrument Serif"'; g.fillText('Soy el chileno', M, 470);
+  g.font = '400 60px "Instrument Serif"'; g.fillText('n.º', M, 690);
+  g.fillStyle = ORO; g.font = `italic 400 ${numero > 99999 ? 170 : 210}px "Instrument Serif"`; g.fillText(fmt(numero), M + 96, 690);
+  g.fillStyle = NIEVE; g.font = '400 60px "Instrument Serif"';
+  ['que recupera la Patagonia', 'para todos los chilenos.'].forEach((t, i) => g.fillText(t, M, 800 + i * 68));
+  g.fillStyle = 'rgba(248,246,240,.75)'; g.font = '600 30px Geist';
+  if (comuna) g.fillText(`${nombre} · ${comuna}`, M, 975);
+  if (compromiso) { g.fillStyle = ORO; g.font = '500 25px "Geist Mono"'; g.fillText(`★ FONDO PATAGONIA · $${fmt(compromiso)} AL MES`, M, 1025); }
+  // sello con estrella
+  sello(g, W - 190, H - 250, 110);
+  g.fillStyle = ROJO; roundRect(g, M, 1110, 560, 96, 48); g.fill();
   g.fillStyle = '#fff'; g.font = '700 36px Geist'; g.fillText('patagoniachilena.cl', M + 52, 1171);
-  g.fillStyle = 'rgba(233,242,245,.55)'; g.font = '500 24px "Geist Mono"'; g.fillText('Súmate gratis · cooperativa ciudadana', M, 1268);
+  g.fillStyle = 'rgba(248,246,240,.55)'; g.font = '500 23px "Geist Mono"'; g.fillText('Súmate gratis · cooperativa ciudadana', M, 1268);
+}
+function estrella(g, cx, cy, r, color) {
+  g.beginPath();
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .4 : r; g.lineTo(cx + rr * Math.cos(a), cy + rr * Math.sin(a)); }
+  g.closePath(); g.fillStyle = color; g.fill();
+}
+function sello(g, cx, cy, r) {
+  g.save();
+  g.strokeStyle = 'rgba(233,196,106,.85)'; g.lineWidth = 3; g.beginPath(); g.arc(cx, cy, r, 0, 7); g.stroke();
+  g.lineWidth = 1.2; g.beginPath(); g.arc(cx, cy, r - 12, 0, 7); g.stroke();
+  g.beginPath(); g.arc(cx, cy, r - 44, 0, 7); g.stroke();
+  estrella(g, cx, cy, r - 56, '#e9c46a');
+  const txt = 'COOPERATIVA CIUDADANA · PATAGONIA CHILENA · ';
+  g.fillStyle = '#e9c46a'; g.font = '600 17px Geist'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  for (let i = 0; i < txt.length; i++) {
+    const a = -Math.PI / 2 + i / txt.length * Math.PI * 2;
+    g.save(); g.translate(cx + (r - 28) * Math.cos(a), cy + (r - 28) * Math.sin(a)); g.rotate(a + Math.PI / 2); g.fillText(txt[i], 0, 0); g.restore();
+  }
+  g.restore();
 }
 function roundRect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 
 if (params.get('s')) bienvenida(params.get('s'));
 else { try { const t = localStorage.getItem('pc_token'); if (t) json(API + 'socio.php?t=' + encodeURIComponent(t)).then(x => { if (x.ok) { miRegion = x.region; pDatos.then(pintarRanking); } }).catch(() => { }); } catch { } }
 if (params.get('error') === 'enlace') { msg.textContent = 'Ese enlace ya no es válido. Inscríbete de nuevo y te enviamos otro.'; $('#sumate').scrollIntoView(); }
+
+/* ------------------------------------------------------------------ Fondo Patagonia: compromiso mensual (aún no se cobra) */
+let miSocio = null, montoElegido = 0;
+const CLP_HA_DEF = 280000;
+function m2Anuales(monto, clpHa) { return monto * 12 / clpHa * 10000; }
+function pintarFondo(fd) {
+  const clpHa = fd.clp_por_ha || CLP_HA_DEF;
+  const pon = (k, v) => $$(`[data-fondo="${k}"]`).forEach(el => el.textContent = v);
+  pon('mensual', '$' + fmt(fd.mensual)); pon('personas', fmt(fd.personas));
+  pon('ha_anio', fmt(Math.round(fd.mensual * 12 / clpHa))); pon('m2', fmt(Math.round(m2Anuales(1000, clpHa))));
+  fondoClpHa = clpHa;
+}
+let fondoClpHa = CLP_HA_DEF;
+async function comprometer(monto) {
+  let t = null; try { t = localStorage.getItem('pc_token'); } catch { }
+  if (!t) return { ok: false, sinToken: true };
+  const r = await fetch(API + 'participar.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ t, accion: 'compromiso', monto }) });
+  const j = await r.json().catch(() => ({ ok: false, error: 'Error de conexión' }));
+  if (j.ok) cargarEstadisticas();
+  return j;
+}
+function elegirMonto(m) {
+  montoElegido = m >= 1000 ? Math.round(m) : 0;
+  $$('#fondo .monto[data-monto]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.monto === montoElegido));
+  const eq = $('#fondo-equivale'), btn = $('#b-comprometer');
+  btn.disabled = !montoElegido;
+  if (!montoElegido) { eq.textContent = m ? 'El mínimo es $1.000 al mes.' : 'Elige un monto para ver cuánta Patagonia significa.'; return; }
+  const m2 = Math.round(m2Anuales(montoElegido, fondoClpHa));
+  eq.innerHTML = `Con <b>$${fmt(montoElegido)} al mes</b> aportas cerca de <b>${fmt(m2)} m² de Patagonia al año</b>. Si 100.000 chilenos hacen lo mismo, son <b>${fmt(Math.round(montoElegido * 1e5 * 12 / fondoClpHa))} hectáreas al año</b>.`;
+}
+$$('#fondo .monto[data-monto]').forEach(b => b.addEventListener('click', () => { $('#monto-otro').value = ''; elegirMonto(+b.dataset.monto); }));
+$('#monto-otro').addEventListener('input', e => elegirMonto(+e.target.value));
+$('#b-comprometer').addEventListener('click', async () => {
+  const msg = $('#fondo-msg'); msg.className = 'form-msg'; msg.textContent = '';
+  const r = await comprometer(montoElegido);
+  if (r.ok) { msg.className = 'form-msg ok'; msg.textContent = `¡Gracias! Quedó tu compromiso de $${fmt(montoElegido)} al mes. Aún no se cobra.`; return; }
+  if (r.sinToken) {
+    try { localStorage.setItem('pc_compromiso', montoElegido); } catch { }
+    const sel = $('#f-compromiso');
+    if (![...sel.options].some(o => +o.value === montoElegido)) sel.add(new Option(`$${fmt(montoElegido)} al mes`, montoElegido));
+    sel.value = montoElegido;
+    msg.className = 'form-msg ok'; msg.textContent = 'Inscríbete abajo: tu compromiso quedará registrado al confirmar tu correo.';
+    setTimeout(() => $('#sumate').scrollIntoView({ behavior: sinMovimiento ? 'auto' : 'smooth' }), 600);
+    return;
+  }
+  msg.textContent = r.error || 'No se pudo registrar.';
+});
+iniciarRelieve('.tarjeta-in, .paso, .desb, .principios li, .fondo-panel, .formulario');

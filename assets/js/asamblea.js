@@ -8,7 +8,7 @@ const fmt = n => Number(n || 0).toLocaleString('es-CL');
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const sinMovimiento = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const R = 10, ALTURA_FILA = .018;
-const COLOR_VOTO = ['#5fae8b', '#e0483d', '#8aa4b3', '#e3c690', '#7fb6d2', '#b58ad6'];
+const COLOR_VOTO = ['#5fae8b', '#e0483d', '#a3b3d1', '#e9c46a', '#7fb6d2', '#b58ad6'];
 
 const params = new URLSearchParams(location.search);
 let token = params.get('s');
@@ -41,7 +41,7 @@ const material = new THREE.ShaderMaterial({
   transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
   uniforms: { uTiempo: { value: 0 }, uEscala: { value: 1 }, uMio: { value: -1 }, uOla: { value: -99 }, uVotando: { value: 0 }, uColVoto: { value: COLOR_VOTO.map(c => new THREE.Color(c)) } },
   vertexShader: `
-    attribute vec3 color; attribute float lleno; attribute float retraso; attribute float indice; attribute float estado; attribute float destello;
+    attribute vec3 color; attribute float lleno; attribute float retraso; attribute float indice; attribute float estado; attribute float destello; attribute float dorado;
     uniform float uTiempo; uniform float uEscala; uniform float uMio; uniform float uOla; uniform float uVotando; uniform vec3 uColVoto[6];
     varying vec3 vColor; varying float vAlfa; varying float vNucleo;
     void main(){
@@ -54,6 +54,7 @@ const material = new THREE.ShaderMaterial({
       float ola = uOla > 0.0 ? exp(-pow((3.1416 - ang) - (uTiempo - uOla) * 2.4, 2.0) * 18.0) : 0.0;
       vec3 c = color;
       float brillo = .55;
+      if (dorado > .5 && lleno > .5) { c = mix(c, vec3(.95, .77, .35), .7); brillo = .8; }
       float tam = lleno > .5 ? 1.2 : .8;
       if (estado > .5 && estado < 1.5) { brillo = 1.15; tam *= 1.35; c = mix(c, vec3(1.0), .25); }
       if (estado > 1.5 && estado < 2.5) { c = vec3(1.0, .68, .2); brillo = 1.5 + sin(uTiempo * 6.0) * .3; tam *= 1.9; }
@@ -86,7 +87,7 @@ function construir(total) {
   for (let i = 0; i < n; i++) { pos[i * 3] = sala.x[i] * R; pos[i * 3 + 1] = sala.fila[i] * ALTURA_FILA; pos[i * 3 + 2] = -sala.y[i] * R; ret[i] = .3 + sala.fila[i] * .035 + Math.random() * .25; idx[i] = i; }
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  for (const [k, d] of [['color', 3], ['lleno', 1], ['estado', 1], ['destello', 1]]) geo.setAttribute(k, new THREE.BufferAttribute(new Float32Array(n * d), d));
+  for (const [k, d] of [['color', 3], ['lleno', 1], ['estado', 1], ['destello', 1], ['dorado', 1]]) geo.setAttribute(k, new THREE.BufferAttribute(new Float32Array(n * d), d));
   geo.setAttribute('retraso', new THREE.BufferAttribute(ret, 1)); geo.setAttribute('indice', new THREE.BufferAttribute(idx, 1));
   if (puntos) { escena.remove(puntos); puntos.geometry.dispose(); }
   puntos = new THREE.Points(geo, material); escena.add(puntos);
@@ -192,6 +193,14 @@ let est = null, yo = null, vivo = null, salaChat = 'plaza', ultimoId = 0, ultimo
 const comunas = new Map();
 fetch('datos/comunas.json').then(r => r.json()).then(L => L.forEach(c => comunas.set(c.c, c.n))).catch(() => { });
 
+async function cargarFondo() {
+  if (!puntos) return;
+  const f = await json('api/fondo.php'); if (!f.ok) return;
+  const d = puntos.geometry.attributes.dorado; d.array.fill(0);
+  for (const [r, p] of f.asientos) { const i = asiento(r, p); if (i >= 0) d.array[i] = 1; }
+  d.needsUpdate = true;
+  $('[data-a="comprometidos"]').textContent = fmt(f.asientos.length);
+}
 async function cargarEstadisticas() {
   est = await json('api/estadisticas.php');
   if (!est || est.total == null) est = { total: 0, comunas: [] };
@@ -268,7 +277,7 @@ function agregar(m) {
   const li = document.createElement('li');
   if (yo && m.n === yo.numero) li.className = 'mio';
   const hora = new Date(m.t * 1000).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
-  li.innerHTML = `<div class="m-cab"><span class="m-apodo" style="--c:${COLOR_REGION[m.r] || '#a9dbe8'}">${esc(m.a || 'Socio')}</span><span class="m-meta">n.º ${fmt(m.n)} · ${esc(comunas.get(m.c) || '')} · ${hora}</span></div><p class="m-txt">${esc(m.x)}</p>${yo && m.n !== yo.numero ? `<button class="m-denunciar" data-id="${m.id}" title="Denunciar este mensaje">denunciar</button>` : ''}`;
+  li.innerHTML = `<div class="m-cab"><span class="m-apodo" style="--c:${COLOR_REGION[m.r] || '#c6d6ee'}">${esc(m.a || 'Socio')}</span><span class="m-meta">n.º ${fmt(m.n)} · ${esc(comunas.get(m.c) || '')} · ${hora}</span></div><p class="m-txt">${esc(m.x)}</p>${yo && m.n !== yo.numero ? `<button class="m-denunciar" data-id="${m.id}" title="Denunciar este mensaje">denunciar</button>` : ''}`;
   lista.append(li); visibles.set(m.id, li);
   while (lista.children.length > 150) { const f = lista.firstElementChild; f.remove(); }
   if (abajo) lista.scrollTop = lista.scrollHeight;
@@ -408,8 +417,9 @@ function cuadro() {
 medir();
 camara.position.set(0, R * 4.2, -R * .4); controles.target.set(0, 0, -R * .42); camara.lookAt(controles.target);
 await cargarEstadisticas();
+await cargarFondo();
 await refrescar(); cuenta();
 volar(VISTAS.cenital(), sinMovimiento ? 1 : 3200);
 requestAnimationFrame(cuadro);
-setInterval(cargarEstadisticas, 60000);
+setInterval(async () => { await cargarEstadisticas(); cargarFondo(); }, 60000);
 if (location.hash === '#participar') setTimeout(() => $('#participar').scrollIntoView(), 300);

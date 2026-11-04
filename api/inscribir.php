@@ -13,6 +13,8 @@ $correo = strtolower(trim((string)($d['correo'] ?? '')));
 $comuna = (int)($d['comuna'] ?? 0);
 $fundador = !empty($d['fundador']) ? 1 : 0;
 $ref = preg_replace('/[^a-z0-9]/', '', strtolower((string)($d['ref'] ?? ''))) ?: null;
+$compromiso = monto_compromiso($d['compromiso'] ?? 0);
+if ($compromiso === null) responder(['ok' => false, 'error' => 'El compromiso mensual mínimo es de $1.000.'], 422);
 
 if (mb_strlen($nombre) < 3 || mb_strlen($nombre) > 80) responder(['ok' => false, 'error' => 'Escribe tu nombre (3 a 80 letras).'], 422);
 if (!filter_var($correo, FILTER_VALIDATE_EMAIL) || strlen($correo) > 120) responder(['ok' => false, 'error' => 'Ese correo no parece válido.'], 422);
@@ -35,6 +37,9 @@ if ($s) {
     if (!$s['confirmado']) {
         $db->prepare('UPDATE socios SET nombre = ?, comuna = ?, fundador = ? WHERE id = ?')->execute([$nombre, $comuna, $fundador, $s['id']]);
     }
+    if ($compromiso) {
+        $db->prepare('UPDATE socios SET compromiso = ?, compromiso_fecha = ? WHERE id = ?')->execute([$compromiso, ahora(), $s['id']]);
+    }
     $token = $s['token']; $confirmado = (bool)$s['confirmado'];
     $db->prepare('UPDATE socios SET envios = envios + 1, ultimo_envio = ? WHERE id = ?')->execute([ahora(), $s['id']]);
 } else {
@@ -42,8 +47,8 @@ if ($s) {
     if ($ref) { $q = $db->prepare('SELECT 1 FROM socios WHERE codigo = ?'); $q->execute([$ref]); if (!$q->fetchColumn()) $ref = null; }
     for ($i = 0; $i < 5; $i++) {
         try {
-            $db->prepare('INSERT INTO socios (nombre, correo, comuna, fundador, token, codigo, ref, creado, ip, envios, ultimo_envio) VALUES (?,?,?,?,?,?,?,?,?,1,?)')
-               ->execute([$nombre, $correo, $comuna, $fundador, $token, codigo_invitacion(), $ref, ahora(), $ip, ahora()]);
+            $db->prepare('INSERT INTO socios (nombre, correo, comuna, fundador, token, codigo, ref, creado, ip, envios, ultimo_envio, compromiso, compromiso_fecha) VALUES (?,?,?,?,?,?,?,?,?,1,?,?,?)')
+               ->execute([$nombre, $correo, $comuna, $fundador, $token, codigo_invitacion(), $ref, ahora(), $ip, ahora(), $compromiso ?: null, $compromiso ? ahora() : null]);
             break;
         } catch (PDOException $e) { if ($i === 4) throw $e; }
     }

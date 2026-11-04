@@ -13,7 +13,9 @@ $total = (int)$db->query('SELECT COUNT(*) FROM socios WHERE numero IS NOT NULL')
 $comunas = [];
 foreach ($db->query('SELECT comuna, COUNT(*) n FROM socios WHERE numero IS NOT NULL GROUP BY comuna ORDER BY n DESC') as $r)
     $comunas[] = [(int)$r['comuna'], (int)$r['n']];
-$json = json_encode(['total' => $total, 'meta' => cfg('meta'), 'comunas' => $comunas, 'asamblea' => asamblea(), 'al' => gmdate('c')]);
+$f = $db->query('SELECT COUNT(*) n, COALESCE(SUM(compromiso), 0) m FROM socios WHERE numero IS NOT NULL AND compromiso > 0')->fetch();
+$fondo = ['personas' => (int)$f['n'], 'mensual' => (int)$f['m'], 'clp_por_ha' => (int)cfg('clp_por_ha', 280000)];
+$json = json_encode(['total' => $total, 'meta' => cfg('meta'), 'comunas' => $comunas, 'fondo' => $fondo, 'asamblea' => asamblea(), 'al' => gmdate('c')]);
 @file_put_contents($cache, $json, LOCK_EX);
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: public, max-age=30');

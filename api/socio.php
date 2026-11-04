@@ -7,4 +7,5 @@ if (!$s) responder(['ok' => false], 404);
 $q = db()->prepare('SELECT COUNT(*) FROM socios WHERE ref = ? AND numero IS NOT NULL'); $q->execute([$s['codigo']]);
 responder(['ok' => true, 'numero' => (int)$s['numero'], 'nombre' => $s['nombre'], 'comuna' => (int)$s['comuna'],
            'codigo' => $s['codigo'], 'invitados' => (int)$q->fetchColumn(), 'region' => (int)$s['region'], 'puesto' => (int)$s['puesto'],
-           'apodo' => $s['apodo'], 'acreditado' => (bool)$s['acreditado'], 'suspendido' => (bool)$s['suspendido']]);
+           'apodo' => $s['apodo'], 'acreditado' => (bool)$s['acreditado'], 'suspendido' => (bool)$s['suspendido'],
+           'compromiso' => (int)$s['compromiso']]);

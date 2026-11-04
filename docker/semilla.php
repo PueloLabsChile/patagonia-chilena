@@ -34,4 +34,9 @@ if ($clave !== '') {
         echo 'Moderación · ' . $nombre . ': ' . cfg('sitio') . 'moderacion.html?m=' . $t . PHP_EOL;
     }
 }
+// compromisos mensuales de prueba (≈ 30 % de los inscritos de prueba), solo la primera vez
+if ((int)$db->query('SELECT COUNT(*) FROM socios WHERE compromiso > 0')->fetchColumn() === 0) {
+    $db->exec("UPDATE socios SET compromiso = CASE abs(random()) % 4 WHEN 0 THEN 1000 WHEN 1 THEN 2000 WHEN 2 THEN 1000 ELSE 5000 END WHERE ip = 'semilla' AND abs(random()) % 10 < 3");
+}
+invalidar_cache();
 echo "semilla lista\n";

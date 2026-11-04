@@ -21,7 +21,7 @@ export function iniciarViento(canvas) {
     t += 16; impulso *= .93;
     g.globalCompositeOperation = 'destination-out'; g.fillStyle = 'rgba(0,0,0,.09)'; g.fillRect(0, 0, W, H);
     g.globalCompositeOperation = 'source-over'; g.lineWidth = .9; g.lineCap = 'round';
-    g.strokeStyle = 'rgba(233,242,245,.38)'; g.beginPath();
+    g.strokeStyle = 'rgba(248,246,240,.38)'; g.beginPath();
     for (const p of ps) {
       const [dx, dy] = campo(p.x, p.y), k = p.v * (1.6 + impulso);
       const nx = p.x + dx * k * 1.8, ny = p.y + dy * k;

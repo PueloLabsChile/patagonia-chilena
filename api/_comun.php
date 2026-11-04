@@ -24,7 +24,7 @@ function migrar(PDO $db): void {
         numero INTEGER UNIQUE, creado TEXT NOT NULL, confirmado TEXT, ip TEXT, envios INTEGER NOT NULL DEFAULT 0, ultimo_envio TEXT)');
     $cols = array_column($db->query('PRAGMA table_info(socios)')->fetchAll(), 'name');
     foreach (['apodo TEXT', 'region INTEGER', 'puesto INTEGER', 'acreditado TEXT', 'visto INTEGER', 'palabra INTEGER',
-              'suspendido INTEGER NOT NULL DEFAULT 0', 'ultimo_mensaje INTEGER', 'ultimo_aplauso INTEGER'] as $c) {
+              'suspendido INTEGER NOT NULL DEFAULT 0', 'ultimo_mensaje INTEGER', 'ultimo_aplauso INTEGER', 'compromiso INTEGER', 'compromiso_fecha TEXT'] as $c) {
         if (!in_array(explode(' ', $c)[0], $cols, true)) $db->exec("ALTER TABLE socios ADD COLUMN $c");
     }
     $db->exec('CREATE UNIQUE INDEX IF NOT EXISTS u_apodo ON socios(apodo COLLATE NOCASE) WHERE apodo IS NOT NULL');
@@ -117,7 +117,13 @@ function limpiar_texto(string $s, int $max): string {
     return mb_substr($s, 0, $max);
 }
 
-function invalidar_cache(): void { @unlink(sys_get_temp_dir() . '/pc_sala_' . md5(cfg('db')) . '.json'); @unlink(sys_get_temp_dir() . '/pc_estadisticas.json'); }
+/** Monto mensual válido (0 = sin compromiso; mínimo $1.000, máximo $1.000.000) o null si no es válido. */
+function monto_compromiso($v): ?int {
+    $m = (int)$v;
+    if ($m === 0) return 0;
+    return ($m >= 1000 && $m <= 1000000) ? $m : null;
+}
+function invalidar_cache(): void { @unlink(sys_get_temp_dir() . '/pc_fondo_' . md5(cfg('db')) . '.json'); @unlink(sys_get_temp_dir() . '/pc_sala_' . md5(cfg('db')) . '.json'); @unlink(sys_get_temp_dir() . '/pc_estadisticas.json'); }
 
 function enviar_correo(string $para, string $asunto, string $html): bool {
     if (cfg('dev')) return true;   // en desarrollo no se envían correos
@@ -134,13 +140,13 @@ function plantilla_correo(string $nombre, string $enlace, string $baja, bool $ya
         ? 'Ya eras parte de Patagonia Chilena. Con este botón vuelves a ver tu número de socio fundador, tu asiento en la Asamblea y tu enlace para invitar.'
         : 'Gracias por sumarte. Falta un paso: confirma tu correo y recibirás tu número de socio fundador y tu asiento en la Asamblea.';
     $boton = $yaConfirmado ? 'Ver mi número' : 'Confirmar mi inscripción';
-    return '<!doctype html><html><body style="margin:0;background:#06111b;font-family:Arial,Helvetica,sans-serif">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#06111b;padding:32px 12px"><tr><td align="center">
-<table role="presentation" width="100%" style="max-width:520px;background:#0f2c40;border-radius:18px;padding:36px 30px;color:#e9f2f5">
-<tr><td style="font:600 13px Arial;letter-spacing:2px;color:#a9dbe8;text-transform:uppercase">Patagonia Chilena</td></tr>
+    return '<!doctype html><html><body style="margin:0;background:#071a45;font-family:Arial,Helvetica,sans-serif">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#071a45;padding:32px 12px"><tr><td align="center">
+<table role="presentation" width="100%" style="max-width:520px;background:#0d2c6e;border-radius:18px;padding:36px 30px;color:#f8f6f0">
+<tr><td style="font:600 13px Arial;letter-spacing:2px;color:#c6d6ee;text-transform:uppercase">Patagonia Chilena</td></tr>
 <tr><td style="padding:18px 0 8px;font:400 30px Georgia,serif;color:#ffffff">' . $titulo . ', ' . $n . '</td></tr>
 <tr><td style="font:16px/1.6 Arial;color:#cfe0e7;padding-bottom:26px">' . $texto . '</td></tr>
-<tr><td><a href="' . $enlace . '" style="display:inline-block;background:#d8261c;color:#ffffff;text-decoration:none;font:700 16px Arial;padding:15px 28px;border-radius:30px">' . $boton . '</a></td></tr>
-<tr><td style="font:13px/1.6 Arial;color:#8aa4b3;padding-top:28px">Primera Asamblea Ciudadana: sábado 5 de diciembre, 19:00 horas, en patagoniachilena.cl/asamblea.html<br><br>Si no fuiste tú, ignora este correo. <a href="' . $baja . '" style="color:#8aa4b3">Darme de baja y borrar mis datos</a>.</td></tr>
+<tr><td><a href="' . $enlace . '" style="display:inline-block;background:#d52b1e;color:#ffffff;text-decoration:none;font:700 16px Arial;padding:15px 28px;border-radius:30px">' . $boton . '</a></td></tr>
+<tr><td style="font:13px/1.6 Arial;color:#a3b3d1;padding-top:28px">Primera Asamblea Ciudadana: sábado 5 de diciembre, 19:00 horas, en patagoniachilena.cl/asamblea.html<br><br>Si no fuiste tú, ignora este correo. <a href="' . $baja . '" style="color:#a3b3d1">Darme de baja y borrar mis datos</a>.</td></tr>
 </table></td></tr></table></body></html>';
 }

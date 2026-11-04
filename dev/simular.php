@@ -34,5 +34,6 @@ if ($modo === 'vivo') {
     foreach ($ids as $k => $id) if ($k % 3 !== 2) $db->prepare('INSERT OR REPLACE INTO votos (votacion_id, socio_id, opcion, creado) VALUES (?,?,?,?)')->execute([$vid, $id, $k % 7 === 0 ? 1 : ($k % 11 === 0 ? 2 : 0), $t]);
     foreach (array_slice($ids, 0, 40) as $id) { $s = $db->query("SELECT region, puesto FROM socios WHERE id = $id")->fetch(); $db->prepare('INSERT INTO aplausos (region, puesto, creado) VALUES (?,?,?)')->execute([$s['region'], $s['puesto'], $t]); }
 }
+$db->exec("UPDATE socios SET compromiso = CASE abs(random()) % 4 WHEN 0 THEN 1000 WHEN 1 THEN 2000 WHEN 2 THEN 1000 ELSE 5000 END WHERE ip = 'semilla' AND compromiso IS NULL AND abs(random()) % 10 < 4");
 invalidar_cache();
 echo "simulado: " . count($ids) . " conectados" . ($modo === 'vivo' ? ', sesión en vivo con votación' : '') . "\n";
