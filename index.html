@@ -15,7 +15,7 @@
 <link rel="icon" href="assets/img/icono.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..600&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
 <link href="assets/css/sitio.css" rel="stylesheet">
 </head>
@@ -27,13 +27,14 @@
 <header class="barra" id="barra">
   <a class="marca" href="#inicio" aria-label="Patagonia Chilena, inicio">
     <svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 31 L13 15 L18 22 L24 9 L37 31 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M21 15 L24 9 L27 15" fill="currentColor"/><circle cx="31" cy="9" r="2.2" fill="var(--rojo)"/></svg>
-    <span>Patagonia <b>Chilena</b></span>
+    <span>Patagonia <em>Chilena</em></span>
   </a>
   <nav class="menu" aria-label="Secciones">
     <a href="#territorio">El territorio</a>
+    <a href="#historia">Historia</a>
     <a href="#cooperativa">La cooperativa</a>
     <a href="#chile">Quiénes se suman</a>
-    <a href="#preguntas">Preguntas</a>
+    <a href="asamblea.html" class="menu-asamblea"><span class="punto-vivo"></span>Asamblea</a>
   </nav>
   <a class="boton boton-rojo boton-chico" href="#sumate">Sumarme</a>
 </header>
@@ -41,6 +42,7 @@
 <!-- Mapa fijo de fondo para el relato -->
 <div class="escenario" id="escenario" aria-hidden="true">
   <div id="mapa"></div>
+  <canvas id="viento"></canvas>
   <div class="velo"></div>
   <div class="grano"></div>
 </div>
@@ -124,6 +126,42 @@
 
 </section>
 
+<!-- Historia del territorio -->
+<section class="bloque historia" id="historia">
+  <div class="envoltorio">
+    <div class="historia-cab">
+      <div>
+        <p class="antetitulo">Historia</p>
+        <h2 class="titulo-bloque">Así se formó el territorio.<br><em>Y así se repartió la tierra.</em></h2>
+      </div>
+      <div class="historia-filtros" aria-hidden="true">
+        <span class="filtro-ley"><i class="ley-frontera"></i>Fronteras</span>
+        <span class="filtro-ley"><i class="ley-tierra"></i>Propiedad de la tierra</span>
+      </div>
+    </div>
+    <div class="historia-escena">
+      <div class="historia-mapa-marco">
+        <div id="mapa-historia" role="img" aria-label="Mapa esquemático de Chile según el año"></div>
+        <div class="historia-anio" aria-hidden="true" id="h-anio-grande"></div>
+        <div class="rapanui-aviso" id="h-rapanui" hidden>← Rapa Nui · 3.700 km al oeste</div>
+      </div>
+      <article class="historia-texto" aria-live="polite">
+        <p class="h-tipo" id="h-tipo">Frontera</p>
+        <h3 id="h-titulo">—</h3>
+        <p id="h-texto"></p>
+        <p class="fuente" id="h-fuente"></p>
+        <div class="h-controles">
+          <button class="boton boton-vidrio boton-chico" type="button" id="h-ant" aria-label="Hito anterior">←</button>
+          <button class="boton boton-vidrio boton-chico" type="button" id="h-play">Pausar</button>
+          <button class="boton boton-vidrio boton-chico" type="button" id="h-sig" aria-label="Hito siguiente">→</button>
+        </div>
+      </article>
+    </div>
+    <ol class="linea" id="h-linea" aria-label="Línea de tiempo"></ol>
+    <p class="fuente historia-nota">Esquema dibujado con las regiones actuales (INE, Censo 2024). No representa límites históricos exactos. Textos basados en los tratados citados y en Memoria Chilena (Biblioteca Nacional).</p>
+  </div>
+</section>
+
 <!-- Pasos -->
 <section class="bloque bloque-claro" id="como">
   <div class="envoltorio">
@@ -159,6 +197,7 @@
       <p class="antetitulo">Por qué una cooperativa</p>
       <h2 class="titulo-bloque">No es una empresa ni una ONG.<br><em>Es de quienes la forman.</em></h2>
       <p class="lead">Una cooperativa es la forma legal chilena para que muchas personas sean dueñas de algo en común. La rige la Ley General de Cooperativas y la fiscaliza el Ministerio de Economía.</p>
+      <a class="boton boton-vidrio" href="asamblea.html" style="margin-top:22px">Ver la sala de la Asamblea →</a>
     </div>
     <ul class="principios">
       <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><div><h3>Una persona, un voto</h3><p>Quien pone más no manda más. Las decisiones grandes se toman en asamblea.</p></div></li>
@@ -174,16 +213,36 @@
   <div class="envoltorio inscritos">
     <div class="inscritos-txt">
       <p class="antetitulo">Quiénes se suman</p>
-      <h2 class="titulo-bloque">Chile entero mirando al sur</h2>
-      <p class="lead">Cada punto es una comuna con personas inscritas. Nunca mostramos nombres: solo cuántos se han sumado en cada comuna.</p>
-      <div class="ranking-cab"><span>Comunas que más aportan gente</span><span class="mono" data-cifra="n_comunas_con">—</span></div>
-      <ol class="ranking" id="ranking"><li class="vacio">Sé el primero de tu comuna.</li></ol>
-      <div class="regiones-barras" id="regiones-barras"></div>
+      <h2 class="titulo-bloque">Chile entero<br><em>mirando al sur</em></h2>
+      <p class="lead">Cada región que se suma enciende una luz hacia la Patagonia. Nunca mostramos nombres, solo cuántos somos.</p>
+      <div class="pestanas" role="tablist">
+        <button role="tab" aria-selected="true" data-orden="habitante">Por habitante</button>
+        <button role="tab" aria-selected="false" data-orden="total">Total</button>
+        <button role="tab" aria-selected="false" data-orden="comunas">Comunas</button>
+      </div>
+      <ol class="ranking" id="ranking"><li class="vacio">Sé el primero de tu región.</li></ol>
+      <p class="mi-lugar" id="mi-lugar" hidden></p>
     </div>
     <div class="mapa-chile-marco">
-      <div id="mapa-chile" role="img" aria-label="Mapa de Chile con la cantidad de inscritos por comuna"></div>
-      <p class="fuente">Límites: INE, Censo 2024.</p>
+      <div id="mapa-chile" role="img" aria-label="Mapa de Chile con inscritos por región"></div>
+      <div class="chile-leyenda"><span>Menos</span><i></i><span>Más inscritos por 10 mil habitantes</span></div>
+      <p class="fuente">Límites y población: INE, Censo 2024.</p>
     </div>
+  </div>
+</section>
+
+<!-- Asamblea (anticipo) -->
+<section class="bloque asamblea-banda" id="asamblea">
+  <canvas id="mini-hemiciclo" aria-hidden="true"></canvas>
+  <div class="envoltorio asamblea-banda-in">
+    <p class="aviso-pronto"><span class="punto-vivo"></span>Próximamente · la fecha se fijará según la coyuntura</p>
+    <h2 class="titulo-bloque">La Asamblea.<br><em>Un asiento para cada uno.</em></h2>
+    <p class="lead">Cada persona inscrita ya tiene su asiento en la sala virtual de la cooperativa. Ahí propondremos, votaremos y la constituiremos. Mírala desde arriba y encuentra el tuyo.</p>
+    <div class="acciones">
+      <a class="boton boton-rojo" href="asamblea.html">Entrar a la Asamblea <span aria-hidden="true">→</span></a>
+      <a class="boton boton-vidrio" href="#sumate">Reservar mi asiento</a>
+    </div>
+    <p class="nota-chica"><b data-cifra="total">0</b> asientos ocupados de <b data-cifra="meta">100.000</b></p>
   </div>
 </section>
 
@@ -192,11 +251,12 @@
   <div class="envoltorio">
     <p class="antetitulo oscuro">Lo que se abre al crecer</p>
     <h2 class="titulo-bloque">Esto no es solo una lista. Es una comunidad que decide.</h2>
+    <p class="lead lead-oscuro">Cada etapa se abre en la Asamblea al llegar a su cifra. <a href="asamblea.html#participar">Ver todo en la Asamblea →</a></p>
     <div class="desbloqueos">
-      <div class="desb" data-umbral="1000"><span class="desb-umbral">1.000</span><h3>Propón y comenta</h3><p>Marca en el mapa lugares que te importan, sube fotos y cuéntanos por qué deberíamos protegerlos.</p><div class="desb-barra"><i></i></div></div>
-      <div class="desb" data-umbral="10000"><span class="desb-umbral">10.000</span><h3>Vota la prioridad</h3><p>La comunidad elige qué zonas y predios estudiar primero, con su ficha técnica en el visor.</p><div class="desb-barra"><i></i></div></div>
-      <div class="desb" data-umbral="50000"><span class="desb-umbral">50.000</span><h3>Asamblea constituyente</h3><p>Votamos los estatutos y constituimos la cooperativa ante la ley.</p><div class="desb-barra"><i></i></div></div>
-      <div class="desb" data-umbral="100000"><span class="desb-umbral">100.000</span><h3>Tu parcela simbólica</h3><p>Cada aporte se convierte en una celda real del primer predio, con tu nombre y tu certificado.</p><div class="desb-barra"><i></i></div></div>
+      <a class="desb" href="asamblea.html#participar" data-umbral="1000"><span class="desb-umbral">1.000</span><h3>Propón y comenta</h3><p>Marca en el mapa lugares que te importan, sube fotos y cuéntanos por qué deberíamos protegerlos.</p><div class="desb-barra"><i></i></div></a>
+      <a class="desb" href="asamblea.html#participar" data-umbral="10000"><span class="desb-umbral">10.000</span><h3>Vota la prioridad</h3><p>La comunidad elige qué zonas y predios estudiar primero, con su ficha técnica en el visor.</p><div class="desb-barra"><i></i></div></a>
+      <a class="desb" href="asamblea.html#participar" data-umbral="50000"><span class="desb-umbral">50.000</span><h3>Asamblea constituyente</h3><p>Votamos los estatutos y constituimos la cooperativa ante la ley.</p><div class="desb-barra"><i></i></div></a>
+      <a class="desb" href="asamblea.html#participar" data-umbral="100000"><span class="desb-umbral">100.000</span><h3>Tu parcela simbólica</h3><p>Cada aporte se convierte en una celda real del primer predio, con tu nombre y tu certificado.</p><div class="desb-barra"><i></i></div></a>
     </div>
   </div>
 </section>
@@ -267,6 +327,7 @@
       <a class="boton boton-verde" id="c-whatsapp" target="_blank" rel="noopener">Compartir por WhatsApp</a>
       <button class="boton boton-vidrio" type="button" id="c-compartir">Compartir imagen</button>
       <button class="boton boton-vidrio" type="button" id="c-copiar">Copiar mi enlace</button>
+      <a class="boton boton-rojo" id="c-asiento" href="asamblea.html">Ver mi asiento en la Asamblea</a>
     </div>
     <p class="nota-chica">Tu enlace para invitar: <code id="c-enlace"></code><br>Personas que se sumaron gracias a ti: <b data-socio-invitados>0</b></p>
   </div>
@@ -293,7 +354,7 @@
 <footer class="pie">
   <div class="envoltorio pie-grid">
     <div>
-      <a class="marca" href="#inicio"><svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 31 L13 15 L18 22 L24 9 L37 31 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M21 15 L24 9 L27 15" fill="currentColor"/><circle cx="31" cy="9" r="2.2" fill="var(--rojo)"/></svg><span>Patagonia <b>Chilena</b></span></a>
+      <a class="marca" href="#inicio"><svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 31 L13 15 L18 22 L24 9 L37 31 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M21 15 L24 9 L27 15" fill="currentColor"/><circle cx="31" cy="9" r="2.2" fill="var(--rojo)"/></svg><span>Patagonia <em>Chilena</em></span></a>
       <p>Movimiento ciudadano para formar una cooperativa que recupere la Patagonia para todos los chilenos.</p>
     </div>
     <div>

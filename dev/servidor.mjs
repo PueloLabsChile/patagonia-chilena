@@ -68,7 +68,9 @@ const api = {
     const s = db.prepare('SELECT nombre, comuna, numero, codigo FROM socios WHERE token=? AND numero IS NOT NULL').get(q.get('t') || '');
     if (!s) return jsonR(res, { ok: false }, 404);
     const inv = db.prepare('SELECT COUNT(*) n FROM socios WHERE ref=? AND numero IS NOT NULL').get(s.codigo).n;
-    jsonR(res, { ok: true, ...s, invitados: inv });
+    const region = Math.floor(s.comuna / 1000);
+    const puesto = db.prepare('SELECT COUNT(*) n FROM socios WHERE numero IS NOT NULL AND numero <= ? AND comuna / 1000 = ?').get(s.numero, region).n;
+    jsonR(res, { ok: true, ...s, invitados: inv, region, puesto });
   },
   'estadisticas.php'(req, res) {
     const total = db.prepare('SELECT COUNT(*) n FROM socios WHERE numero IS NOT NULL').get().n;

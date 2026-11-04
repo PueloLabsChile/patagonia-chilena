@@ -9,5 +9,10 @@ $q->execute([$t]);
 $s = $q->fetch();
 if (!$s) responder(['ok' => false], 404);
 $q = db()->prepare('SELECT COUNT(*) FROM socios WHERE ref = ? AND numero IS NOT NULL'); $q->execute([$s['codigo']]);
+$invitados = (int)$q->fetchColumn();
+// puesto dentro de su región (para ubicar su asiento en la Asamblea)
+$region = intdiv((int)$s['comuna'], 1000);
+$q = db()->prepare('SELECT COUNT(*) FROM socios WHERE numero IS NOT NULL AND numero <= ? AND comuna / 1000 = ?');
+$q->execute([(int)$s['numero'], $region]);
 responder(['ok' => true, 'numero' => (int)$s['numero'], 'nombre' => $s['nombre'], 'comuna' => (int)$s['comuna'],
-           'codigo' => $s['codigo'], 'invitados' => (int)$q->fetchColumn()]);
+           'codigo' => $s['codigo'], 'invitados' => $invitados, 'region' => $region, 'puesto' => (int)$q->fetchColumn()]);

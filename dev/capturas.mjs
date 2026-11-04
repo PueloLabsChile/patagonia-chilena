@@ -14,14 +14,14 @@ const foto = async n => { const { data } = await ch.cdp('Page.captureScreenshot'
 async function recorrido(prefijo) {
   await ch.cdp('Page.navigate', { url });
   for (let i = 0; i < 60; i++) { await espera(500); if (await js(ch, "document.readyState==='complete'").catch(() => false)) break; }
-  await espera(7000); await foto(prefijo + '-0-portada');
+  await js(ch, 'scrollTo(0, 0)'); await espera(7000); await foto(prefijo + '-0-portada');
   const caps = await js(ch, "[...document.querySelectorAll('.relato .capitulo')].length");
   for (let i = 0; i < caps; i++) {
     await js(ch, `(() => { const c = document.querySelectorAll('.relato .capitulo')[${i}]; scrollTo({ top: c.offsetTop + c.offsetHeight / 2 - innerHeight / 2, behavior: 'instant' }); })()`);
     await espera(6000); await foto(`${prefijo}-${i + 1}-cap`);
   }
-  for (const id of ['como', 'cooperativa', 'chile', 'viene', 'sumate', 'preguntas']) {
-    await js(ch, `document.getElementById('${id}').scrollIntoView({ behavior: 'instant' })`); await espera(id === 'chile' ? 4000 : 1200); await foto(`${prefijo}-z-${id}`);
+  for (const id of ['historia', 'como', 'cooperativa', 'chile', 'asamblea', 'viene', 'sumate']) {
+    await js(ch, `document.getElementById('${id}').scrollIntoView({ behavior: 'instant' })`); await espera(['chile', 'historia', 'asamblea'].includes(id) ? 4500 : 1200); await foto(`${prefijo}-z-${id}`);
   }
 }
 try {
@@ -39,6 +39,15 @@ try {
     return document.querySelector('#dev-enlace a')?.href || document.getElementById('form-msg').textContent; })()`);
   console.log('inscripción →', r);
   await js(ch, "document.getElementById('sumate').scrollIntoView({ behavior: 'instant' })"); await espera(800); await foto('flujo-1-revisa');
-  if (r.startsWith('http')) { await ch.cdp('Page.navigate', { url: r }); await espera(6000); await foto('flujo-2-bienvenida'); }
+  if (r.startsWith('http')) {
+    await ch.cdp('Page.navigate', { url: r }); await espera(6000); await foto('flujo-2-bienvenida');
+    const t = r.split('t=')[1];
+    await ch.cdp('Page.navigate', { url: url + 'asamblea.html' }); await espera(7000); await foto('asamblea-1-sala');
+    await js(ch, "document.getElementById('ir-asiento').click()"); await espera(3500); await foto('asamblea-2-mi-asiento');
+    await js(ch, "document.querySelector('[data-vista=tribuna]').click()"); await espera(3500); await foto('asamblea-3-tribuna');
+    await js(ch, "document.getElementById('participar').scrollIntoView({behavior:'instant'})"); await espera(1500); await foto('asamblea-4-participar');
+    await ch.cdp('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 2, mobile: true });
+    await ch.cdp('Page.navigate', { url: url + 'asamblea.html' }); await espera(7000); await foto('asamblea-5-celular');
+  }
 } finally { ch.cerrar(); }
 console.log(errores.length ? 'ERRORES:\n' + [...new Set(errores)].join('\n') : 'sin errores de consola');

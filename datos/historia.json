@@ -1,0 +1,100 @@
+{
+  "nota": "Esquema dibujado con las regiones actuales (INE, Censo 2024). No representa límites históricos exactos.",
+  "pasos": [
+    {
+      "anio": "Antes de 1540", "tipo": "tierra", "titulo": "Una tierra con dueños antiguos",
+      "texto": "Durante miles de años, aonikenk, selk'nam, kawésqar, yaganes y chonos recorrieron la estepa, los canales y los fiordos del sur. No había fronteras estatales.",
+      "regiones": [], "destacar": [11, 12], "fuente": "Memoria Chilena, Biblioteca Nacional"
+    },
+    {
+      "anio": "1818", "tipo": "frontera", "titulo": "Nace la República",
+      "texto": "Con la independencia, el Estado controla en la práctica el territorio entre el despoblado de Atacama y el Biobío, con Valdivia como enclave. Chiloé sigue en manos realistas.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14], "destacar": [], "fuente": "Acta de Independencia, 1818"
+    },
+    {
+      "anio": "1826", "tipo": "frontera", "titulo": "Chiloé se incorpora",
+      "texto": "Tras las campañas de Freire, el Tratado de Tantauco incorpora Chiloé a la República.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10], "destacar": [10], "fuente": "Tratado de Tantauco, 1826"
+    },
+    {
+      "anio": "1843", "tipo": "frontera", "titulo": "Chile llega al Estrecho",
+      "texto": "La goleta Ancud toma posesión del Estrecho de Magallanes el 21 de septiembre y se levanta el Fuerte Bulnes. Es el primer paso del Estado en la Patagonia.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12], "destacar": [12], "punto": [-70.97, -53.63], "rotulo": "Fuerte Bulnes", "fuente": "Memoria Chilena: Fuerte Bulnes"
+    },
+    {
+      "anio": "1881", "tipo": "frontera", "titulo": "Tratado de Límites con Argentina",
+      "texto": "La frontera se fija en las altas cumbres de los Andes que dividen las aguas. Chile conserva el Estrecho y la Patagonia occidental, y renuncia a la oriental.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11], "destacar": [11, 12], "fuente": "Tratado de Límites de 1881, BCN"
+    },
+    {
+      "anio": "1883", "tipo": "frontera", "titulo": "La Araucanía y Tarapacá",
+      "texto": "El Estado completa la ocupación de la Araucanía. Ese mismo año, el Tratado de Ancón con Perú le entrega Tarapacá.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1], "destacar": [9, 1], "fuente": "Tratado de Ancón, 1883"
+    },
+    {
+      "anio": "1888", "tipo": "frontera", "titulo": "Rapa Nui",
+      "texto": "El 9 de septiembre, Policarpo Toro firma con el pueblo rapanui el Acuerdo de Voluntades. La isla, a 3.700 km del continente, pasa a ser parte de Chile.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1], "destacar": [], "rapanui": true, "fuente": "Acuerdo de Voluntades, 1888"
+    },
+    {
+      "anio": "1893", "tipo": "tierra", "titulo": "La tierra se entrega en grandes paños",
+      "texto": "El Estado remata y arrienda la estepa magallánica en lotes enormes. La Sociedad Explotadora de Tierra del Fuego llega a controlar millones de hectáreas a ambos lados de la frontera. En esos años, el pueblo selk'nam queda casi exterminado.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1], "destacar": [12], "fuente": "Memoria Chilena: Sociedad Explotadora de Tierra del Fuego"
+    },
+    {
+      "anio": "1902", "tipo": "frontera", "titulo": "El laudo británico",
+      "texto": "El rey Eduardo VII dicta el fallo arbitral que traza la frontera en la Patagonia, incluidos los valles de Aysén. Con los Pactos de Mayo se evita una guerra con Argentina.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1], "destacar": [11], "fuente": "Laudo arbitral de 1902"
+    },
+    {
+      "anio": "1903", "tipo": "tierra", "titulo": "Aysén, en concesión",
+      "texto": "Grandes concesiones ganaderas, como la de la Sociedad Industrial de Aysén, abren la región. Llegan colonos chilenos desde Argentina y Chiloé, que fundan pueblos como Coyhaique (1929).",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1], "destacar": [11], "punto": [-72.07, -45.57], "rotulo": "Coyhaique", "fuente": "Memoria Chilena: Colonización de Aysén"
+    },
+    {
+      "anio": "1904", "tipo": "frontera", "titulo": "Paz con Bolivia",
+      "texto": "El Tratado de Paz y Amistad reconoce como chileno el litoral de Antofagasta.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2], "destacar": [2], "fuente": "Tratado de 1904, BCN"
+    },
+    {
+      "anio": "1929", "tipo": "frontera", "titulo": "Arica",
+      "texto": "El Tratado de Lima con Perú resuelve la cuestión de Tacna y Arica: Arica queda en Chile.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [15], "fuente": "Tratado de Lima, 1929"
+    },
+    {
+      "anio": "1940", "tipo": "frontera", "titulo": "Territorio Chileno Antártico",
+      "texto": "Un decreto fija los límites del Territorio Chileno Antártico entre los meridianos 53° y 90° oeste.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [], "antartica": true, "fuente": "Decreto 1.747 de 1940"
+    },
+    {
+      "anio": "1965–1973", "tipo": "tierra", "titulo": "Las grandes estancias se dividen",
+      "texto": "Las estancias magallánicas y aiseninas se fraccionan y la tierra pasa al Estado, a cooperativas y a colonos. El mapa de la propiedad del sur cambia por completo.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [11, 12], "fuente": "Memoria Chilena: la tierra en Magallanes"
+    },
+    {
+      "anio": "1984", "tipo": "frontera", "titulo": "Beagle: paz con Argentina",
+      "texto": "Tras la mediación papal, el Tratado de Paz y Amistad confirma como chilenas las islas Picton, Lennox y Nueva.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [12], "antartica": true, "punto": [-66.9, -55.2], "rotulo": "Picton, Lennox y Nueva", "fuente": "Tratado de Paz y Amistad, 1984"
+    },
+    {
+      "anio": "1994", "tipo": "frontera", "titulo": "Laguna del Desierto",
+      "texto": "Un tribunal arbitral latinoamericano falla a favor de Argentina en el sector de Laguna del Desierto, en el límite de Aysén.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [11], "antartica": true, "punto": [-72.93, -49.05], "rotulo": "Laguna del Desierto", "fuente": "Laudo de 1994"
+    },
+    {
+      "anio": "1998", "tipo": "frontera", "titulo": "Campo de Hielo Sur",
+      "texto": "Chile y Argentina acuerdan el límite en el Campo de Hielo Patagónico Sur. Un tramo sigue pendiente de demarcación hasta hoy.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [11, 12], "antartica": true, "punto": [-73.4, -49.6], "rotulo": "Campo de Hielo Sur", "fuente": "Acuerdo de 1998"
+    },
+    {
+      "anio": "2018", "tipo": "tierra", "titulo": "La Red de Parques de la Patagonia",
+      "texto": "Una donación privada de más de 400 mil hectáreas, sumada a tierras fiscales, crea cinco parques nacionales nuevos. Mostró que la tierra puede volver a ser de todos.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [11, 12], "antartica": true, "fuente": "Ministerio de Bienes Nacionales, 2018"
+    },
+    {
+      "anio": "Hoy", "tipo": "tierra", "titulo": "La Patagonia vuelve al mercado",
+      "texto": "Predios con lagos y volcanes se ofrecen al mejor postor, y el Estado vende inmuebles fiscales. La próxima página de esta historia la podemos escribir nosotros.",
+      "regiones": [3, 4, 5, 13, 6, 7, 16, 8, 14, 10, 12, 11, 9, 1, 2, 15], "destacar": [11, 12], "antartica": true, "punto": [-72.40, -41.84], "rotulo": "En venta", "fuente": "BioBioChile, 3-nov-2026"
+    }
+  ]
+}
