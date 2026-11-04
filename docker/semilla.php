@@ -31,6 +31,7 @@ if ($clave !== '') {
     foreach (array_filter(array_map('trim', explode(',', getenv('DEMO_MODERADORES') ?: 'Moderación'))) as $nombre) {
         $t = rtrim(strtr(base64_encode(hash('sha256', $clave . '|' . $nombre, true)), '+/', '-_'), '=');
         $db->prepare('INSERT OR IGNORE INTO moderadores (nombre, token, creado) VALUES (?,?,?)')->execute([$nombre, $t, ahora()]);
+        echo 'Moderación · ' . $nombre . ': ' . cfg('sitio') . 'moderacion.html?m=' . $t . PHP_EOL;
     }
 }
 echo "semilla lista\n";

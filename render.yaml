@@ -6,7 +6,7 @@ services:
     healthCheckPath: /api/estadisticas.php
     envVars:
       - key: DEMO_CLAVE
-        sync: false
+        generateValue: true
       - key: DEMO_ESTADO
         value: ""
       - key: DEMO_VIDEO
