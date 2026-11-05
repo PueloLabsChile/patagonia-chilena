@@ -5,3 +5,4 @@ scripts/*.log
 __pycache__/
 dev/moderadores-local.txt
 dev/forzar.txt
+dist/
