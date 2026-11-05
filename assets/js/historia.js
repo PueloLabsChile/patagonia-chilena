@@ -160,7 +160,9 @@ export async function iniciarHistoria() {
     dial.textContent = p.anio; dial.classList.toggle('largo', p.anio.length > 6);
     dial.style.setProperty('--c', COLOR_TIPO[p.tipo]);
     linea.querySelectorAll('button').forEach((b, j) => { b.setAttribute('aria-current', j === i); b.classList.toggle('pasado', j < i); });
-    linea.querySelector(`button[data-k="${i}"]`)?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    // centrar el año activo moviendo solo la línea de tiempo (no la página)
+    const btn = linea.querySelector(`button[data-k="${i}"]`)?.parentElement;
+    if (btn) linea.scrollTo({ left: btn.offsetLeft - linea.clientWidth / 2 + btn.clientWidth / 2, behavior: antes < 0 ? 'auto' : 'smooth' });
     cont.querySelectorAll('.h-paso').forEach((a, j) => a.classList.toggle('activo', j === i));
     pintar(i, antes < 0);
     chispas(p.ganado?.length ? 'ganado' : p.perdido?.length ? 'perdido' : null);
