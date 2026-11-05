@@ -4,6 +4,9 @@ import { iniciarRelieve } from './relieve.js';
 import { iniciarParalaje } from './paralaje.js';
 import { iniciarHistoria } from './historia.js';
 import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js';
+// siempre partir desde la portada (salvo que el enlace apunte a una sección)
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+if (!location.hash) { scrollTo(0, 0); addEventListener('load', () => scrollTo(0, 0)); }
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const fmt = n => Number(n || 0).toLocaleString('es-CL');
