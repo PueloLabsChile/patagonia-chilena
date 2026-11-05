@@ -44,7 +44,7 @@ python scripts/preparar_historia.py    # piezas históricas (CShapes 2.0 en scri
 CShapes 2.0 (ETH Zürich y PRIO) tiene licencia CC BY-NC-SA 4.0: uso no comercial, citando la fuente.
 
 ## Publicar en cPanel
-1. En tu computador: `python dev/empaquetar.py patagoniadechile.cl "Gonzalo,Juan Carlos,Ignacio,Paloma"`. Crea `dist/patagoniadechile-cpanel.zip` (con `api/config.php` de producción y una sal aleatoria) y `dist/SECRETO-instalacion.txt` con el enlace del instalador. **No compartas ese archivo.**
+1. En tu computador: `python dev/empaquetar.py patagoniadechile.cl "Nombre 1,Nombre 2,Nombre 3"`. Crea `dist/patagoniadechile-cpanel.zip` (con `api/config.php` de producción y una sal aleatoria) y `dist/SECRETO-instalacion.txt` con el enlace del instalador. **No compartas ese archivo.**
 2. En cPanel → «Select PHP Version»: PHP 8.1 o superior con `pdo_sqlite` y `mbstring`.
 3. En cPanel → Cuentas de correo: crear `no-responder@patagoniadechile.cl` (y si quieren, `contacto@`). En «Email Deliverability», activar SPF y DKIM.
 4. Administrador de archivos → `public_html` (o la carpeta del dominio) → subir el ZIP → «Extraer».

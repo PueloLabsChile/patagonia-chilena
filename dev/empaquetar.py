@@ -6,7 +6,7 @@ import json, os, secrets, sys, zipfile, pathlib
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 DOMINIO = sys.argv[1] if len(sys.argv) > 1 else 'patagoniadechile.cl'
-MODS = [m.strip() for m in (sys.argv[2] if len(sys.argv) > 2 else 'Gonzalo,Juan Carlos,Ignacio,Paloma').split(',') if m.strip()]
+MODS = [m.strip() for m in (sys.argv[2] if len(sys.argv) > 2 else 'Moderación').split(',') if m.strip()]
 DIST = RAIZ / 'dist'; DIST.mkdir(exist_ok=True)
 
 INCLUIR = ['index.html', 'asamblea.html', 'moderacion.html', 'privacidad.html', '.htaccess', 'assets', 'datos', 'api']
