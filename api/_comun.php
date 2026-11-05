@@ -11,7 +11,7 @@ function db(): PDO {
     if ($pdo) return $pdo;
     $ruta = cfg('db');
     // la base de inscritos jamás debe quedar dentro de una carpeta pública
-    if (!cfg('dev') && preg_match('~/(public_html|www|htdocs)(/|$)~', str_replace('\', '/', $ruta))) {
+    if (!cfg('dev') && preg_match('~/(public_html|www|htdocs)(/|$)~', str_replace(chr(92), '/', $ruta))) {
         http_response_code(500); header('Content-Type: text/plain; charset=utf-8');
         exit('Configuración insegura: la base de datos quedaría dentro de una carpeta pública. Ajusta «db» en api/config.php.');
     }
