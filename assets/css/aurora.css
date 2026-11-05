@@ -160,3 +160,34 @@ html,body,.cielo{background:#030304!important}
 .bloque::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(180deg,rgba(3,3,4,.7),rgba(3,3,4,.25) 20%,rgba(3,3,4,.25) 80%,rgba(3,3,4,.7))}
 .contador-cifra span,.fondo-cifra>b,.cuenta b,.cuenta-mini b{text-shadow:0 0 30px rgba(203,184,255,.3)!important}
 .barra.solida{background:rgba(3,3,4,.62)!important}
+
+/* ---------- v5.3 · Asamblea: barra inferior sin cortes y parte baja con vida ---------- */
+.sala-pie{flex-wrap:wrap;row-gap:10px;min-width:0}
+.sala-leyenda{flex:1 1 320px!important;min-width:0!important;max-width:none!important}
+.sala-vistas{flex:0 0 auto!important;margin-left:auto}
+@media (max-width:1280px){.sala-leyenda div span{display:none}.sala-leyenda div i{height:8px}}
+.participar{position:relative;overflow:hidden;isolation:isolate}
+.participar::before,.participar::after{content:"";position:absolute;z-index:-1;pointer-events:none;border-radius:50%;filter:blur(110px);mix-blend-mode:screen}
+.participar::before{width:60vw;height:50vw;left:-15vw;top:5%;background:radial-gradient(circle,rgba(176,124,255,.30),transparent 65%);animation:deriva1 26s ease-in-out infinite alternate}
+.participar::after{width:55vw;height:45vw;right:-15vw;bottom:-10%;background:radial-gradient(circle,rgba(255,122,107,.22),rgba(95,224,207,.12) 45%,transparent 70%);animation:deriva2 32s ease-in-out infinite alternate}
+@keyframes deriva1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(25vw,12vh) scale(1.25)}}
+@keyframes deriva2{0%{transform:translate(0,0) scale(1.1)}100%{transform:translate(-22vw,-15vh) scale(.9)}}
+@property --giro{syntax:'<angle>';inherits:false;initial-value:0deg}
+.reglas div,.etapa,.convocatoria{transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s}
+.reglas div:hover,.etapa:hover{transform:translateY(-6px)}
+.reglas div::after,.etapa::after,.convocatoria::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;opacity:0;transition:opacity .5s;
+  background:conic-gradient(from var(--giro),transparent 0 60%,rgba(203,184,255,.9) 75%,rgba(127,224,212,.9) 85%,rgba(255,122,107,.9) 95%,transparent);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:girar 4s linear infinite}
+.reglas div:hover::after,.etapa:hover::after,.convocatoria::after{opacity:1}
+.convocatoria::after{opacity:.55}
+@keyframes girar{to{--giro:360deg}}
+.etapa-barra i{position:relative;overflow:hidden}
+.etapa-barra i::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);transform:translateX(-100%);animation:brillo 2.8s ease-in-out infinite}
+@keyframes brillo{to{transform:translateX(100%)}}
+.reglas span{box-shadow:0 0 0 0 rgba(255,122,107,.6);animation:pulso 3s ease-out infinite}
+@keyframes pulso{70%{box-shadow:0 0 0 14px rgba(255,122,107,0)}100%{box-shadow:0 0 0 0 rgba(255,122,107,0)}}
+.etapa-ico{background:radial-gradient(circle,rgba(203,184,255,.25),rgba(203,184,255,.05))!important;box-shadow:0 0 24px rgba(203,184,255,.25)}
+.pagina-asamblea .pie{position:relative;overflow:hidden}
+.pagina-asamblea .pie::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,transparent,rgba(176,124,255,.08),rgba(255,122,107,.06),transparent);background-size:200% 100%;animation:barrido 14s linear infinite}
+@keyframes barrido{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.participar::before,.participar::after,.reglas div::after,.etapa::after,.convocatoria::after,.etapa-barra i::after,.reglas span,.pagina-asamblea .pie::before{animation:none}}

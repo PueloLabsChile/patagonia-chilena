@@ -1,8 +1,8 @@
 // La Asamblea: hemiciclo 3D + participación en vivo (presencia, chat, palabra, votación consultiva, aplausos).
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { iniciarParalaje } from './paralaje.js?v=1793838857';
-import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js?v=1793838857';
+import { iniciarParalaje } from './paralaje.js?v=1793884133';
+import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js?v=1793884133';
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const fmt = n => Number(n || 0).toLocaleString('es-CL');
@@ -66,8 +66,10 @@ const material = new THREE.ShaderMaterial({
       if (mio) { tam *= 3.0 + sin(uTiempo * 4.0) * .8; c = mix(c, vec3(1.0, .95, .82), .65); brillo = 1.4; }
       tam *= mix(1.8, 1.0, ap);
       gl_PointSize = tam * uEscala * (60.0 / -mv.z);
-      vColor = lleno > .5 ? c * brillo : vec3(.10, .17, .22);
-      vAlfa = lleno > .5 ? ap : .9;
+      // asientos vacíos: lila tenue que respira en ondas desde la mesa hacia atrás
+      float onda = .5 + .5 * sin(uTiempo * .8 - length(position.xz) * .55 + ang * 2.0);
+      vColor = lleno > .5 ? c * brillo : mix(vec3(.16, .14, .26), vec3(.34, .28, .52), onda);
+      vAlfa = lleno > .5 ? ap : .55 + onda * .35;
       vNucleo = lleno;
     }`,
   fragmentShader: `

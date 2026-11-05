@@ -1,9 +1,9 @@
 // Patagonia Chilena · relato con mapa, historia, contador, mapa de inscritos, anticipo de la Asamblea e inscripción
-import { iniciarViento } from './viento.js?v=1793838857';
-import { iniciarRelieve } from './relieve.js?v=1793838857';
-import { iniciarParalaje } from './paralaje.js?v=1793838857';
-import { iniciarHistoria } from './historia.js?v=1793838857';
-import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1793838857';
+import { iniciarViento } from './viento.js?v=1793884133';
+import { iniciarRelieve } from './relieve.js?v=1793884133';
+import { iniciarParalaje } from './paralaje.js?v=1793884133';
+import { iniciarHistoria } from './historia.js?v=1793884133';
+import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1793884133';
 // siempre partir desde la portada (salvo que el enlace apunte a una sección)
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (!location.hash) { scrollTo(0, 0); addEventListener('load', () => scrollTo(0, 0)); }
@@ -62,7 +62,19 @@ setInterval(cuentaMini, 20000); cuentaMini();
 async function cargarEstadisticas() {
   try { estad = await json(API + 'estadisticas.php'); } catch (e) { console.warn('estadísticas', e); }
   const { total, meta } = estad;
-  pintarCifra('total', total, true);
+  // Mientras haya menos de 100 socios confirmados, la cifra grande es la comunidad de Instagram (rotulada como tal);
+  // la barra de la meta y el resto del sitio siempre usan solo inscritos reales.
+  await pDatos;
+  const ig = datos.cifras?.comunidad_instagram || 0, primeros = ig && total < 100;
+  pintarCifra('total', primeros ? ig : total, true);
+  const rot = $('[data-cifra-rotulo]'); if (rot) rot.textContent = primeros ? 'personas en nuestra comunidad de Instagram' : 'chilenos ya se sumaron';
+  const com = $('[data-comunidad]');
+  if (com && ig) {
+    com.hidden = false;
+    com.innerHTML = primeros
+      ? `<b>${fmt(total)}</b> ${total === 1 ? 'socio fundador inscrito' : 'socios fundadores inscritos'} aquí · sé de los primeros 1.000`
+      : `y <b>${fmt(ig)}</b> en nuestra comunidad de Instagram`;
+  }
   pintarCifra('meta', meta);
   pintarCifra('falta', total >= meta ? '¡Meta cumplida!' : `faltan ${fmt(meta - total)}`);
   $('[data-barra]').style.width = Math.min(100, total / meta * 100) + '%';
