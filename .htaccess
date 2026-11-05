@@ -6,8 +6,12 @@ AddType application/geo+json .geojson
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType application/geo+json "access plus 7 days"
-  ExpiresByType text/css "access plus 1 day"
-  ExpiresByType text/javascript "access plus 1 day"
   ExpiresByType image/svg+xml "access plus 30 days"
 </IfModule>
 RedirectMatch 404 ^/(dev|scripts|docker|\.git)(/|$)
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|css|js|mjs)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
