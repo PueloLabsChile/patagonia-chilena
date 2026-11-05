@@ -7,9 +7,9 @@
 <title>Moderación · Patagonia Chilena</title>
 <link rel="icon" href="assets/img/icono.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link href="assets/css/sitio.css?v=1793888938" rel="stylesheet">
-<link href="assets/css/nacional.css?v=1793888938" rel="stylesheet">
-<link href="assets/css/aurora.css?v=1793888938" rel="stylesheet">
+<link href="assets/css/sitio.css?v=1793890595" rel="stylesheet">
+<link href="assets/css/nacional.css?v=1793890595" rel="stylesheet">
+<link href="assets/css/aurora.css?v=1793890595" rel="stylesheet">
 <style>
 body{background:#07080c}
 .mod{max-width:1280px;margin:0 auto;padding:calc(var(--barra-alto) + 24px) 16px 60px}
@@ -34,6 +34,20 @@ input,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid 
 .pill{display:inline-block;padding:4px 8px;border-radius:99px;font:500 11px var(--mono);background:rgba(248,246,240,.08)}
 .err{color:#ff9d93}
 .res{display:flex;justify-content:space-between;font:400 13px var(--mono);color:var(--niebla)}
+.socios{margin-bottom:18px}
+.socios-cab{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.socios-cab h2{margin:0}
+.socios-cab .herr{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.socios-cab input{width:240px;max-width:100%}
+.cifras-s{display:flex;gap:18px;flex-wrap:wrap;font:400 13px var(--mono);color:var(--niebla);margin-bottom:10px}
+.cifras-s b{color:#fff;font-size:18px;margin-right:4px}
+.tabla{max-height:60vh;overflow:auto;border-radius:10px;border:1px solid rgba(248,246,240,.08)}
+.tabla table{width:100%;border-collapse:collapse;font-size:13.5px}
+.tabla th{position:sticky;top:0;background:#12131a;text-align:left;font:600 11.5px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--niebla);padding:9px 10px;cursor:pointer;white-space:nowrap}
+.tabla td{padding:8px 10px;border-top:1px solid rgba(248,246,240,.06);white-space:nowrap}
+.tabla tr.pend td{opacity:.55}
+.tabla td.num{font-family:var(--mono)}
+a.b{text-decoration:none}
 </style>
 </head>
 <body>
@@ -44,6 +58,22 @@ input,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid 
     <button class="b" id="recargar">Actualizar</button>
   </div>
   <p class="err" id="err"></p>
+  <section class="caja socios" id="socios" hidden>
+    <div class="socios-cab">
+      <h2>Socios inscritos</h2>
+      <div class="herr">
+        <input id="s-buscar" type="search" placeholder="Buscar nombre, correo, comuna…" aria-label="Buscar socio">
+        <button class="b" id="s-recargar">Actualizar lista</button>
+        <a class="b rojo" id="s-csv" href="#">Descargar Excel (CSV)</a>
+      </div>
+    </div>
+    <div class="cifras-s" id="s-cifras"></div>
+    <div class="tabla"><table><thead><tr>
+      <th data-k="numero">N.º</th><th data-k="nombre">Nombre</th><th data-k="correo">Correo</th><th data-k="comuna_nombre">Comuna</th>
+      <th data-k="apodo">Apodo</th><th data-k="creado">Inscrito</th><th data-k="compromiso">Compromiso</th><th data-k="invitados">Invitó</th>
+    </tr></thead><tbody id="s-filas"></tbody></table></div>
+    <p style="color:var(--niebla);font-size:12.5px;margin:10px 0 0">Datos personales: solo tú los ves. No los compartas fuera de la cooperativa. Cada consulta queda en la bitácora. Los que aparecen atenuados aún no confirman su correo.</p>
+  </section>
   <div class="grid" id="panel" hidden>
     <section class="caja">
       <h2>Mensajes <span class="pill" id="n-den"></span></h2>
@@ -86,6 +116,7 @@ async function cargar() {
   if (!d.ok) { $('#err').textContent = d.error || 'Sin acceso'; return; }
   $('#panel').hidden = false;
   $('#hola').textContent = 'Hola, ' + d.moderador;
+  if (d.admin) { $('#socios').hidden = false; if (!sociosListos) { sociosListos = true; cargarSocios(); } }
   $('#estado').textContent = `${d.asamblea.titulo}: ${d.asamblea.estado.replace('_', ' ')} · ${d.presentes} conectados ahora`;
   const den = d.mensajes.filter(x => x.denuncias > 0 && !x.oculto).length;
   $('#n-den').textContent = den ? den + ' con denuncias' : 'sin denuncias pendientes';
@@ -98,6 +129,28 @@ async function cargar() {
   $('#suspendidos').innerHTML = d.suspendidos.map(s => `<div class="msj"><div><b>${esc(s.apodo || 'socio')}</b> <small>n.º ${s.numero}</small></div><div class="acc"><button class="b" onclick="accion('reactivar',{numero:${s.numero}})">Reactivar</button></div></div>`).join('') || '<p style="color:var(--niebla)">Nadie.</p>';
   $('#bitacora').innerHTML = d.bitacora.map(b => `${hora(b.creado)} · ${esc(b.moderador)} · ${esc(b.accion)} ${esc(b.detalle)}`).join('<br>') || 'Sin acciones todavía.';
 }
+let SOCIOS = [], ORDEN = ['numero', 1];
+const pesos = n => n ? '$' + Number(n).toLocaleString('es-CL') : '—';
+async function cargarSocios() {
+  const r = await fetch('api/socios.php?m=' + encodeURIComponent(m || ''), { cache: 'no-cache' });
+  const d = await r.json(); if (!d.ok) { $('#s-filas').innerHTML = `<tr><td colspan="8">${esc(d.error)}</td></tr>`; return; }
+  SOCIOS = d.socios; pintarSocios();
+}
+function pintarSocios() {
+  const q = $('#s-buscar').value.trim().toLowerCase();
+  const conf = SOCIOS.filter(s => s.numero), comp = conf.filter(s => s.compromiso > 0);
+  $('#s-cifras').innerHTML = `<span><b>${conf.length}</b>confirmados</span><span><b>${SOCIOS.length - conf.length}</b>sin confirmar</span><span><b>${comp.length}</b>con compromiso</span><span><b>${pesos(comp.reduce((a, s) => a + +s.compromiso, 0))}</b>al mes comprometido</span>`;
+  const [k, dir] = ORDEN;
+  const filas = SOCIOS.filter(s => !q || [s.nombre, s.correo, s.comuna_nombre, s.apodo, s.numero].join(' ').toLowerCase().includes(q))
+    .sort((a, b) => { const x = a[k] ?? '', y = b[k] ?? ''; return (typeof x === 'number' || k === 'numero' || k === 'compromiso' || k === 'invitados' ? (+x || 1e9) - (+y || 1e9) : String(x).localeCompare(String(y), 'es')) * dir; });
+  $('#s-filas').innerHTML = filas.map(s => `<tr class="${s.numero ? '' : 'pend'}"><td class="num">${s.numero ?? 'pendiente'}</td><td>${esc(s.nombre)}</td><td><a href="mailto:${esc(s.correo)}" style="color:inherit">${esc(s.correo)}</a></td><td>${esc(s.comuna_nombre)}</td><td>${esc(s.apodo || '—')}</td><td class="num">${esc((s.creado || '').slice(0, 10))}</td><td class="num">${pesos(s.compromiso)}</td><td class="num">${s.invitados || ''}</td></tr>`).join('')
+    || '<tr><td colspan="8" style="color:var(--niebla)">' + (SOCIOS.length ? 'Nadie coincide con la búsqueda.' : 'Aún no hay inscritos.') + '</td></tr>';
+}
+$('#s-buscar').oninput = pintarSocios;
+$('#s-recargar').onclick = cargarSocios;
+document.querySelectorAll('.tabla th').forEach(th => th.onclick = () => { ORDEN = [th.dataset.k, ORDEN[0] === th.dataset.k ? -ORDEN[1] : 1]; pintarSocios(); });
+$('#s-csv').href = 'api/socios.php?csv=1&m=' + encodeURIComponent(m || '');
+let sociosListos = false;
 $('#recargar').onclick = cargar;
 $('#limpiar').onclick = () => accion('limpiar_palabra');
 $('#f-vot').onsubmit = e => { e.preventDefault(); accion('abrir_votacion', { pregunta: $('#v-preg').value, opciones: $('#v-ops').value.split('\n') }); };

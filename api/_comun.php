@@ -50,6 +50,11 @@ function migrar(PDO $db): void {
     $db->exec('CREATE TABLE IF NOT EXISTS votos (votacion_id INTEGER, socio_id INTEGER, opcion INTEGER, creado INTEGER, PRIMARY KEY (votacion_id, socio_id))');
     $db->exec('CREATE TABLE IF NOT EXISTS moderadores (id INTEGER PRIMARY KEY, nombre TEXT NOT NULL, token TEXT NOT NULL UNIQUE, correo TEXT, creado TEXT)');
     $db->exec('CREATE TABLE IF NOT EXISTS bitacora (id INTEGER PRIMARY KEY, moderador TEXT, accion TEXT, detalle TEXT, creado INTEGER)');
+    // administrador: el único que ve la lista de socios con nombre y correo (por defecto, Gonzalo)
+    if (!in_array('admin', array_column($db->query('PRAGMA table_info(moderadores)')->fetchAll(), 'name'), true)) {
+        $db->exec('ALTER TABLE moderadores ADD COLUMN admin INTEGER NOT NULL DEFAULT 0');
+        $db->exec("UPDATE moderadores SET admin = 1 WHERE nombre = 'Gonzalo'");
+    }
 }
 
 function responder($datos, int $estado = 200): void {

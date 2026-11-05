@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     $bit = $db->query('SELECT * FROM bitacora ORDER BY id DESC LIMIT 40')->fetchAll();
     $suspendidos = $db->query('SELECT numero, apodo, comuna FROM socios WHERE suspendido = 1')->fetchAll();
-    responder(['ok' => true, 'moderador' => $mod['nombre'], 'asamblea' => asamblea(), 'mensajes' => $msj, 'palabra' => $palabra,
+    responder(['ok' => true, 'moderador' => $mod['nombre'], 'admin' => (int)($mod['admin'] ?? 0) === 1, 'asamblea' => asamblea(), 'mensajes' => $msj, 'palabra' => $palabra,
                'votaciones' => $vot, 'bitacora' => $bit, 'suspendidos' => $suspendidos,
                'presentes' => (int)$db->query('SELECT COUNT(*) FROM socios WHERE visto > ' . ($ahora - 45))->fetchColumn()]);
 }
