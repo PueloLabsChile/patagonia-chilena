@@ -141,3 +141,22 @@ em{font-style:italic;background:linear-gradient(95deg,#c3c9ff 0%,#8fe9dd 55%,#ff
 .tarjeta-in,.h-tarjeta,.fondo-panel,.formulario,.paso,.desb,.etapa,.reglas div,.principios li{border-color:transparent!important;
   background:var(--vidrio) padding-box,linear-gradient(160deg,rgba(255,255,255,.22),rgba(255,255,255,.03) 40%,rgba(255,255,255,0) 60%,rgba(255,170,160,.14)) border-box!important}
 .velo{background:linear-gradient(90deg,rgba(4,5,7,.9) 0%,rgba(4,5,7,.5) 40%,rgba(4,5,7,.08) 70%),linear-gradient(0deg,rgba(4,5,7,1) 0%,rgba(4,5,7,0) 36%),linear-gradient(180deg,rgba(4,5,7,.8) 0%,rgba(4,5,7,0) 22%),radial-gradient(ellipse 60% 50% at 75% 40%,rgba(176,124,255,.10),transparent 70%)!important}
+
+/* ---------- v5.2 · más negro: la luz apenas se asoma ---------- */
+:root{--vidrio:linear-gradient(155deg,rgba(255,255,255,.035),rgba(0,0,0,.35) 45%,rgba(0,0,0,.55));--borde-vidrio:rgba(255,255,255,.05)}
+html,body,.cielo{background:#030304!important}
+.aurora{filter:blur(170px)!important}
+.aurora.a1{opacity:.16!important}.aurora.a2{opacity:.10!important}.aurora.a3{opacity:.13!important}.aurora.a4{opacity:.07!important}
+.cielo::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 85% 70% at 50% 45%,rgba(3,3,4,0) 0%,rgba(3,3,4,.55) 70%,rgba(3,3,4,.92) 100%)}
+.cielo .estrellas{opacity:.75}
+.tarjeta-in,.h-tarjeta,.formulario,.estado-form,.contador,.principios li,.fondo-panel,.modal-caja,.etapa,.reglas div,.convocatoria,.votacion,.paso,.desb,.chat,.sala-pie,.h-leyenda,.mi-asiento,.pestanas{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 40px 100px -40px rgba(0,0,0,1),0 0 70px -45px rgba(203,184,255,.14)!important}
+.tarjeta-in,.h-tarjeta,.fondo-panel,.formulario,.paso,.desb,.etapa,.reglas div,.principios li{
+  background:var(--vidrio) padding-box,linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.02) 40%,rgba(255,255,255,0) 65%,rgba(255,170,160,.08)) border-box!important}
+.paso.activo,.desb.abierto{background:linear-gradient(155deg,rgba(203,184,255,.12),rgba(0,0,0,.45) 55%,rgba(255,122,107,.08))!important}
+.velo{background:linear-gradient(90deg,rgba(3,3,4,.94) 0%,rgba(3,3,4,.62) 42%,rgba(3,3,4,.22) 72%),linear-gradient(0deg,rgba(3,3,4,1) 0%,rgba(3,3,4,0) 40%),linear-gradient(180deg,rgba(3,3,4,.85) 0%,rgba(3,3,4,0) 24%),radial-gradient(ellipse 120% 90% at 70% 50%,rgba(3,3,4,0) 40%,rgba(3,3,4,.6) 100%)!important}
+.h-velo{background:linear-gradient(90deg,rgba(3,3,4,.9) 0%,rgba(3,3,4,.35) 45%,rgba(3,3,4,.1) 65%),linear-gradient(0deg,rgba(3,3,4,1) 0%,rgba(3,3,4,0) 30%),linear-gradient(180deg,rgba(3,3,4,.9) 0%,rgba(3,3,4,0) 20%),radial-gradient(ellipse 110% 90% at 65% 50%,rgba(3,3,4,0) 45%,rgba(3,3,4,.65) 100%)!important}
+.bloque::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(180deg,rgba(3,3,4,.7),rgba(3,3,4,.25) 20%,rgba(3,3,4,.25) 80%,rgba(3,3,4,.7))}
+.contador-cifra span,.fondo-cifra>b,.cuenta b,.cuenta-mini b{text-shadow:0 0 30px rgba(203,184,255,.3)!important}
+.barra.solida{background:rgba(3,3,4,.62)!important}

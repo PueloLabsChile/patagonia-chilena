@@ -153,7 +153,7 @@ const ESTILO = {
   sky: { 'sky-color': '#121218', 'horizon-color': '#d0c8e6', 'fog-color': '#060608', 'sky-horizon-blend': .55, 'horizon-fog-blend': .65, 'fog-ground-blend': .55, 'atmosphere-blend': .8 },
   layers: [
     { id: 'fondo', type: 'background', paint: { 'background-color': '#07080c' } },
-    { id: 'satelite', type: 'raster', source: 'satelite', paint: { 'raster-saturation': -.62, 'raster-contrast': .05, 'raster-brightness-max': .8, 'raster-hue-rotate': 18 } },
+    { id: 'satelite', type: 'raster', source: 'satelite', paint: { 'raster-saturation': -.7, 'raster-contrast': .08, 'raster-brightness-max': .62, 'raster-hue-rotate': 18 } },
   ],
 };
 
