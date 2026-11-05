@@ -10,6 +10,11 @@ function db(): PDO {
     static $pdo = null;
     if ($pdo) return $pdo;
     $ruta = cfg('db');
+    // la base de inscritos jamás debe quedar dentro de una carpeta pública
+    if (!cfg('dev') && preg_match('~/(public_html|www|htdocs)(/|$)~', str_replace('\', '/', $ruta))) {
+        http_response_code(500); header('Content-Type: text/plain; charset=utf-8');
+        exit('Configuración insegura: la base de datos quedaría dentro de una carpeta pública. Ajusta «db» en api/config.php.');
+    }
     if (!is_dir(dirname($ruta))) mkdir(dirname($ruta), 0750, true);
     $pdo = new PDO('sqlite:' . $ruta, null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
     $pdo->exec('PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000; PRAGMA synchronous=NORMAL;');

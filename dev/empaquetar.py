@@ -2,7 +2,7 @@
 # Incluye config.php de producción (con sal aleatoria) y un instalador de un solo uso con nombre y clave aleatorios.
 # Los secretos quedan solo en dist/ (ignorado por git).
 #   python dev/empaquetar.py [dominio] [moderadores separados por coma]
-import json, os, secrets, sys, zipfile, pathlib
+import json, os, secrets, sys, time, zipfile, pathlib
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 DOMINIO = sys.argv[1] if len(sys.argv) > 1 else 'patagoniadechile.cl'
@@ -42,6 +42,11 @@ return [
 inst = (RAIZ / 'dev' / 'instalar-plantilla.php').read_text(encoding='utf8')
 inst = inst.replace('__CLAVE__', clave).replace('__NOMBRE__', nombre_inst).replace('__MODERADORES__', json.dumps(MODS, ensure_ascii=False))
 
+def meter(z, nombre, datos):
+    # permisos 644 y fecha actual: sin fecha, cPanel deja mtime 1980 y el servidor responde 304 con versiones viejas
+    zi = zipfile.ZipInfo(nombre, date_time=time.localtime()[:6]); zi.external_attr = 0o644 << 16; zi.compress_type = zipfile.ZIP_DEFLATED
+    z.writestr(zi, datos)
+
 zip_ruta = DIST / f'{DOMINIO.split(".")[0]}-cpanel.zip'
 n = 0
 with zipfile.ZipFile(zip_ruta, 'w', zipfile.ZIP_DEFLATED) as z:
@@ -51,8 +56,8 @@ with zipfile.ZipFile(zip_ruta, 'w', zipfile.ZIP_DEFLATED) as z:
         for f in archivos:
             rel = f.relative_to(RAIZ).as_posix()
             if rel in EXCLUIR or '__pycache__' in rel: continue
-            z.write(f, rel); n += 1
-    z.writestr('api/config.php', config); z.writestr(nombre_inst, inst); n += 2
+            meter(z, rel, f.read_bytes()); n += 1
+    meter(z, 'api/config.php', config.encode('utf8')); meter(z, nombre_inst, inst.encode('utf8')); n += 2
 
 url = f'https://{DOMINIO}/{nombre_inst}?clave={clave}'
 (DIST / 'SECRETO-instalacion.txt').write_text(
