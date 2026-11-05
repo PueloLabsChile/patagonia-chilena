@@ -2,7 +2,7 @@
 // Cada hito cambia el estado de piezas del territorio (CShapes 2.0 + esquemas de los tratados).
 // Las fronteras ganadas se «dibujan» con un trazo de luz; las perdidas se apagan con un destello.
 const $ = s => document.querySelector(s);
-const COLOR_TIPO = { frontera: '#c6d6ee', tierra: '#e9c46a' };
+const COLOR_TIPO = { frontera: '#d9d3ec', tierra: '#e9c46a' };
 const sinMovimiento = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esCel = () => innerWidth < 760;
 
@@ -56,16 +56,16 @@ export async function iniciarHistoria() {
           sat: { type: 'raster', tileSize: 256, maxzoom: 15, tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'] },
           relieve: { type: 'raster-dem', encoding: 'terrarium', tileSize: 256, maxzoom: 12, tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'] },
         },
-        sky: { 'sky-color': '#071a45', 'horizon-color': '#4a6597', 'fog-color': '#06153a', 'sky-horizon-blend': .5, 'horizon-fog-blend': .7, 'fog-ground-blend': .6, 'atmosphere-blend': .7 },
+        sky: { 'sky-color': '#07080c', 'horizon-color': '#6a5a8a', 'fog-color': '#060709', 'sky-horizon-blend': .5, 'horizon-fog-blend': .7, 'fog-ground-blend': .6, 'atmosphere-blend': .7 },
         layers: [
-          { id: 'fondo', type: 'background', paint: { 'background-color': '#06153a' } },
+          { id: 'fondo', type: 'background', paint: { 'background-color': '#060709' } },
           { id: 'sat', type: 'raster', source: 'sat', paint: { 'raster-saturation': -.9, 'raster-brightness-max': .36, 'raster-contrast': .12 } },
         ],
       },
     });
     mapa.on('load', () => {
       if (!esCel()) mapa.setTerrain({ source: 'relieve', exaggeration: 1.6 });
-      mapa.addImage('t-admin', trama('rgba(198,214,238,.55)', 'rgba(47,95,184,.18)', 2, 8));
+      mapa.addImage('t-admin', trama('rgba(217,211,236,.55)', 'rgba(138,116,216,.18)', 2, 8));
       mapa.addImage('t-reclamo', trama('rgba(248,246,240,.35)', null, 1.4, 7));
       mapa.addImage('t-mapuche', trama('rgba(233,196,106,.6)', 'rgba(212,169,67,.12)', 2.2, 9));
       mapa.addImage('t-realista', trama('rgba(239,120,110,.55)', 'rgba(213,43,30,.1)', 2, 8));
@@ -73,7 +73,7 @@ export async function iniciarHistoria() {
       mapa.addSource('bordes', { type: 'geojson', data: 'datos/historia-bordes.geojson', lineMetrics: true });
       const est = ['coalesce', ['feature-state', 'e'], 'no'];
       const T = { duration: 1100 };
-      mapa.addLayer({ id: 'p-solido', type: 'fill', source: 'piezas', paint: { 'fill-color': '#8f9bff', 'fill-opacity': ['match', est, 'solido', .42, 'originario', 0, 0], 'fill-opacity-transition': T } });
+      mapa.addLayer({ id: 'p-solido', type: 'fill', source: 'piezas', paint: { 'fill-color': '#b89cff', 'fill-opacity': ['match', est, 'solido', .42, 'originario', 0, 0], 'fill-opacity-transition': T } });
       mapa.addLayer({ id: 'p-origen', type: 'fill', source: 'piezas', paint: { 'fill-color': '#d4a943', 'fill-opacity': ['match', est, 'originario', .38, 0], 'fill-opacity-transition': T } });
       mapa.addLayer({ id: 'p-admin', type: 'fill', source: 'piezas', filter: ['==', ['get', 'id'], '__'], paint: { 'fill-pattern': 't-admin', 'fill-opacity': .95 } });
       mapa.addLayer({ id: 'p-reclamo', type: 'fill', source: 'piezas', filter: ['==', ['get', 'id'], '__'], paint: { 'fill-pattern': 't-reclamo', 'fill-opacity': .8 } });
@@ -81,7 +81,7 @@ export async function iniciarHistoria() {
       mapa.addLayer({ id: 'p-realista', type: 'fill', source: 'piezas', filter: ['==', ['get', 'id'], '__'], paint: { 'fill-pattern': 't-realista', 'fill-opacity': .95 } });
       mapa.addLayer({ id: 'p-destello', type: 'fill', source: 'piezas', paint: { 'fill-color': ['match', ['coalesce', ['feature-state', 'f'], 'no'], 'perdido', '#ff5a4a', 'tierra', '#e9c46a', '#ffffff'], 'fill-opacity': ['match', ['coalesce', ['feature-state', 'f'], 'no'], 'no', 0, .55], 'fill-opacity-transition': { duration: 1600 } } });
       // bordes: halo + línea fina, según estado
-      const colBorde = ['match', est, 'solido', '#dfe8f7', 'administrado', '#c6d6ee', 'reclamado', 'rgba(248,246,240,.6)', 'mapuche', '#e9c46a', 'originario', '#e9c46a', 'realista', '#ef786e', 'ajeno', 'rgba(248,246,240,.45)', 'rgba(0,0,0,0)'];
+      const colBorde = ['match', est, 'solido', '#dfe8f7', 'administrado', '#d9d3ec', 'reclamado', 'rgba(248,246,240,.6)', 'mapuche', '#e9c46a', 'originario', '#e9c46a', 'realista', '#ef786e', 'ajeno', 'rgba(248,246,240,.45)', 'rgba(0,0,0,0)'];
       mapa.addLayer({ id: 'b-halo', type: 'line', source: 'piezas', paint: { 'line-color': colBorde, 'line-width': ['match', est, 'solido', 7, 0], 'line-blur': 6, 'line-opacity': .45 } });
       mapa.addLayer({ id: 'b-linea', type: 'line', source: 'piezas', paint: { 'line-color': colBorde, 'line-width': ['match', est, 'solido', 1.4, 'ajeno', 1, 1.1], 'line-dasharray': [1, 0] } });
       mapa.addLayer({ id: 'b-ajeno', type: 'line', source: 'piezas', filter: ['==', ['get', 'id'], '__'], paint: { 'line-color': 'rgba(248,246,240,.55)', 'line-width': 1.2, 'line-dasharray': [2, 2] } });

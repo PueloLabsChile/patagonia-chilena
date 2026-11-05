@@ -278,7 +278,7 @@ function agregar(m) {
   const li = document.createElement('li');
   if (yo && m.n === yo.numero) li.className = 'mio';
   const hora = new Date(m.t * 1000).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
-  li.innerHTML = `<div class="m-cab"><span class="m-apodo" style="--c:${COLOR_REGION[m.r] || '#c6d6ee'}">${esc(m.a || 'Socio')}</span><span class="m-meta">n.º ${fmt(m.n)} · ${esc(comunas.get(m.c) || '')} · ${hora}</span></div><p class="m-txt">${esc(m.x)}</p>${yo && m.n !== yo.numero ? `<button class="m-denunciar" data-id="${m.id}" title="Denunciar este mensaje">denunciar</button>` : ''}`;
+  li.innerHTML = `<div class="m-cab"><span class="m-apodo" style="--c:${COLOR_REGION[m.r] || '#d9d3ec'}">${esc(m.a || 'Socio')}</span><span class="m-meta">n.º ${fmt(m.n)} · ${esc(comunas.get(m.c) || '')} · ${hora}</span></div><p class="m-txt">${esc(m.x)}</p>${yo && m.n !== yo.numero ? `<button class="m-denunciar" data-id="${m.id}" title="Denunciar este mensaje">denunciar</button>` : ''}`;
   lista.append(li); visibles.set(m.id, li);
   while (lista.children.length > 150) { const f = lista.firstElementChild; f.remove(); }
   if (abajo) lista.scrollTop = lista.scrollHeight;

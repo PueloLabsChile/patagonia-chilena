@@ -150,10 +150,10 @@ const ESTILO = {
     satelite: { type: 'raster', tileSize: 256, maxzoom: 17, tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'], attribution: 'Imagen © Esri, Maxar, Earthstar Geographics' },
     relieve: { type: 'raster-dem', encoding: 'terrarium', tileSize: 256, maxzoom: 13, tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], attribution: 'Relieve: Terrain Tiles (AWS, Mapzen)' },
   },
-  sky: { 'sky-color': '#0c2a66', 'horizon-color': '#b9c9e6', 'fog-color': '#071a45', 'sky-horizon-blend': .55, 'horizon-fog-blend': .65, 'fog-ground-blend': .55, 'atmosphere-blend': .8 },
+  sky: { 'sky-color': '#121218', 'horizon-color': '#d0c8e6', 'fog-color': '#060608', 'sky-horizon-blend': .55, 'horizon-fog-blend': .65, 'fog-ground-blend': .55, 'atmosphere-blend': .8 },
   layers: [
-    { id: 'fondo', type: 'background', paint: { 'background-color': '#071a45' } },
-    { id: 'satelite', type: 'raster', source: 'satelite', paint: { 'raster-saturation': -.25, 'raster-contrast': .08, 'raster-brightness-max': .92 } },
+    { id: 'fondo', type: 'background', paint: { 'background-color': '#07080c' } },
+    { id: 'satelite', type: 'raster', source: 'satelite', paint: { 'raster-saturation': -.62, 'raster-contrast': .05, 'raster-brightness-max': .8, 'raster-hue-rotate': 18 } },
   ],
 };
 
@@ -174,9 +174,9 @@ function crearMapa() {
     ];
     for (const [id, url] of capas) mapa.addSource(id, { type: 'geojson', data: url });
     const T = { duration: 900 };
-    mapa.addLayer({ id: 'regiones-tinte', type: 'fill', source: 'regiones', paint: { 'fill-color': ['match', ['get', 'cod'], 11, '#c6d6ee', '#e9c46a'], 'fill-opacity': 0, 'fill-opacity-transition': T } });
+    mapa.addLayer({ id: 'regiones-tinte', type: 'fill', source: 'regiones', paint: { 'fill-color': ['match', ['get', 'cod'], 11, '#d9d3ec', '#e9c46a'], 'fill-opacity': 0, 'fill-opacity-transition': T } });
     mapa.addLayer({ id: 'glaciares-relleno', type: 'fill', source: 'glaciares', paint: { 'fill-color': '#dff6ff', 'fill-opacity': 0, 'fill-opacity-transition': T } });
-    mapa.addLayer({ id: 'glaciares-borde', type: 'line', source: 'glaciares', paint: { 'line-color': '#c6d6ee', 'line-width': 1, 'line-opacity': 0, 'line-opacity-transition': T } });
+    mapa.addLayer({ id: 'glaciares-borde', type: 'line', source: 'glaciares', paint: { 'line-color': '#d9d3ec', 'line-width': 1, 'line-opacity': 0, 'line-opacity-transition': T } });
     const colorArea = ['match', ['get', 'tipo'], 'Parque nacional', '#5fae8b', '#d4a943'];
     mapa.addLayer({ id: 'areas-relleno', type: 'fill', source: 'areas', paint: { 'fill-color': colorArea, 'fill-opacity': 0, 'fill-opacity-transition': T } });
     mapa.addLayer({ id: 'areas-borde', type: 'line', source: 'areas', paint: { 'line-color': colorArea, 'line-width': 1.4, 'line-opacity': 0, 'line-opacity-transition': T } });
@@ -244,7 +244,7 @@ addEventListener('resize', () => capActual && irA(capActual, true));
 /* ------------------------------------------------------------------ mapa de inscritos: regiones que se encienden y arcos hacia el sur */
 let mapaChile, chileListo = false, pasoArco = 0;
 const DESTINO = [-73.2, -49.2];
-const ESCALA = ['#141625', '#272b52', '#4b53a8', '#8f9bff', '#7fe0d4', '#fff1d6'];
+const ESCALA = ['#141625', '#272b52', '#4b53a8', '#b89cff', '#7fe0d4', '#fff1d6'];
 function centroRegion(r) {
   let sx = 0, sy = 0, sp = 0;
   for (const c of datos.comunas || []) if (c.r === r && c.p) { sx += c.x * c.p; sy += c.y * c.p; sp += c.p; }
@@ -269,12 +269,12 @@ function crearMapaChile() {
     mapaChile.addSource('focos', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
     const k = ['coalesce', ['feature-state', 'k'], 0];
     mapaChile.addLayer({ id: 'reg', type: 'fill', source: 'regiones', paint: { 'fill-color': ['interpolate', ['linear'], k, 0, ESCALA[0], .15, ESCALA[1], .35, ESCALA[2], .6, ESCALA[3], .85, ESCALA[4], 1, ESCALA[5]], 'fill-opacity': .92 } });
-    mapaChile.addLayer({ id: 'reg-halo', type: 'line', source: 'regiones', paint: { 'line-color': ['interpolate', ['linear'], k, 0, 'rgba(198,214,238,0)', 1, 'rgba(255,241,204,.7)'], 'line-width': 6, 'line-blur': 6 } });
-    mapaChile.addLayer({ id: 'reg-b', type: 'line', source: 'regiones', paint: { 'line-color': '#071a45', 'line-width': .8 } });
+    mapaChile.addLayer({ id: 'reg-halo', type: 'line', source: 'regiones', paint: { 'line-color': ['interpolate', ['linear'], k, 0, 'rgba(217,211,236,0)', 1, 'rgba(255,241,204,.7)'], 'line-width': 6, 'line-blur': 6 } });
+    mapaChile.addLayer({ id: 'reg-b', type: 'line', source: 'regiones', paint: { 'line-color': '#07080c', 'line-width': .8 } });
     mapaChile.addLayer({ id: 'arcos-base', type: 'line', source: 'arcos', layout: { 'line-cap': 'round' }, paint: { 'line-color': '#e9c46a', 'line-opacity': .18, 'line-width': ['get', 'w'] } });
     mapaChile.addLayer({ id: 'arcos-flujo', type: 'line', source: 'arcos', layout: { 'line-cap': 'round' }, paint: { 'line-color': '#fff1cc', 'line-opacity': .85, 'line-width': ['get', 'w'], 'line-dasharray': SECUENCIA[0] } });
     mapaChile.addLayer({ id: 'focos', type: 'circle', source: 'focos', paint: { 'circle-radius': ['get', 'r'], 'circle-color': '#fff1cc', 'circle-blur': .8, 'circle-opacity': .55 } });
-    mapaChile.addLayer({ id: 'destino', type: 'circle', source: { type: 'geojson', data: { type: 'Point', coordinates: DESTINO } }, paint: { 'circle-radius': 14, 'circle-color': '#c6d6ee', 'circle-blur': 1, 'circle-opacity': .8 } });
+    mapaChile.addLayer({ id: 'destino', type: 'circle', source: { type: 'geojson', data: { type: 'Point', coordinates: DESTINO } }, paint: { 'circle-radius': 14, 'circle-color': '#d9d3ec', 'circle-blur': 1, 'circle-opacity': .8 } });
     const pop = new maplibregl.Popup({ closeButton: false, closeOnClick: false, className: 'pop-chile' });
     mapaChile.on('mousemove', 'reg', e => {
       const r = e.features[0].properties.cod, f = filasRegiones().find(x => x.r === r);
@@ -313,7 +313,7 @@ function pintarMini() {
   const cel = W < 760, R = cel ? W * .62 : Math.min(W * .5, H * .95), cx = cel ? W / 2 : W * .7, cy = cel ? H * .52 : H * .93;
   miniOcup = ocupar(SALA, porRegionDesde(estad.comunas));
   const t = Math.max(1.1, SALA.paso * R * .62);
-  g.fillStyle = 'rgba(198,214,238,.13)';
+  g.fillStyle = 'rgba(217,211,236,.13)';
   for (let i = 0; i < SALA.n; i++) if (!miniOcup[i]) g.fillRect(cx + SALA.x[i] * R - t / 2, cy - SALA.y[i] * R - t / 2, t, t);
   g.shadowBlur = 6;
   for (const r of ORDEN_REGIONES) {
@@ -475,7 +475,7 @@ async function bienvenida(token) {
 
 async function dibujarTarjeta(cv, { numero, comuna, nombre, compromiso }) {
   try { await Promise.all(['400 120px "Instrument Serif"', 'italic 400 80px "Instrument Serif"', '600 30px Geist', '500 26px "Geist Mono"'].map(f => document.fonts.load(f))); } catch { }
-  const g = cv.getContext('2d'), W = cv.width, H = cv.height, AZUL = '#0039a6', ROJO = '#d52b1e', NIEVE = '#f8f6f0', ORO = '#f5c98a';
+  const g = cv.getContext('2d'), W = cv.width, H = cv.height, AZUL = '#6f5bd6', ROJO = '#d52b1e', NIEVE = '#f8f6f0', ORO = '#f5c98a';
   // fondo azul turquí
   g.fillStyle = '#050609'; g.fillRect(0, 0, W, H);
   for (const [x, y, r, c] of [[W * .1, H * .12, 620, '123,134,255'], [W * .95, H * .45, 560, '79,216,198'], [W * .35, H * 1.02, 600, '255,107,107'], [W * .7, H * .05, 380, '255,255,255']]) {
@@ -483,7 +483,7 @@ async function dibujarTarjeta(cv, { numero, comuna, nombre, compromiso }) {
     g.fillStyle = rg; g.fillRect(0, 0, W, H);
   }
   // trama de seguridad tipo billete (guilloché)
-  g.save(); g.globalAlpha = .13; g.strokeStyle = '#c6d6ee'; g.lineWidth = 1;
+  g.save(); g.globalAlpha = .13; g.strokeStyle = '#d9d3ec'; g.lineWidth = 1;
   for (let k = 0; k < 46; k++) {
     g.beginPath();
     for (let x = 0; x <= W; x += 6) { const y = 230 + k * 24 + Math.sin(x / 70 + k * .35) * 14 + Math.sin(x / 23 + k) * 4; x ? g.lineTo(x, y) : g.moveTo(x, y); }
@@ -509,19 +509,19 @@ async function dibujarTarjeta(cv, { numero, comuna, nombre, compromiso }) {
       const polys = ft.geometry.type === 'Polygon' ? [ft.geometry.coordinates] : ft.geometry.coordinates;
       g.beginPath();
       for (const pol of polys) for (const an of pol) an.forEach((c, i) => { const [x, y] = P(c); i ? g.lineTo(x, y) : g.moveTo(x, y); });
-      g.fillStyle = 'rgba(198,214,238,.10)'; g.fill('evenodd'); g.strokeStyle = 'rgba(248,246,240,.35)'; g.lineWidth = 1.1; g.stroke();
+      g.fillStyle = 'rgba(217,211,236,.10)'; g.fill('evenodd'); g.strokeStyle = 'rgba(248,246,240,.35)'; g.lineWidth = 1.1; g.stroke();
     }
     g.restore();
   } catch { }
   const vel = g.createLinearGradient(0, 0, W * .8, 0); vel.addColorStop(0, 'rgba(5,6,9,.75)'); vel.addColorStop(1, 'rgba(5,6,9,0)');
   g.fillStyle = vel; g.fillRect(0, 0, W, H);
   // bandera arriba
-  const franja = g.createLinearGradient(0, 0, W, 0); franja.addColorStop(0, 'rgba(169,178,255,.9)'); franja.addColorStop(.5, 'rgba(238,243,255,.9)'); franja.addColorStop(1, 'rgba(255,122,107,.9)');
+  const franja = g.createLinearGradient(0, 0, W, 0); franja.addColorStop(0, 'rgba(203,184,255,.9)'); franja.addColorStop(.5, 'rgba(238,243,255,.9)'); franja.addColorStop(1, 'rgba(255,122,107,.9)');
   g.fillStyle = franja; g.fillRect(0, 0, W, 10);
   g.save(); g.shadowColor = '#fff'; g.shadowBlur = 30; estrella(g, W - 110, 120, 26, '#ffffff'); g.restore();
   // encabezado
   const M = 86;
-  g.fillStyle = '#a9b2ff'; g.font = '500 25px "Geist Mono"'; g.fillText('MOVIMIENTO CIUDADANO · PATAGONIA CHILENA', M, 150);
+  g.fillStyle = '#cbb8ff'; g.font = '500 25px "Geist Mono"'; g.fillText('MOVIMIENTO CIUDADANO · PATAGONIA CHILENA', M, 150);
   g.fillStyle = NIEVE; g.font = '400 64px "Instrument Serif"'; g.fillText('Socio fundador', M, 236);
   g.fillStyle = ORO; g.font = '500 24px "Geist Mono"'; g.fillText('N.º DE SERIE  PAT-2026-' + String(numero).padStart(6, '0'), M, 286);
   // número

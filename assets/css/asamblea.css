@@ -1,10 +1,10 @@
 /* La Asamblea · sala + chat */
-.pagina-asamblea{background:#051234}
-.sala{display:grid;grid-template-columns:minmax(0,1fr) 400px;grid-template-rows:minmax(0,1fr) auto;height:100vh;height:100svh;min-height:640px;padding-top:var(--barra-alto);background:radial-gradient(ellipse 70% 60% at 45% 70%,#0d2a66 0%,#051234 70%)}
+.pagina-asamblea{background:#050608}
+.sala{display:grid;grid-template-columns:minmax(0,1fr) 400px;grid-template-rows:minmax(0,1fr) auto;height:100vh;height:100svh;min-height:640px;padding-top:var(--barra-alto);background:radial-gradient(ellipse 70% 60% at 45% 70%,#101017 0%,#050608 70%)}
 .sala-escena{position:relative;grid-column:1;grid-row:1;overflow:hidden;min-height:0}
 #sala{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
 #sala:active{cursor:grabbing}
-.sala-velo{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(5,18,52,.9) 0%,rgba(5,18,52,.35) 32%,rgba(5,18,52,0) 52%)}
+.sala-velo{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(5,6,9,.9) 0%,rgba(5,6,9,.35) 32%,rgba(5,6,9,0) 52%)}
 .sala-panel{position:absolute;left:clamp(16px,3.5vw,56px);top:24px;max-width:400px;z-index:2}
 .sala-panel h1{font-size:clamp(52px,6vw,84px);line-height:.95;margin:0 0 14px}
 .sala-bajada{color:rgba(248,246,240,.8);margin:0 0 20px;font-size:15.5px}
@@ -19,14 +19,14 @@
 .sala-cifras div:first-child b{color:#9ff0c4}
 .sala-acciones{display:flex;flex-wrap:wrap;gap:10px}
 .aviso-pronto.vivo{background:rgba(213,43,30,.85);color:#fff;border-color:#ff6b5f}
-.mi-asiento{position:absolute;z-index:3;pointer-events:none;transform:translate(-50%,calc(-100% - 22px));background:rgba(5,18,52,.9);border:1px solid var(--estepa-2);border-radius:12px;padding:9px 13px;text-align:center;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.mi-asiento{position:absolute;z-index:3;pointer-events:none;transform:translate(-50%,calc(-100% - 22px));background:rgba(5,6,9,.9);border:1px solid var(--estepa-2);border-radius:12px;padding:9px 13px;text-align:center;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.6)}
 .mi-asiento::after{content:"";position:absolute;left:50%;bottom:-7px;width:12px;height:12px;background:inherit;border:inherit;border-width:0 1px 1px 0;transform:translateX(-50%) rotate(45deg)}
 .mi-asiento-n{display:block;font:400 21px/1.1 var(--serif);color:var(--estepa-2)}
 .mi-asiento span:last-child{font:400 11.5px/1.4 var(--mono);color:var(--niebla)}
-.sala-tip{position:absolute;z-index:4;pointer-events:none;background:#0c2560;border:1px solid rgba(198,214,238,.25);border-radius:10px;padding:9px 12px;font:14px/1.4 var(--sans);transform:translate(14px,14px);white-space:nowrap}
+.sala-tip{position:absolute;z-index:4;pointer-events:none;background:#0e0e15;border:1px solid rgba(217,211,236,.25);border-radius:10px;padding:9px 12px;font:14px/1.4 var(--sans);transform:translate(14px,14px);white-space:nowrap}
 .sala-tip b{display:block}
 /* pie de la sala: leyenda y vistas, fuera del gráfico */
-.sala-pie{grid-column:1;grid-row:2;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px clamp(16px,3.5vw,56px) 16px;border-top:1px solid rgba(248,246,240,.07);background:rgba(5,18,52,.6)}
+.sala-pie{grid-column:1;grid-row:2;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px clamp(16px,3.5vw,56px) 16px;border-top:1px solid rgba(248,246,240,.07);background:rgba(5,6,9,.6)}
 .sala-leyenda{display:flex;gap:3px;align-items:flex-end;flex:1;max-width:760px}
 .sala-leyenda div{flex:1;text-align:center;font:400 9.5px/1.2 var(--mono);color:var(--niebla);min-width:0}
 .sala-leyenda div i{display:block;height:6px;border-radius:3px;background:var(--c);margin-bottom:6px;opacity:.35;transition:opacity .3s}
@@ -37,7 +37,7 @@
 .sala-vistas button[aria-pressed="true"]{background:var(--hielo);color:var(--tinta)}
 .sala-vistas button:focus-visible{outline:2px solid var(--hielo-2)}
 /* votación */
-.votacion{position:absolute;right:20px;top:20px;z-index:3;width:min(360px,calc(100% - 40px));padding:18px;border-radius:16px;background:rgba(5,18,52,.88);border:1px solid rgba(248,246,240,.16);backdrop-filter:blur(12px);box-shadow:var(--sombra)}
+.votacion{position:absolute;right:20px;top:20px;z-index:3;width:min(360px,calc(100% - 40px));padding:18px;border-radius:16px;background:rgba(5,6,9,.88);border:1px solid rgba(248,246,240,.16);backdrop-filter:blur(12px);box-shadow:var(--sombra)}
 .votacion-tipo{margin:0 0 8px;font:500 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--estepa-2)}
 .votacion h3{font-size:24px;margin:0 0 14px}
 .v-opciones{display:grid;gap:8px}
@@ -49,7 +49,7 @@
 .v-op:disabled{cursor:default}
 .v-nota{margin:10px 0 0;font:400 11.5px/1.4 var(--mono);color:var(--niebla)}
 /* chat */
-.chat{grid-column:2;grid-row:1/3;display:flex;flex-direction:column;min-height:0;border-left:1px solid rgba(248,246,240,.08);background:#071a45}
+.chat{grid-column:2;grid-row:1/3;display:flex;flex-direction:column;min-height:0;border-left:1px solid rgba(248,246,240,.08);background:#07080c}
 .video{aspect-ratio:16/9;background:#000;flex:none}
 .video iframe{width:100%;height:100%;border:0;display:block}
 .chat-cab{padding:14px 16px 10px;border-bottom:1px solid rgba(248,246,240,.07)}
@@ -104,7 +104,7 @@
 }
 
 /* Participar */
-.participar{padding:clamp(80px,10vw,130px) clamp(16px,6vw,96px);background:linear-gradient(180deg,#051234,#0b2257)}
+.participar{padding:clamp(80px,10vw,130px) clamp(16px,6vw,96px);background:linear-gradient(180deg,#050608,#0c0d12)}
 .reglas{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
 @media (max-width:1000px){.reglas{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.reglas{grid-template-columns:1fr}}
@@ -118,7 +118,7 @@
 @media (max-width:560px){.etapas{grid-template-columns:1fr}}
 .etapa{padding:24px;border-radius:var(--radio);background:rgba(248,246,240,.04);border:1px solid rgba(248,246,240,.1);display:flex;flex-direction:column}
 .etapa-cab{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.etapa-ico{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:rgba(198,214,238,.1);font-size:19px;color:var(--hielo-2)}
+.etapa-ico{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:rgba(217,211,236,.1);font-size:19px;color:var(--hielo-2)}
 .etapa-estado{font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;border-radius:99px;background:rgba(248,246,240,.06);color:var(--niebla)}
 .etapa.abierta .etapa-estado{background:var(--verde);color:#04140d}
 .etapa h3{font-size:26px;margin-bottom:8px}

@@ -16,7 +16,7 @@ $checks = [
     'api/config.php presente' => is_file(__DIR__ . '/api/config.php'),
 ];
 ?><!doctype html><html lang="es-CL"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Instalación · Patagonia Chilena</title>
-<style>body{font:16px/1.6 system-ui,sans-serif;background:#071a45;color:#f8f6f0;max-width:760px;margin:40px auto;padding:0 16px}code,input{font:14px ui-monospace,monospace}a{color:#e9c46a}li{margin:4px 0}.caja{background:#0b2257;border-radius:12px;padding:16px 20px;margin:16px 0}</style></head><body>
+<style>body{font:16px/1.6 system-ui,sans-serif;background:#07080c;color:#f8f6f0;max-width:760px;margin:40px auto;padding:0 16px}code,input{font:14px ui-monospace,monospace}a{color:#e9c46a}li{margin:4px 0}.caja{background:#0c0d12;border-radius:12px;padding:16px 20px;margin:16px 0}</style></head><body>
 <h1>Instalación de Patagonia Chilena</h1>
 <div class="caja"><h2>1. Requisitos</h2><ul>
 <?php foreach ($checks as $k => $v) echo "<li>{$ok($v)} " . htmlspecialchars($k) . '</li>'; ?>

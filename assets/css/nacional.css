@@ -1,6 +1,6 @@
 /* ===================== v4 · Tricolor austral: símbolos patrios y relieve ===================== */
-:root{--azul:#0039a6;--azul-2:#1d4fc4;--oro:#e9c46a;--plata:#c6d6ee}
-body{background:#071a45}
+:root{--azul:#6f5bd6;--azul-2:#5b4a8a;--oro:#e9c46a;--plata:#d9d3ec}
+body{background:#07080c}
 .marca-icono{border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.35)}
 
 /* franja de la bandera bajo la barra */
@@ -22,8 +22,8 @@ body{background:#071a45}
 .tarjeta-in,.h-tarjeta,.formulario,.estado-form,.contador,.principios li,.fondo-panel,.modal-caja,.etapa,.reglas div,.convocatoria,.votacion{
   position:relative;isolation:isolate;border:1px solid transparent!important;
   background:
-    linear-gradient(165deg,rgba(29,79,196,.30) 0%,rgba(9,32,86,.80) 38%,rgba(5,18,52,.93) 100%) padding-box,
-    linear-gradient(160deg,rgba(255,255,255,.40),rgba(198,214,238,.10) 30%,rgba(198,214,238,.04) 60%,rgba(213,43,30,.5)) border-box!important;
+    linear-gradient(165deg,rgba(111,91,214,.30) 0%,rgba(12,11,18,.80) 38%,rgba(5,6,9,.93) 100%) padding-box,
+    linear-gradient(160deg,rgba(255,255,255,.40),rgba(217,211,236,.10) 30%,rgba(217,211,236,.04) 60%,rgba(213,43,30,.5)) border-box!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.35),0 2px 3px rgba(0,0,0,.25),0 14px 28px -14px rgba(2,8,30,.7),0 40px 90px -40px rgba(2,8,30,.9)!important}
 .tarjeta-in::before,.h-tarjeta::before,.formulario::before,.fondo-panel::before,.principios li::before,.etapa::before,.reglas div::before,.convocatoria::before{
   content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;
@@ -31,11 +31,11 @@ body{background:#071a45}
 .h-tarjeta{border-left:3px solid var(--c)!important}
 
 /* secciones claras: papel con relieve */
-.paso,.desb{position:relative;isolation:isolate;border:1px solid rgba(11,31,74,.10)!important;
+.paso,.desb{position:relative;isolation:isolate;border:1px solid rgba(18,16,24,.10)!important;
   background:linear-gradient(180deg,#ffffff 0%,#fbf8f1 100%)!important;
-  box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(11,31,74,.10),0 10px 24px -12px rgba(11,31,74,.25),0 30px 60px -30px rgba(11,31,74,.35)!important}
+  box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(18,16,24,.10),0 10px 24px -12px rgba(18,16,24,.25),0 30px 60px -30px rgba(18,16,24,.35)!important}
 .paso::before,.desb::before{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:url(../img/curvas-oscuras.svg) 70% 30%/520px auto}
-.paso.activo,.desb.abierto{background:linear-gradient(165deg,#15398a 0%,#0b2257 60%,#071a45 100%)!important;border-color:rgba(255,255,255,.15)!important}
+.paso.activo,.desb.abierto{background:linear-gradient(165deg,#1b1a26 0%,#0c0d12 60%,#07080c 100%)!important;border-color:rgba(255,255,255,.15)!important}
 .paso.activo::before,.desb.abierto::before{background-image:url(../img/curvas-claras.svg)}
 .bloque-claro{background:#f6f2e8 url(../img/curvas-oscuras.svg) right -120px top -60px/900px auto}
 
@@ -46,12 +46,12 @@ body{background:#071a45}
 
 /* escarapela en los pasos */
 .paso-n{width:58px!important;height:58px!important;font-size:22px!important;color:#fff!important;
-  background:radial-gradient(circle,var(--azul) 0 50%,#f8f6f0 51% 66%,var(--rojo) 67% 100%)!important;box-shadow:0 4px 12px rgba(11,31,74,.35)}
+  background:radial-gradient(circle,var(--azul) 0 50%,#f8f6f0 51% 66%,var(--rojo) 67% 100%)!important;box-shadow:0 4px 12px rgba(18,16,24,.35)}
 .paso-estado{border-radius:4px}
 .paso.activo .paso-estado{background:var(--rojo)}
 
 /* contador y botones */
-.contador-cifra span{color:#fff;text-shadow:0 2px 24px rgba(29,79,196,.6)}
+.contador-cifra span{color:#fff;text-shadow:0 2px 24px rgba(111,91,214,.6)}
 .meta-barra i{background:linear-gradient(90deg,#f8f6f0,#f8f6f0 70%,var(--rojo))}
 .boton-rojo{background:linear-gradient(180deg,#e8402f,#c4241a);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 12px 30px -10px rgba(213,43,30,.75)}
 .boton-rojo:hover{background:linear-gradient(180deg,#f04b39,#d52b1e)}
@@ -64,13 +64,13 @@ body{background:#071a45}
 @media (max-width:760px){.condor{top:14%;left:30%}}
 
 /* ---- Fondo Patagonia ---- */
-.fondo{background:radial-gradient(ellipse 70% 60% at 85% 30%,rgba(233,196,106,.12),transparent 60%),linear-gradient(180deg,#0b2257,#071a45)}
+.fondo{background:radial-gradient(ellipse 70% 60% at 85% 30%,rgba(233,196,106,.12),transparent 60%),linear-gradient(180deg,#0c0d12,#07080c)}
 .fondo-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(30px,5vw,80px);align-items:center}
 @media (max-width:900px){.fondo-grid{grid-template-columns:1fr}}
 .fondo-montos{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:28px 0 14px}
 @media (max-width:560px){.fondo-montos{grid-template-columns:1fr 1fr}}
 .monto{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:16px 8px;border-radius:14px;text-align:center;
-  font:400 30px/1 var(--serif);color:#fff;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:1px solid rgba(198,214,238,.25);
+  font:400 30px/1 var(--serif);color:#fff;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:1px solid rgba(217,211,236,.25);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 8px 20px -10px rgba(0,0,0,.6);transition:transform .2s,border-color .2s,background .2s}
 .monto small{font:400 11px/1 var(--mono);color:var(--niebla);letter-spacing:.06em;text-transform:uppercase}
 .monto:hover{transform:translateY(-2px);border-color:var(--oro)}
@@ -78,7 +78,7 @@ body{background:#071a45}
 .monto:focus-visible,.monto:focus-within{outline:2px solid var(--oro);outline-offset:2px}
 .monto-otro{font-size:15px;gap:6px}
 .monto-otro span{font:600 13px/1 var(--sans);color:var(--niebla)}
-.monto-otro input{all:unset;width:90%;text-align:center;font:400 24px/1.1 var(--serif);color:#fff;border-bottom:1px solid rgba(198,214,238,.35)}
+.monto-otro input{all:unset;width:90%;text-align:center;font:400 24px/1.1 var(--serif);color:#fff;border-bottom:1px solid rgba(217,211,236,.35)}
 .fondo-equivale{min-height:3em;color:rgba(248,246,240,.85);margin:0 0 18px}
 .fondo-equivale b{color:var(--oro)}
 .fondo-panel{padding:clamp(24px,3vw,38px);border-radius:24px}
@@ -86,14 +86,14 @@ body{background:#071a45}
 .fondo-cifra>b{display:block;font:400 clamp(54px,7vw,84px)/1 var(--serif);color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 2px 30px rgba(233,196,106,.35)}
 .fondo-sub{display:block;margin-top:8px;color:var(--niebla)}
 .fondo-sub b{color:#fff}
-.fondo-ha{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:26px 0;padding:18px 0;border-top:1px solid rgba(198,214,238,.15);border-bottom:1px solid rgba(198,214,238,.15)}
+.fondo-ha{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:26px 0;padding:18px 0;border-top:1px solid rgba(217,211,236,.15);border-bottom:1px solid rgba(217,211,236,.15)}
 .fondo-ha b{display:block;font:400 34px/1 var(--serif);color:var(--oro)}
 .fondo-ha span{font:400 11.5px/1.4 var(--mono);color:var(--niebla)}
 .fondo-destino h3{font-size:24px;margin-bottom:6px}
 .fondo-destino p{margin:0;color:rgba(248,246,240,.82);font-size:15.5px}
 .opcional{font-weight:400;color:var(--niebla);font-size:12.5px}
 .campo select{width:100%;padding:15px 16px;border-radius:12px;border:1px solid rgba(248,246,240,.18);background:rgba(248,246,240,.06);color:#fff;font:500 16px/1.2 var(--sans)}
-.campo select option{color:#0b1f4a}
+.campo select option{color:#121018}
 .bv-compromiso{margin:14px 0 4px;padding:14px;border-radius:14px;background:rgba(233,196,106,.1);border:1px solid rgba(233,196,106,.35)}
 .bv-compromiso p{margin:0 0 10px;font-size:15px}
 .fondo-montos.chico{grid-template-columns:repeat(3,1fr);margin:0}
@@ -102,7 +102,7 @@ body{background:#071a45}
 /* Asamblea */
 .pagina-asamblea .barra::after{opacity:1}
 .sala-panel h1::after,.historia-intro .titulo-bloque::after{display:none}
-.sala{background:radial-gradient(ellipse 70% 60% at 45% 70%,#0d2a66 0%,#051234 70%)!important}
+.sala{background:radial-gradient(ellipse 70% 60% at 45% 70%,#101017 0%,#050608 70%)!important}
 .sala-cifras div:nth-child(4) b{color:var(--oro)}
 @media (min-width:761px){.sala .votacion{position:absolute!important}}
 .mensajes .m-apodo{text-shadow:0 0 18px rgba(0,0,0,.4)}
