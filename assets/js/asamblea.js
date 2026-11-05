@@ -1,6 +1,7 @@
 // La Asamblea: hemiciclo 3D + participación en vivo (presencia, chat, palabra, votación consultiva, aplausos).
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { iniciarParalaje } from './paralaje.js';
 import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js';
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
@@ -19,12 +20,12 @@ const canvas = $('#sala');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
 const escena = new THREE.Scene();
-escena.fog = new THREE.FogExp2(0x040b12, .026);
+escena.fog = new THREE.FogExp2(0x040507, .024);
 const camara = new THREE.PerspectiveCamera(42, 1, .1, 200);
 const controles = new OrbitControls(camara, canvas);
 Object.assign(controles, { enableDamping: true, dampingFactor: .06, minDistance: 2.2, maxDistance: 34, maxPolarAngle: 1.25, enablePan: true, panSpeed: .6, rotateSpeed: .55 });
 
-const suelo = new THREE.Mesh(new THREE.CircleGeometry(R * 1.35, 96, 0, Math.PI), new THREE.MeshBasicMaterial({ color: 0x07151f, transparent: true, opacity: .9 }));
+const suelo = new THREE.Mesh(new THREE.CircleGeometry(R * 1.35, 96, 0, Math.PI), new THREE.MeshBasicMaterial({ color: 0x0a0b12, transparent: true, opacity: .55 }));
 suelo.rotation.x = -Math.PI / 2; suelo.position.y = -.02; escena.add(suelo);
 const matMesa = new THREE.MeshBasicMaterial({ color: 0xd8261c, transparent: true, opacity: .9, side: THREE.DoubleSide });
 const anilloMesa = new THREE.Mesh(new THREE.RingGeometry(R * .14, R * .155, 64, 1, 0, Math.PI), matMesa); anilloMesa.rotation.x = -Math.PI / 2;
@@ -414,6 +415,7 @@ function cuadro() {
   requestAnimationFrame(cuadro);
 }
 
+iniciarParalaje({ paralaje: [['.participar .titulo-bloque', .06], ['.reglas', .03]], revelar: ['.reglas div', '.etapa', '.convocatoria'] });
 medir();
 camara.position.set(0, R * 4.2, -R * .4); controles.target.set(0, 0, -R * .42); camara.lookAt(controles.target);
 await cargarEstadisticas();

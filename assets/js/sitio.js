@@ -1,6 +1,7 @@
 // Patagonia Chilena · relato con mapa, historia, contador, mapa de inscritos, anticipo de la Asamblea e inscripción
 import { iniciarViento } from './viento.js';
 import { iniciarRelieve } from './relieve.js';
+import { iniciarParalaje } from './paralaje.js';
 import { iniciarHistoria } from './historia.js';
 import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js';
 const $ = (s, r = document) => r.querySelector(s);
@@ -243,7 +244,7 @@ addEventListener('resize', () => capActual && irA(capActual, true));
 /* ------------------------------------------------------------------ mapa de inscritos: regiones que se encienden y arcos hacia el sur */
 let mapaChile, chileListo = false, pasoArco = 0;
 const DESTINO = [-73.2, -49.2];
-const ESCALA = ['#10295f', '#2a5a72', '#4a6fb8', '#d4a943', '#e9c46a', '#fff1cc'];
+const ESCALA = ['#141625', '#272b52', '#4b53a8', '#8f9bff', '#7fe0d4', '#fff1d6'];
 function centroRegion(r) {
   let sx = 0, sy = 0, sp = 0;
   for (const c of datos.comunas || []) if (c.r === r && c.p) { sx += c.x * c.p; sy += c.y * c.p; sp += c.p; }
@@ -474,10 +475,13 @@ async function bienvenida(token) {
 
 async function dibujarTarjeta(cv, { numero, comuna, nombre, compromiso }) {
   try { await Promise.all(['400 120px "Instrument Serif"', 'italic 400 80px "Instrument Serif"', '600 30px Geist', '500 26px "Geist Mono"'].map(f => document.fonts.load(f))); } catch { }
-  const g = cv.getContext('2d'), W = cv.width, H = cv.height, AZUL = '#0039a6', ROJO = '#d52b1e', NIEVE = '#f8f6f0', ORO = '#e9c46a';
+  const g = cv.getContext('2d'), W = cv.width, H = cv.height, AZUL = '#0039a6', ROJO = '#d52b1e', NIEVE = '#f8f6f0', ORO = '#f5c98a';
   // fondo azul turquí
-  const f = g.createLinearGradient(0, 0, W, H); f.addColorStop(0, '#15398a'); f.addColorStop(.5, '#0b2257'); f.addColorStop(1, '#051234');
-  g.fillStyle = f; g.fillRect(0, 0, W, H);
+  g.fillStyle = '#050609'; g.fillRect(0, 0, W, H);
+  for (const [x, y, r, c] of [[W * .1, H * .12, 620, '123,134,255'], [W * .95, H * .45, 560, '79,216,198'], [W * .35, H * 1.02, 600, '255,107,107'], [W * .7, H * .05, 380, '255,255,255']]) {
+    const rg = g.createRadialGradient(x, y, 0, x, y, r); rg.addColorStop(0, `rgba(${c},${c === '255,255,255' ? .10 : .42})`); rg.addColorStop(1, `rgba(${c},0)`);
+    g.fillStyle = rg; g.fillRect(0, 0, W, H);
+  }
   // trama de seguridad tipo billete (guilloché)
   g.save(); g.globalAlpha = .13; g.strokeStyle = '#c6d6ee'; g.lineWidth = 1;
   for (let k = 0; k < 46; k++) {
@@ -509,14 +513,15 @@ async function dibujarTarjeta(cv, { numero, comuna, nombre, compromiso }) {
     }
     g.restore();
   } catch { }
-  const vel = g.createLinearGradient(0, 0, W * .8, 0); vel.addColorStop(0, 'rgba(5,18,52,.92)'); vel.addColorStop(1, 'rgba(5,18,52,0)');
+  const vel = g.createLinearGradient(0, 0, W * .8, 0); vel.addColorStop(0, 'rgba(5,6,9,.75)'); vel.addColorStop(1, 'rgba(5,6,9,0)');
   g.fillStyle = vel; g.fillRect(0, 0, W, H);
   // bandera arriba
-  g.fillStyle = NIEVE; g.fillRect(0, 0, W, 34); g.fillStyle = ROJO; g.fillRect(0, 34, W, 34); g.fillStyle = AZUL; g.fillRect(0, 0, 150, 34);
-  estrella(g, 75, 17, 12, NIEVE);
+  const franja = g.createLinearGradient(0, 0, W, 0); franja.addColorStop(0, 'rgba(169,178,255,.9)'); franja.addColorStop(.5, 'rgba(238,243,255,.9)'); franja.addColorStop(1, 'rgba(255,122,107,.9)');
+  g.fillStyle = franja; g.fillRect(0, 0, W, 10);
+  g.save(); g.shadowColor = '#fff'; g.shadowBlur = 30; estrella(g, W - 110, 120, 26, '#ffffff'); g.restore();
   // encabezado
   const M = 86;
-  g.fillStyle = '#c6d6ee'; g.font = '500 25px "Geist Mono"'; g.fillText('MOVIMIENTO CIUDADANO · PATAGONIA CHILENA', M, 150);
+  g.fillStyle = '#a9b2ff'; g.font = '500 25px "Geist Mono"'; g.fillText('MOVIMIENTO CIUDADANO · PATAGONIA CHILENA', M, 150);
   g.fillStyle = NIEVE; g.font = '400 64px "Instrument Serif"'; g.fillText('Socio fundador', M, 236);
   g.fillStyle = ORO; g.font = '500 24px "Geist Mono"'; g.fillText('N.º DE SERIE  PAT-2026-' + String(numero).padStart(6, '0'), M, 286);
   // número
@@ -530,7 +535,7 @@ async function dibujarTarjeta(cv, { numero, comuna, nombre, compromiso }) {
   if (compromiso) { g.fillStyle = ORO; g.font = '500 25px "Geist Mono"'; g.fillText(`★ FONDO PATAGONIA · $${fmt(compromiso)} AL MES`, M, 1025); }
   // sello con estrella
   sello(g, W - 190, H - 250, 110);
-  g.fillStyle = ROJO; roundRect(g, M, 1110, 560, 96, 48); g.fill();
+  const bt = g.createLinearGradient(M, 0, M + 560, 0); bt.addColorStop(0, '#ff7a6b'); bt.addColorStop(.6, '#ff5f8f'); bt.addColorStop(1, '#c47bff'); g.fillStyle = bt; roundRect(g, M, 1110, 560, 96, 48); g.fill();
   g.fillStyle = '#fff'; g.font = '700 36px Geist'; g.fillText('patagoniadechile.cl', M + 52, 1171);
   g.fillStyle = 'rgba(248,246,240,.55)'; g.font = '500 23px "Geist Mono"'; g.fillText('Súmate gratis · cooperativa ciudadana', M, 1268);
 }
@@ -606,3 +611,8 @@ $('#b-comprometer').addEventListener('click', async () => {
   msg.textContent = r.error || 'No se pudo registrar.';
 });
 iniciarRelieve('.tarjeta-in, .paso, .desb, .principios li, .fondo-panel, .formulario');
+iniciarParalaje({
+  paralaje: [['.titulo-bloque', .07], ['.antetitulo', .12], ['.lead', .04], ['.pasos', .03], ['.desbloqueos', .035], ['.principios', .05],
+             ['.fondo-montos', .03], ['.portada-txt', .05], ['.condor', -.25], ['.cuenta-mini', .08], ['.mapa-chile-marco', .025]],
+  revelar: ['.paso', '.desb', '.principios li', '.faq details', '.fondo-panel', '.monto', '.check li', '.formulario'],
+});

@@ -1,0 +1,125 @@
+/* ===================== v5 · Aurora austral: negro profundo, vidrio, luz difusa ===================== */
+:root{
+  --negro:#040507; --negro-2:#0a0b10;
+  --lavanda:#a9b2ff; --turquesa:#7fe0d4; --coral:#ff7a6b; --rosa:#ff5f8f; --arena:#f5c98a; --hielo:#eef3ff;
+  --hielo-2:#b9c1ff; --estepa-2:#f5c98a; --estepa:#e2b56f; --verde:#7fe0d4; --rojo:#ff6b5e; --rojo-2:#ff8a72;
+  --niebla:#9aa0b8; --tenue:#6e7490;
+  --vidrio:linear-gradient(155deg,rgba(255,255,255,.085),rgba(255,255,255,.025) 55%,rgba(255,255,255,.04));
+  --borde-vidrio:rgba(255,255,255,.10);
+  --radio:22px;
+}
+html,body{background:var(--negro)!important}
+body{color:var(--hielo)}
+main{position:relative;z-index:1}
+
+/* ---------- cielo: estrellas + auroras (detrás de todo) ---------- */
+.cielo{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:radial-gradient(ellipse 120% 80% at 50% 120%,#0b0c16 0%,#040507 60%)}
+.cielo .estrellas{position:absolute;inset:0}
+.aurora{position:absolute;display:block;border-radius:50%;filter:blur(90px);opacity:.42;mix-blend-mode:screen;will-change:transform}
+.aurora.a1{width:60vw;height:42vw;left:-12vw;top:-8vh;background:radial-gradient(circle at 40% 40%,#7b86ff,rgba(123,134,255,0) 70%)}
+.aurora.a2{width:52vw;height:38vw;right:-14vw;top:20vh;background:radial-gradient(circle at 60% 50%,#4fd8c6,rgba(79,216,198,0) 70%);opacity:.32}
+.aurora.a3{width:46vw;height:34vw;left:22vw;bottom:-18vh;background:radial-gradient(circle at 50% 50%,#ff6b6b,rgba(255,107,107,0) 70%);opacity:.26}
+.aurora.a4{width:34vw;height:26vw;right:18vw;top:-14vh;background:radial-gradient(circle at 50% 50%,#ffffff,rgba(255,255,255,0) 70%);opacity:.10}
+@media (max-width:760px){.aurora{filter:blur(60px)}.aurora.a1{width:110vw;height:80vw}.aurora.a2{width:100vw;height:70vw}.aurora.a3{width:90vw;height:70vw}}
+
+/* ---------- barra y escenario ---------- */
+.barra.solida{background:rgba(6,7,11,.48)!important;backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border-color:rgba(255,255,255,.06)!important}
+.barra::after{display:none!important}
+.velo{background:linear-gradient(90deg,rgba(4,5,7,.88) 0%,rgba(4,5,7,.45) 38%,rgba(4,5,7,0) 66%),linear-gradient(0deg,rgba(4,5,7,1) 0%,rgba(4,5,7,0) 32%),linear-gradient(180deg,rgba(4,5,7,.75) 0%,rgba(4,5,7,0) 20%)!important}
+@media (max-width:760px){.velo{background:linear-gradient(0deg,rgba(4,5,7,.96) 0%,rgba(4,5,7,.55) 55%,rgba(4,5,7,.2) 100%)!important}}
+.escenario{background:var(--negro)!important}
+.marca-icono{border-radius:10px;box-shadow:0 0 22px rgba(169,178,255,.35)}
+.marca em{background:linear-gradient(90deg,var(--lavanda),var(--turquesa));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---------- tipografía con luz ---------- */
+em{font-style:italic;background:linear-gradient(95deg,#c3c9ff 0%,#8fe9dd 55%,#ffb3a6 100%);-webkit-background-clip:text;background-clip:text;color:transparent!important;padding-right:.06em}
+.titulo-bloque::after,.paso-estado::before{display:none!important}
+.antetitulo,.antetitulo.oscuro{color:var(--lavanda)!important;letter-spacing:.16em}
+.antetitulo::before{width:10px!important;height:10px!important;background:#fff!important;opacity:.75;filter:drop-shadow(0 0 6px rgba(255,255,255,.9))}
+.cap-num{color:var(--arena)!important}
+.tarjeta-alerta .cap-num{color:var(--coral)!important}
+.dato{color:var(--turquesa)}
+.fuente{color:#6e7490!important}
+.fuente a{color:#9aa0b8!important}
+
+/* ---------- secciones: sin fondos planos, dejan ver el cielo ---------- */
+.bloque,.bloque-claro,.bloque-noche,.bloque-noche-2,.fondo,.historia,.participar,.asamblea-banda,.sumate{background:transparent!important;color:var(--hielo)}
+.sumate-fondo{background:radial-gradient(ellipse 60% 50% at 80% 20%,rgba(255,107,107,.16),transparent 65%),radial-gradient(ellipse 60% 50% at 10% 90%,rgba(123,134,255,.16),transparent 65%)!important}
+.sumate-fondo::after{opacity:.12!important}
+.pie{background:rgba(255,255,255,.02)!important;border-top:1px solid rgba(255,255,255,.06);backdrop-filter:blur(10px)}
+.bloque-claro .titulo-bloque,.bloque-claro h2,.bloque-claro h3{color:var(--hielo)}
+.bloque-claro .lead-oscuro,.paso p,.desb p,.faq details p{color:rgba(238,243,255,.72)!important}
+.lead-oscuro a{color:var(--turquesa)!important}
+.faq{border-top-color:rgba(255,255,255,.08)!important}
+.faq details{border-bottom-color:rgba(255,255,255,.08)!important}
+.faq summary{color:var(--hielo)}
+.faq summary::after{color:var(--lavanda)!important}
+.historia-escenario{background:transparent}
+
+/* ---------- vidrio: todas las cajas translúcidas ---------- */
+.tarjeta-in,.h-tarjeta,.formulario,.estado-form,.contador,.principios li,.fondo-panel,.modal-caja,.etapa,.reglas div,.convocatoria,.votacion,.paso,.desb,.chat,.sala-pie,.h-leyenda,.mi-asiento,.ranking-cab,.pestanas{
+  background:var(--vidrio)!important;
+  border:1px solid var(--borde-vidrio)!important;
+  backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 0 0 1px rgba(255,255,255,.02),0 30px 80px -30px rgba(0,0,0,.85),0 0 60px -30px rgba(169,178,255,.25)!important;
+  color:var(--hielo)}
+.tarjeta-in::before,.h-tarjeta::before,.formulario::before,.fondo-panel::before,.principios li::before,.etapa::before,.reglas div::before,.convocatoria::before,.paso::before,.desb::before{opacity:.18!important;mix-blend-mode:screen}
+.h-tarjeta{border-left:2px solid var(--c)!important}
+.paso.activo,.desb.abierto{background:linear-gradient(155deg,rgba(169,178,255,.22),rgba(127,224,212,.10) 50%,rgba(255,122,107,.14))!important;border-color:rgba(255,255,255,.18)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 0 80px -20px rgba(169,178,255,.45),0 30px 80px -30px rgba(0,0,0,.85)!important}
+.paso h3,.desb h3{color:var(--hielo)}
+.paso-n{background:transparent!important;border:1px solid rgba(255,255,255,.35);box-shadow:0 0 24px rgba(169,178,255,.35),inset 0 0 18px rgba(169,178,255,.25)!important;color:#fff!important}
+.paso.activo .paso-n{border-color:var(--coral);box-shadow:0 0 30px rgba(255,122,107,.55),inset 0 0 18px rgba(255,122,107,.3)!important}
+.paso-estado{background:rgba(255,255,255,.07)!important;color:var(--niebla)!important;border-radius:99px!important}
+.paso.activo .paso-estado{background:linear-gradient(90deg,var(--coral),var(--rosa))!important;color:#fff!important}
+.desb-umbral{color:var(--lavanda)!important}
+.desb-barra,.etapa-barra,.meta-barra{background:rgba(255,255,255,.08)!important}
+.desb-barra i,.etapa-barra i,.meta-barra i{background:linear-gradient(90deg,var(--lavanda),var(--turquesa),var(--coral))!important;box-shadow:0 0 14px rgba(169,178,255,.6)}
+.principios svg{stroke:var(--lavanda)!important}
+
+/* ---------- botones: coral que respira ---------- */
+.boton-rojo{background:linear-gradient(120deg,#ff7a6b,#ff5f8f 60%,#c47bff)!important;background-size:200% 100%!important;color:#fff;box-shadow:0 10px 40px -10px rgba(255,95,143,.7),inset 0 1px 0 rgba(255,255,255,.3)!important;animation:respira 6s ease-in-out infinite}
+.boton-rojo:hover{background-position:100% 0!important;box-shadow:0 14px 50px -10px rgba(255,95,143,.9),inset 0 1px 0 rgba(255,255,255,.35)!important}
+@keyframes respira{0%,100%{background-position:0 0}50%{background-position:60% 0}}
+.boton-vidrio{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.16)!important;backdrop-filter:blur(12px)}
+.boton-verde{background:linear-gradient(120deg,#25d366,#1fb57a)!important}
+.boton,.monto,.chip{border-radius:999px}
+.monto{border-radius:20px!important;background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.12)!important}
+.monto[aria-pressed="true"]{background:linear-gradient(155deg,rgba(169,178,255,.30),rgba(255,122,107,.18))!important;border-color:rgba(255,255,255,.4)!important;box-shadow:0 0 40px -6px rgba(169,178,255,.6)!important}
+.campo input,.campo select,.redactar textarea{background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.12)!important;border-radius:16px!important}
+.campo input:focus,.campo select:focus,.redactar textarea:focus{border-color:var(--lavanda)!important;box-shadow:0 0 0 4px rgba(169,178,255,.15)}
+.casilla input{accent-color:var(--coral)}
+
+/* ---------- contador y cifras con halo ---------- */
+.contador-cifra span,.fondo-cifra>b,.cuenta b,.cuenta-mini b{text-shadow:0 0 40px rgba(169,178,255,.55)}
+.fondo-ha b,.cuenta-mini b{color:var(--arena)}
+.fondo-etq{color:var(--arena)!important}
+.aviso-pronto{background:rgba(255,122,107,.10)!important;border-color:rgba(255,122,107,.35)!important;color:#ffc2b8!important;backdrop-filter:blur(10px)}
+.aviso-pronto.vivo{background:linear-gradient(90deg,#ff6b5e,#ff5f8f)!important;color:#fff!important}
+.punto-vivo{background:var(--coral)!important}
+
+/* ---------- aparición ---------- */
+.revelar{opacity:0;translate:0 40px;filter:blur(8px);transition:opacity 1.1s cubic-bezier(.2,.8,.2,1) var(--d,0ms),filter 1.1s var(--d,0ms),translate 1.1s cubic-bezier(.2,.8,.2,1) var(--d,0ms)}
+.revelar.revelado{opacity:1;translate:0 0;filter:none}
+
+/* ---------- mapas e inscritos ---------- */
+#mapa-chile,.historia-mapa-marco{background:transparent!important;border-color:rgba(255,255,255,.08)!important}
+.mi-lugar{background:rgba(245,201,138,.08)!important;border-color:rgba(245,201,138,.3)!important}
+.pestanas button[aria-selected="true"],.chat-pestanas button[aria-selected="true"],.sala-vistas button[aria-pressed="true"]{background:linear-gradient(120deg,#eef3ff,#d9dcff)!important;color:#0a0b10!important}
+.ranking .barrita i{background:linear-gradient(90deg,var(--lavanda),var(--coral))!important}
+.h-velo{background:linear-gradient(90deg,rgba(4,5,7,.85) 0%,rgba(4,5,7,.2) 42%,rgba(4,5,7,0) 62%),linear-gradient(0deg,rgba(4,5,7,.95) 0%,rgba(4,5,7,0) 26%),linear-gradient(180deg,rgba(4,5,7,.85) 0%,rgba(4,5,7,0) 18%)!important}
+.condor{opacity:.28!important;color:#05060a!important;filter:blur(.4px) drop-shadow(0 30px 20px rgba(0,0,0,.4))!important}
+
+/* ---------- Asamblea ---------- */
+.sala{background:transparent!important}
+.sala-velo{background:linear-gradient(90deg,rgba(4,5,7,.88) 0%,rgba(4,5,7,.3) 34%,rgba(4,5,7,0) 54%)!important}
+.chat{border-left:1px solid rgba(255,255,255,.07)!important}
+.mensajes li:hover{background:rgba(255,255,255,.04)!important}
+.mensajes .mio{background:rgba(169,178,255,.08)!important}
+.participar .reglas span{background:linear-gradient(135deg,var(--coral),var(--rosa))!important}
+.convocatoria{border-color:rgba(255,122,107,.25)!important}
+.modal{background:rgba(2,3,5,.72)!important}
+
+@media (max-width:760px){
+  .tarjeta-in,.h-tarjeta,.formulario,.fondo-panel,.paso,.desb,.etapa,.reglas div{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+}
+@media (prefers-reduced-motion:reduce){.revelar{opacity:1!important;translate:none!important;filter:none!important}.boton-rojo{animation:none}}

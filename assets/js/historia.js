@@ -59,7 +59,7 @@ export async function iniciarHistoria() {
         sky: { 'sky-color': '#071a45', 'horizon-color': '#4a6597', 'fog-color': '#06153a', 'sky-horizon-blend': .5, 'horizon-fog-blend': .7, 'fog-ground-blend': .6, 'atmosphere-blend': .7 },
         layers: [
           { id: 'fondo', type: 'background', paint: { 'background-color': '#06153a' } },
-          { id: 'sat', type: 'raster', source: 'sat', paint: { 'raster-saturation': -.85, 'raster-brightness-max': .42, 'raster-contrast': .15, 'raster-hue-rotate': 190 } },
+          { id: 'sat', type: 'raster', source: 'sat', paint: { 'raster-saturation': -.9, 'raster-brightness-max': .36, 'raster-contrast': .12 } },
         ],
       },
     });
@@ -73,7 +73,7 @@ export async function iniciarHistoria() {
       mapa.addSource('bordes', { type: 'geojson', data: 'datos/historia-bordes.geojson', lineMetrics: true });
       const est = ['coalesce', ['feature-state', 'e'], 'no'];
       const T = { duration: 1100 };
-      mapa.addLayer({ id: 'p-solido', type: 'fill', source: 'piezas', paint: { 'fill-color': '#2f5fb8', 'fill-opacity': ['match', est, 'solido', .5, 'originario', 0, 0], 'fill-opacity-transition': T } });
+      mapa.addLayer({ id: 'p-solido', type: 'fill', source: 'piezas', paint: { 'fill-color': '#8f9bff', 'fill-opacity': ['match', est, 'solido', .42, 'originario', 0, 0], 'fill-opacity-transition': T } });
       mapa.addLayer({ id: 'p-origen', type: 'fill', source: 'piezas', paint: { 'fill-color': '#d4a943', 'fill-opacity': ['match', est, 'originario', .38, 0], 'fill-opacity-transition': T } });
       mapa.addLayer({ id: 'p-admin', type: 'fill', source: 'piezas', filter: ['==', ['get', 'id'], '__'], paint: { 'fill-pattern': 't-admin', 'fill-opacity': .95 } });
       mapa.addLayer({ id: 'p-reclamo', type: 'fill', source: 'piezas', filter: ['==', ['get', 'id'], '__'], paint: { 'fill-pattern': 't-reclamo', 'fill-opacity': .8 } });
