@@ -1,9 +1,9 @@
 // Patagonia Chilena · relato con mapa, historia, contador, mapa de inscritos, anticipo de la Asamblea e inscripción
-import { iniciarViento } from './viento.js?v=1793884133';
-import { iniciarRelieve } from './relieve.js?v=1793884133';
-import { iniciarParalaje } from './paralaje.js?v=1793884133';
-import { iniciarHistoria } from './historia.js?v=1793884133';
-import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1793884133';
+import { iniciarViento } from './viento.js?v=1793888938';
+import { iniciarRelieve } from './relieve.js?v=1793888938';
+import { iniciarParalaje } from './paralaje.js?v=1793888938';
+import { iniciarHistoria } from './historia.js?v=1793888938';
+import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1793888938';
 // siempre partir desde la portada (salvo que el enlace apunte a una sección)
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (!location.hash) { scrollTo(0, 0); addEventListener('load', () => scrollTo(0, 0)); }
@@ -72,7 +72,8 @@ async function cargarEstadisticas() {
   if (com && ig) {
     com.hidden = false;
     com.innerHTML = primeros
-      ? `<b>${fmt(total)}</b> ${total === 1 ? 'socio fundador inscrito' : 'socios fundadores inscritos'} aquí · sé de los primeros 1.000`
+      ? (total === 0 ? 'Inscripciones abiertas · sé de los primeros 1.000 socios fundadores'
+        : `<b>${fmt(total)}</b> ${total === 1 ? 'socio fundador inscrito' : 'socios fundadores inscritos'} aquí · sé de los primeros 1.000`)
       : `y <b>${fmt(ig)}</b> en nuestra comunidad de Instagram`;
   }
   pintarCifra('meta', meta);
