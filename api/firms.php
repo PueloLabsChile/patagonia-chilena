@@ -17,7 +17,7 @@ $S = -56.6; $N = -43.6; $O = -76.5; $E = -66.3;
 $feats = []; $ok = 0;
 $ctx = stream_context_create(['http' => ['timeout' => 40, 'header' => "User-Agent: ObservatorioPatagonia/1.0\r\n"]]);
 foreach ($fuentes as $sat => $url) {
-    $fh = @fopen($url, 'r', false, $ctx);
+    $fh = descargar($url, $ctx);
     if (!$fh) continue;
     $cab = fgetcsv($fh); if (!$cab) { fclose($fh); continue; }
     $i = array_flip($cab); $ok++;
@@ -33,6 +33,19 @@ foreach ($fuentes as $sat => $url) {
                                      'dia_noche' => ($r[$i['daynight']] ?? '') === 'D' ? 'día' : 'noche']];
     }
     fclose($fh);
+}
+/** Baja el CSV a un archivo temporal (curl si existe; si no, fopen) y devuelve el puntero, o null. */
+function descargar(string $url, $ctx) {
+    if (function_exists('curl_init')) {
+        $tmp = fopen('php://temp', 'w+');
+        $c = curl_init($url);
+        curl_setopt_array($c, [CURLOPT_FILE => $tmp, CURLOPT_FOLLOWLOCATION => true, CURLOPT_TIMEOUT => 50, CURLOPT_CONNECTTIMEOUT => 15, CURLOPT_USERAGENT => 'ObservatorioPatagonia/1.0', CURLOPT_FAILONERROR => true]);
+        $ok = curl_exec($c); curl_close($c);
+        if ($ok) { rewind($tmp); return $tmp; }
+        fclose($tmp);
+    }
+    $fh = @fopen($url, 'r', false, $ctx);
+    return $fh ?: null;
 }
 /** Longitud aproximada de la frontera Chile–Argentina según la latitud (suficiente para descartar focos argentinos). */
 function frontera(float $lat): float {
