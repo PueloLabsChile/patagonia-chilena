@@ -9,6 +9,7 @@
 // POST {accion: reportar, id, motivo}
 // POST {accion: suprimir, id, g | token}             (gestión o quien la subió, con su token)
 // POST {accion: restaurar, id, g}                    (gestión)
+// POST {accion: editar, id, g, autor, titulo, descripcion, tema}   (gestión: corregir textos ofensivos)
 require __DIR__ . '/_comun.php';
 
 const TEMAS = ['paisaje' => 'Paisaje', 'hielo' => 'Glaciares y hielo', 'agua' => 'Ríos, lagos y mar', 'fauna' => 'Fauna', 'flora' => 'Flora y bosque',
@@ -34,6 +35,8 @@ function foto_publica(array $f, bool $gestion): array {
     if ($gestion) { $o['reportes'] = (int)$f['reportes']; $o['oculta'] = (int)$f['oculta']; }
     return $o;
 }
+/** Lugar de la foto en el archivo público (n.º 1, 2, 3…) */
+function numero_foto(int $id): int { $q = db()->prepare('SELECT COUNT(*) FROM fotos WHERE oculta = 0 AND id <= ?'); $q->execute([$id]); return (int)$q->fetchColumn(); }
 function borrar_archivos(string $dir, string $archivo): void { @unlink("$dir/$archivo.jpg"); @unlink("$dir/{$archivo}_m.jpg"); }
 /** Guarda un JPEG subido volviéndolo a codificar (borra metadatos y cualquier contenido extra del archivo). */
 function guardar_jpeg(string $bytes, string $destino, int $maxLado, int $maxBytes, int $calidad): array {
@@ -91,6 +94,11 @@ solo_post();
 // ------------------------------------------------------------------ subir (paquete binario)
 if (str_starts_with(strtolower($_SERVER['CONTENT_TYPE'] ?? ''), 'application/octet-stream')) {
     [$P, $fotoB, $miniB] = leer_paquete();
+    $clave = is_string($P['clave'] ?? null) && token_valido($P['clave']) ? $P['clave'] : null;
+    if ($clave) {   // reenvío desde la cola sin señal: ya estaba guardada
+        $q = $db->prepare('SELECT * FROM fotos WHERE clave = ?'); $q->execute([$clave]);
+        if ($ya = $q->fetch()) responder(['ok' => true, 'foto' => foto_publica($ya, false), 'token' => $ya['token'], 'numero' => numero_foto((int)$ya['id'])]);
+    }
     if (empty($P['acepto'])) error('Debes confirmar que puedes publicar la foto con licencia CC BY 4.0.', 422);
     if (!empty($P['web'])) error('No se pudo publicar.', 422);   // trampa para robots
     $lat = (float)($P['lat'] ?? 0); $lon = (float)($P['lon'] ?? 0);
@@ -100,11 +108,11 @@ if (str_starts_with(strtolower($_SERVER['CONTENT_TYPE'] ?? ''), 'application/oct
     if (mb_strlen($autor) < 2) error('Escribe tu nombre para firmar la foto (la licencia CC BY exige citar a quien la tomó).', 422);
     $titulo = filtrar(limpiar_texto((string)($P['titulo'] ?? ''), 90)) ?: null;
     $descr = filtrar(limpiar_texto((string)($P['descripcion'] ?? ''), 600)) ?: null;
-    $tema = isset(TEMAS[$P['tema'] ?? '']) ? $P['tema'] : 'otro';
+    $tema = is_string($P['tema'] ?? null) && isset(TEMAS[$P['tema']]) ? $P['tema'] : 'otro';
     $rumbo = is_numeric($P['rumbo'] ?? null) ? fmod(fmod((float)$P['rumbo'], 360) + 360, 360) : null;
     $alt = is_numeric($P['altitud'] ?? null) && abs((float)$P['altitud']) < 9000 ? round((float)$P['altitud'], 1) : null;
     $tomada = preg_match('/^(19[3-9]\d|20\d\d)-\d\d-\d\d( \d\d:\d\d(:\d\d)?)?$/', (string)($P['tomada'] ?? '')) ? substr((string)$P['tomada'], 0, 16) : null;
-    $origen = in_array($P['origen'] ?? '', ['gps', 'recorrido', 'mapa'], true) ? $P['origen'] : 'mapa';
+    $origen = in_array($P['origen'] ?? '', ['gps', 'telefono', 'recorrido', 'mapa'], true) ? $P['origen'] : 'mapa';
     if ((int)$db->query("SELECT COUNT(*) FROM fotos WHERE creado > datetime('now', '-1 day')")->fetchColumn() >= (int)cfg('fotos_dia', 800)) error('La galería recibió muchas fotos hoy. Intenta mañana.', 429);
     limite_ip('foto', (int)cfg('fotos_ip_hora', 80));
 
@@ -114,14 +122,14 @@ if (str_starts_with(strtolower($_SERVER['CONTENT_TYPE'] ?? ''), 'application/oct
     $listo = false;   // si algo falla a medio camino (error() termina el script), no quedan archivos sueltos
     register_shutdown_function(function () use (&$listo, $dir, $archivo) { if (!$listo) borrar_archivos($dir, $archivo); });
     [$w, $h] = guardar_jpeg($fotoB, "$dir/$archivo.jpg", 2400, 4 * 1024 * 1024, 86);
-    guardar_jpeg($miniB, "$dir/{$archivo}_m.jpg", 640, 400 * 1024, 80);
+    guardar_jpeg($miniB, "$dir/{$archivo}_m.jpg", 800, 500 * 1024, 80);
     $token = aleatorio(18);
-    $db->prepare('INSERT INTO fotos (archivo, w, h, lat, lon, rumbo, altitud, tomada, titulo, descripcion, autor, tema, origen, creado, ip, token) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
-       ->execute([$archivo, $w, $h, round($lat, 6), round($lon, 6), $rumbo === null ? null : round($rumbo, 1), $alt, $tomada, $titulo, $descr, $autor, $tema, $origen, ahora(), ip_hash(), $token]);
+    $db->prepare('INSERT INTO fotos (archivo, w, h, lat, lon, rumbo, altitud, tomada, titulo, descripcion, autor, tema, origen, creado, ip, token, clave) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+       ->execute([$archivo, $w, $h, round($lat, 6), round($lon, 6), $rumbo === null ? null : round($rumbo, 1), $alt, $tomada, $titulo, $descr, $autor, $tema, $origen, ahora(), ip_hash(), $token, $clave]);
     $id = (int)$db->lastInsertId();
     $listo = true;
     $q = $db->prepare('SELECT * FROM fotos WHERE id = ?'); $q->execute([$id]);
-    responder(['ok' => true, 'foto' => foto_publica($q->fetch(), false), 'token' => $token]);
+    responder(['ok' => true, 'foto' => foto_publica($q->fetch(), false), 'token' => $token, 'numero' => numero_foto($id)]);
 }
 
 // ------------------------------------------------------------------ acciones (JSON)
@@ -148,6 +156,16 @@ switch ((string)($d['accion'] ?? '')) {
         borrar_archivos($dir, $f['archivo']);
         $anotar('suprimir foto');
         responder(['ok' => true]);
+    case 'editar':
+        if (!$quien) error('Solo el equipo de gestión puede corregir los textos de una foto.', 403);
+        $autor = filtrar(limpiar_texto((string)($d['autor'] ?? ''), 60));
+        if (mb_strlen($autor) < 2) error('La firma debe tener al menos 2 letras (puede ser «Anónimo»).', 422);
+        $tema = is_string($d['tema'] ?? null) && isset(TEMAS[$d['tema']]) ? $d['tema'] : $f['tema'];
+        $db->prepare('UPDATE fotos SET autor = ?, titulo = ?, descripcion = ?, tema = ? WHERE id = ?')
+           ->execute([$autor, filtrar(limpiar_texto((string)($d['titulo'] ?? ''), 90)) ?: null, filtrar(limpiar_texto((string)($d['descripcion'] ?? ''), 600)) ?: null, $tema, $id]);
+        $anotar('editar foto');
+        $q = $db->prepare('SELECT * FROM fotos WHERE id = ?'); $q->execute([$id]);
+        responder(['ok' => true, 'foto' => foto_publica($q->fetch(), true)]);
     case 'restaurar':
         if (!$quien) error('Solo el equipo de gestión puede restaurar fotos.', 403);
         $db->prepare('UPDATE fotos SET oculta = 0, reportes = 0 WHERE id = ?')->execute([$id]);

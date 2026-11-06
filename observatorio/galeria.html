@@ -4,121 +4,201 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Galería de terreno · Observatorio Patagonia</title>
-<meta name="description" content="Archivo abierto de fotos de terreno de Aysén y Magallanes, ubicadas en el mapa con su dirección y fecha. Cualquiera puede aportar, con licencia CC BY 4.0.">
+<meta name="description" content="El archivo abierto de fotos de Aysén y Magallanes: cada foto ubicada en el mapa, con su fecha y su autor. Sube las tuyas desde el celular.">
 <meta property="og:title" content="Galería de terreno · Observatorio Patagonia">
-<meta property="og:description" content="Fotos georreferenciadas de Aysén y Magallanes, abiertas y con licencia CC BY 4.0.">
+<meta property="og:description" content="El archivo abierto de fotos de la Patagonia chilena. Sube las tuyas.">
+<meta name="theme-color" content="#1c2326">
 <link rel="icon" href="../assets/img/icono.svg" type="image/svg+xml">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<link href="obs.css?v=1794005392" rel="stylesheet">
-<link href="galeria.css?v=1794005392" rel="stylesheet">
+<link href="obs.css?v=1794007281" rel="stylesheet">
+<link href="galeria.css?v=1794007281" rel="stylesheet">
 </head>
 <body class="galeria">
-<main id="g-hoja">
 
-  <header id="cabeza">
-    <div class="titulo">
-      <p>Observatorio Patagonia · <b>Galería de terreno</b></p>
-      <h1><a href="./" title="Volver al visor">Fotos de Aysén y Magallanes</a></h1>
+<header id="cabeza">
+  <div class="titulo">
+    <p>Observatorio Patagonia · <b>Galería de terreno</b></p>
+    <h1><a href="./" title="Volver al visor">Fotos de la Patagonia</a></h1>
+  </div>
+  <div id="marca" lang="en"><b>GEOGES Analytics</b><span>We know the place</span></div>
+  <nav class="g-acc">
+    <a class="h-btn" href="./">← Visor</a>
+    <button class="h-btn h-pri" type="button" data-abrir-subida>Subir fotos</button>
+  </nav>
+</header>
+
+<div class="cola-aviso" id="cola-aviso" hidden></div>
+
+<section class="hero" id="hero" aria-label="Foto destacada">
+  <div class="hero-fondo" id="hero-fondo"></div>
+  <div class="hero-velo"></div>
+  <div class="hero-txt">
+    <p class="hero-etq">Archivo abierto · Aysén y Magallanes</p>
+    <h2 id="hero-titulo">La Patagonia, foto a foto</h2>
+    <p class="hero-meta" id="hero-meta">Cada foto queda ubicada en el mapa, con su fecha y su autor, para que cualquiera la vea y la use.</p>
+    <div class="hero-acc">
+      <button class="boton-grande" type="button" data-abrir-subida><span aria-hidden="true">📷</span> Sube tus fotos</button>
+      <button class="boton-claro" type="button" data-ir-vista="desafio" id="hero-desafio">Desafío por comunas</button>
     </div>
-    <div id="marca" lang="en"><b>GEOGES Analytics</b><span>We know the place</span></div>
-    <nav class="g-acc">
-      <a class="h-btn" href="./">← Visor</a>
-      <button class="h-btn h-pri" id="b-subir" type="button">Subir fotos</button>
-    </nav>
-  </header>
+  </div>
+  <dl class="hero-cifras" id="hero-cifras"></dl>
+  <button class="hero-ver" id="hero-ver" type="button" hidden>Ver esta foto</button>
+</section>
 
-  <section id="g-barra" aria-label="Filtros">
-    <input id="g-q" type="search" placeholder="Buscar título, autor, lugar…" aria-label="Buscar">
+<nav class="barra" id="barra" aria-label="Vistas y filtros">
+  <div class="vistas-g" role="tablist">
+    <button role="tab" aria-selected="true" data-vista="galeria">Galería</button>
+    <button role="tab" aria-selected="false" data-vista="mapa">Mapa</button>
+    <button role="tab" aria-selected="false" data-vista="desafio">Desafío <b id="n-faltan"></b></button>
+    <button role="tab" aria-selected="false" data-vista="mias">Mis fotos <b id="n-mias"></b></button>
+  </div>
+  <div class="filtros" id="filtros">
+    <input id="g-q" type="search" placeholder="Buscar lugar, autor, tema…" aria-label="Buscar">
     <select id="g-region" aria-label="Región"><option value="">Aysén y Magallanes</option><option>Aysén</option><option>Magallanes</option></select>
     <select id="g-comuna" aria-label="Comuna"><option value="">Todas las comunas</option></select>
     <select id="g-anio" aria-label="Año de la foto"><option value="">Todos los años</option></select>
-    <select id="g-orden" aria-label="Orden"><option value="recientes">Subidas recientes</option><option value="tomada">Fecha de la foto ↓</option><option value="antiguas">Fecha de la foto ↑</option></select>
-    <label class="marca"><input type="checkbox" id="g-vista"> Solo lo visible en el mapa</label>
-    <div class="g-temas" id="g-temas" role="group" aria-label="Temas"></div>
-  </section>
-
-  <div class="g-pestanas" role="tablist">
-    <button role="tab" aria-selected="true" data-gp="fotos">Fotos</button>
-    <button role="tab" aria-selected="false" data-gp="mapa">Mapa</button>
+    <select id="g-orden" aria-label="Orden"><option value="recientes">Recientes</option><option value="tomada">Fecha de la foto ↓</option><option value="antiguas">Fecha de la foto ↑</option></select>
   </div>
+  <div class="temas-g" id="g-temas" role="group" aria-label="Temas"></div>
+</nav>
 
-  <section id="g-cuerpo">
-    <div id="g-izq" data-gp="fotos">
-      <p class="g-cuenta" id="g-cuenta">Cargando fotos…</p>
-      <div id="g-gestion" hidden></div>
-      <div class="mosaico" id="mosaico" role="list"></div>
+<div id="g-gestion" class="g-gestion" hidden></div>
+
+<main>
+  <section class="vista" data-vista="galeria">
+    <p class="g-cuenta" id="g-cuenta"></p>
+    <div class="justificada" id="mosaico" role="list"></div>
+  </section>
+  <section class="vista" data-vista="mapa" hidden>
+    <div class="mapa-g"><div id="g-mapa" role="region" aria-label="Mapa de las fotos"></div>
+      <div class="g-fondos" role="group" aria-label="Fondo"><button type="button" data-fondo="papel" aria-pressed="true">Papel</button><button type="button" data-fondo="satelite" aria-pressed="false">Satélite</button></div>
     </div>
-    <div id="g-der" data-gp="mapa">
-      <div id="g-mapa" role="region" aria-label="Mapa de las fotos"></div>
-      <div class="g-fondos" role="group" aria-label="Fondo">
-        <button type="button" data-fondo="papel" aria-pressed="true">Papel</button><button type="button" data-fondo="satelite" aria-pressed="false">Satélite</button>
+  </section>
+  <section class="vista" data-vista="desafio" hidden>
+    <div class="desafio">
+      <div class="des-txt">
+        <p class="etq">Desafío ciudadano</p>
+        <h2 id="des-titulo">Fotografiemos las 20 comunas</h2>
+        <p id="des-sub">Cada comuna con fotos de terreno es un pedazo de Patagonia documentado para siempre. Las que faltan están en rojo.</p>
+        <div class="des-barra"><i id="des-avance"></i></div>
+        <ol class="des-lista" id="des-lista"></ol>
       </div>
+      <div class="des-mapa"><div id="d-mapa" role="region" aria-label="Mapa del desafío por comunas"></div></div>
     </div>
+  </section>
+  <section class="vista" data-vista="mias" hidden>
+    <p class="g-cuenta" id="mias-cuenta"></p>
+    <div class="justificada" id="mosaico-mias" role="list"></div>
   </section>
 </main>
 
+<footer class="g-pie">
+  <p>Fotos con licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noopener">CC BY 4.0</a>: úsalas libremente nombrando a quien la tomó. · <a href="../privacidad.html">Privacidad</a> · <a href="../">Patagonia Chilena</a></p>
+</footer>
+
 <!-- visor de una foto -->
-<div class="visor" id="visor" hidden role="dialog" aria-modal="true" aria-labelledby="v-titulo">
-  <div class="v-img">
-    <img id="v-foto" alt="">
-    <button class="v-nav v-ant" id="v-ant" type="button" aria-label="Foto anterior">‹</button>
-    <button class="v-nav v-sig" id="v-sig" type="button" aria-label="Foto siguiente">›</button>
+<div class="lb" id="visor" hidden role="dialog" aria-modal="true" aria-labelledby="v-titulo">
+  <div class="lb-barra">
+    <span id="v-cuenta"></span>
+    <button type="button" id="v-info" aria-pressed="true">Información</button>
+    <button type="button" id="v-compartir">Compartir</button>
+    <button type="button" class="lb-x" id="v-cerrar" aria-label="Cerrar">×</button>
   </div>
-  <aside class="v-ficha" id="v-ficha"></aside>
-  <button class="cerrar v-cerrar" id="v-cerrar" type="button" aria-label="Cerrar">×</button>
+  <div class="lb-img" id="v-escena">
+    <img id="v-foto" alt="">
+    <button class="lb-nav lb-ant" id="v-ant" type="button" aria-label="Foto anterior">‹</button>
+    <button class="lb-nav lb-sig" id="v-sig" type="button" aria-label="Foto siguiente">›</button>
+  </div>
+  <aside class="lb-ficha" id="v-ficha"><div id="v-a"></div><div class="v-mini" id="v-mini"></div><div id="v-b"></div></aside>
 </div>
 
-<!-- subir fotos -->
-<div class="subida" id="subida" hidden role="dialog" aria-modal="true" aria-labelledby="s-titulo">
-  <div class="s-cab">
-    <div><p class="etq">Galería de terreno · aporte abierto</p><h2 id="s-titulo">Subir fotos</h2></div>
-    <button class="cerrar" id="s-cerrar" type="button" aria-label="Cerrar">×</button>
-  </div>
-  <div class="s-cuerpo">
-    <div class="s-izq">
-      <label class="subir" id="s-zona">
-        <input type="file" id="s-archivos" multiple accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp,.heic">
-        <b>Elegir o arrastrar fotos</b>
-        <span>JPG, PNG o WEBP. Si la foto trae GPS se ubica sola, con la dirección hacia donde mira si el celular la guardó.</span>
-      </label>
-      <label class="subir s-gpx">
-        <input type="file" id="s-gpx" accept=".gpx,application/gpx+xml">
-        <b>¿Fotos sin GPS? Agrega tu recorrido (.gpx)</b>
-        <span id="s-gpx-txt">Si grabaste el recorrido con un GPS, reloj o app (Wikiloc, Strava, OsmAnd…), cada foto se ubica cruzando su hora con la del recorrido.</span>
-      </label>
-      <div class="s-desfase" id="s-desfase" hidden>
-        <label for="s-desf">Hora de la cámara</label>
-        <select id="s-desf"></select>
-        <small>Si el reloj de la cámara estaba adelantado o atrasado, corrígelo aquí.</small>
-      </div>
-      <div class="s-lista" id="s-lista"></div>
+<!-- subir fotos: tres pasos -->
+<div class="asis" id="subida" hidden role="dialog" aria-modal="true" aria-labelledby="a-titulo">
+  <header class="asis-cab">
+    <button class="asis-x" id="a-cerrar" type="button" aria-label="Cerrar">×</button>
+    <ol class="pasos" id="pasos"><li data-p="1">Tus fotos</li><li data-p="2">¿Dónde?</li><li data-p="3">¿Quién?</li></ol>
+  </header>
 
-      <fieldset class="s-comun" id="s-comun" hidden>
-        <legend>Datos para todas</legend>
-        <div class="s-dos">
-          <label>Tu nombre <small>(firma de la foto)</small><input id="s-autor" maxlength="60" autocomplete="name" placeholder="Nombre y apellido u organización"></label>
-          <label>Tema<select id="s-tema"></select></label>
+  <section class="paso" data-p="1">
+    <h2 id="a-titulo">Comparte tu Patagonia</h2>
+    <p class="paso-sub">Fotos de paisajes, glaciares, fauna, bosques, incendios u obras en Aysén o Magallanes.</p>
+    <div class="fuentes-foto">
+      <label class="fuente cam"><input type="file" id="a-camara" accept="image/*" capture="environment"><span aria-hidden="true">📷</span><b>Tomar foto ahora</b><small>Usa la ubicación de tu teléfono</small></label>
+      <label class="fuente"><input type="file" id="a-galeria" accept="image/jpeg,image/png,image/webp,image/heic,.heic" multiple><span aria-hidden="true">🖼</span><b>Elegir de mi galería</b><small>Hasta 30 fotos a la vez</small></label>
+    </div>
+    <div class="a-fotos" id="a-fotos"></div>
+    <div class="a-tema" id="a-tema-caja" hidden>
+      <h3>¿Qué muestran?</h3>
+      <div class="chips-tema" id="a-temas" role="radiogroup" aria-label="Tema"></div>
+    </div>
+  </section>
+
+  <section class="paso" data-p="2" hidden>
+    <div class="donde">
+      <div class="donde-foto">
+        <p class="donde-n" id="d-n"></p>
+        <img id="d-img" alt="">
+        <p class="donde-est" id="d-est"></p>
+        <div class="donde-acc">
+          <button class="boton-sec" type="button" id="d-aqui">📍 Estoy aquí</button>
+          <button class="boton-sec" type="button" id="d-igual" hidden>Igual que la anterior</button>
         </div>
-        <label>Descripción <small>(opcional, se agrega a cada foto)</small><textarea id="s-descr" rows="2" maxlength="600" placeholder="Qué se ve, contexto, campaña de terreno…"></textarea></label>
-        <input class="trampa" id="s-web" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label class="s-acepto"><input type="checkbox" id="s-acepto"> Tomé estas fotos o tengo permiso para publicarlas, y las comparto con licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noopener">CC BY 4.0</a>: cualquiera puede usarlas citando mi nombre.</label>
-        <p class="nota">Las fotos se reducen en tu navegador y se les borran los datos internos (modelo de cámara, número de serie). Solo se publica lo que ves aquí: la ubicación, la dirección, la fecha y tu nombre. Evita fotos donde se reconozca a personas sin su permiso.</p>
-        <p class="s-err" id="s-err" role="alert"></p>
-        <div class="s-pie"><span id="s-resumen"></span><button class="h-btn h-pri" id="s-publicar" type="button">Publicar</button></div>
-      </fieldset>
+        <div class="buscar-lugar">
+          <input id="d-buscar" type="search" placeholder="Escribe un lugar: Caleta Tortel, Cerro Castillo…" autocomplete="off" aria-label="Buscar un lugar">
+          <ul id="d-res" hidden></ul>
+        </div>
+        <div class="dial-caja">
+          <div class="dial" id="d-dial" role="slider" aria-label="Hacia dónde miraba la cámara" aria-valuemin="0" aria-valuemax="359" tabindex="0">
+            <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="50" class="dial-aro"/><text x="60" y="17">N</text><text x="106" y="64">E</text><text x="60" y="112">S</text><text x="14" y="64">O</text>
+              <g id="d-aguja"><path d="M60 60 44 18 A44 44 0 0 1 76 18Z" class="dial-cono"/></g><circle cx="60" cy="60" r="6" class="dial-centro"/></svg>
+          </div>
+          <div class="dial-txt"><b>¿Hacia dónde miraba?</b><small id="d-rumbo">Opcional. Gira el abanico con el dedo.</small><button type="button" class="enlace" id="d-sinrumbo">No lo sé</button></div>
+        </div>
+        <div class="donde-nav"><button type="button" class="boton-sec" id="d-prev">‹ Anterior</button><button type="button" class="boton-sec" id="d-next">Siguiente foto ›</button></div>
+        <button type="button" class="enlace quitar" id="d-quitar">Quitar esta foto</button>
+      </div>
+      <div class="donde-mapa"><div id="a-mapa" role="region" aria-label="Mapa para ubicar la foto"></div><p class="donde-ayuda">Toca el mapa o arrastra el pin hasta donde estabas al tomar la foto.</p></div>
     </div>
-    <div class="s-der">
-      <div id="s-mapa" role="region" aria-label="Mapa para ubicar las fotos"></div>
-      <div class="s-hud" id="s-hud" hidden><span id="s-hud-txt"></span><button class="h-btn" id="s-hud-omitir" type="button">Sin dirección</button><button class="h-btn" id="s-hud-cancelar" type="button">Cancelar</button></div>
+    <details class="avanzado" id="a-avanzado">
+      <summary>Opciones para investigadores: ubicar con un recorrido GPS (.gpx)</summary>
+      <p>Si grabaste tu recorrido con un GPS, reloj o app (Wikiloc, Strava, OsmAnd…), cada foto se ubica cruzando su hora con la del recorrido.</p>
+      <label class="boton-sec archivo-gpx"><input type="file" id="a-gpx" accept=".gpx,application/gpx+xml"> Cargar recorrido .gpx</label>
+      <span id="a-gpx-txt"></span>
+      <label class="desfase" id="a-desfase" hidden>El reloj de la cámara estaba <select id="a-desf"></select> y <input id="a-desf-min" type="number" min="-59" max="59" value="0"> minutos</label>
+    </details>
+  </section>
+
+  <section class="paso" data-p="3" hidden>
+    <h2>¿Cómo te nombramos?</h2>
+    <div class="quien">
+      <div class="quien-form">
+        <label class="campo-g">Tu nombre o un seudónimo<input id="a-autor" maxlength="60" autocomplete="nickname" placeholder="Ej.: Ana de Cochrane"><small>Aparecerá junto a tus fotos. Puede ser un seudónimo.</small></label>
+        <div id="a-titulos"></div>
+        <label class="campo-g">Algo que quieras contar <small>(opcional)</small><textarea id="a-descr" rows="2" maxlength="600" placeholder="Qué se ve, cuándo fuiste, por qué te importa este lugar…"></textarea></label>
+        <input class="trampa" id="a-web" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="acepto-g"><input type="checkbox" id="a-acepto"><span><b>Las fotos son mías o tengo permiso</b> y cualquiera podrá usarlas nombrándome (licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noopener">CC BY 4.0</a>).</span></label>
+        <p class="nota-g">Se publica la foto, el lugar, la fecha y tu nombre. Los datos internos de la cámara se borran antes de enviarla. Evita fotos donde se reconozca a personas sin su permiso.</p>
+      </div>
+      <div class="quien-prev"><p class="etq">Así se verá</p><div id="a-prev"></div></div>
     </div>
-  </div>
+  </section>
+
+  <section class="paso fin" data-p="4" hidden>
+    <div id="a-fin"></div>
+  </section>
+
+  <footer class="asis-pie">
+    <button class="boton-sec" type="button" id="a-atras">Atrás</button>
+    <span id="a-estado" role="status"></span>
+    <button class="boton-grande" type="button" id="a-sig">Siguiente</button>
+  </footer>
 </div>
 
 <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
 
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/exifr@7.1.3/dist/lite.umd.js"></script>
-<script type="module" src="galeria.js?v=1794005392"></script>
+<script type="module" src="galeria.js?v=1794007281"></script>
 </body>
 </html>

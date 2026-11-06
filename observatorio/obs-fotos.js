@@ -103,3 +103,26 @@ export function comunaDe(fc, lon, lat) {
   }
   return null;
 }
+
+export const EMOJI_TEMA = { paisaje: '🏞', hielo: '🧊', agua: '🌊', fauna: '🦊', flora: '🌲', fuego: '🔥', obras: '🚧', predios: '📍', comunidad: '🏘', otro: '✨' };
+
+/** Localidad más cercana (para sugerir «Cerca de Cochrane») */
+export function cercana(fc, lon, lat) {
+  let mejor = null, dmin = Infinity;
+  const k = Math.cos(lat * Math.PI / 180);
+  for (const f of fc?.features || []) {
+    const [x, y] = f.geometry?.coordinates || []; if (x == null) continue;
+    const d = ((x - lon) * k) ** 2 + (y - lat) ** 2;
+    if (d < dmin) { dmin = d; mejor = f.properties; }
+  }
+  return mejor ? { ...mejor, km: Math.sqrt(dmin) * 111.2 } : null;
+}
+
+/** Ubicación del teléfono (promesa; null si la persona no da permiso o no hay señal GPS) */
+export function ubicacionTelefono(timeout = 15000) {
+  return new Promise(ok => {
+    if (!navigator.geolocation) return ok(null);
+    navigator.geolocation.getCurrentPosition(p => ok({ lat: p.coords.latitude, lon: p.coords.longitude, alt: p.coords.altitude, precision: p.coords.accuracy, t: Date.now() }),
+      () => ok(null), { enableHighAccuracy: true, timeout, maximumAge: 60000 });
+  });
+}

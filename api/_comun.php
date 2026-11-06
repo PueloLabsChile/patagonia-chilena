@@ -60,6 +60,8 @@ function migrar(PDO $db): void {
         tomada TEXT, titulo TEXT, descripcion TEXT, autor TEXT NOT NULL, tema TEXT, origen TEXT, licencia TEXT NOT NULL DEFAULT \'CC BY 4.0\',
         creado TEXT NOT NULL, ip TEXT, token TEXT NOT NULL, reportes INTEGER NOT NULL DEFAULT 0, oculta INTEGER NOT NULL DEFAULT 0)');
     $db->exec('CREATE TABLE IF NOT EXISTS fotos_reportes (foto_id INTEGER, ip TEXT, motivo TEXT, creado TEXT, PRIMARY KEY (foto_id, ip))');
+    if (!in_array('clave', array_column($db->query('PRAGMA table_info(fotos)')->fetchAll(), 'name'), true)) $db->exec('ALTER TABLE fotos ADD COLUMN clave TEXT');
+    $db->exec('CREATE UNIQUE INDEX IF NOT EXISTS u_foto_clave ON fotos(clave) WHERE clave IS NOT NULL');
     // administrador: el único que ve la lista de socios con nombre y correo (por defecto, Gonzalo)
     if (!in_array('admin', array_column($db->query('PRAGMA table_info(moderadores)')->fetchAll(), 'name'), true)) {
         $db->exec('ALTER TABLE moderadores ADD COLUMN admin INTEGER NOT NULL DEFAULT 0');
