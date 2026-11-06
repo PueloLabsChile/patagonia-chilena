@@ -1,9 +1,9 @@
 // Patagonia Chilena · relato con mapa, historia, contador, mapa de inscritos, anticipo de la Asamblea e inscripción
-import { iniciarViento } from './viento.js?v=1794005164';
-import { iniciarRelieve } from './relieve.js?v=1794005164';
-import { iniciarParalaje } from './paralaje.js?v=1794005164';
-import { iniciarHistoria } from './historia.js?v=1794005164';
-import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1794005164';
+import { iniciarViento } from './viento.js?v=1794005392';
+import { iniciarRelieve } from './relieve.js?v=1794005392';
+import { iniciarParalaje } from './paralaje.js?v=1794005392';
+import { iniciarHistoria } from './historia.js?v=1794005392';
+import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1794005392';
 // siempre partir desde la portada (salvo que el enlace apunte a una sección)
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (!location.hash) { scrollTo(0, 0); addEventListener('load', () => scrollTo(0, 0)); }

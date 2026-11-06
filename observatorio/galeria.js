@@ -1,6 +1,6 @@
 // Galería de terreno del Observatorio Patagonia: mosaico + mapa, visor de fotos y subida con ubicación (GPS, recorrido GPX o clic en el mapa).
-import { TEMAS, COLOR_TEMA, leerFoto, achicar, leerGPX, ubicarEnRecorrido, rumboEntre, iconoCono, comunaDe, rumboTexto, dentroCaja, CAJA } from './obs-fotos.js?v=1794005164';
-import * as C from './obs-coords.js?v=1794005164';
+import { TEMAS, COLOR_TEMA, leerFoto, achicar, leerGPX, ubicarEnRecorrido, rumboEntre, iconoCono, comunaDe, rumboTexto, dentroCaja, CAJA } from './obs-fotos.js?v=1794005392';
+import * as C from './obs-coords.js?v=1794005392';
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -490,6 +490,12 @@ function pintarMapaS(encuadrar = false) {
   }
 }
 
+/** Paquete binario PCF1: datos JSON + foto + miniatura (ver api/fotos.php) */
+function paquete(datos, foto, mini) {
+  const largo = n => { const b = new Uint8Array(4); new DataView(b.buffer).setUint32(0, n); return b; };
+  const json = new TextEncoder().encode(JSON.stringify(datos));
+  return new Blob([new TextEncoder().encode('PCF1'), largo(json.length), json, largo(foto.size), foto, largo(mini.size), mini], { type: 'application/octet-stream' });
+}
 $('#s-publicar').onclick = async () => {
   const autor = $('#s-autor').value.trim(), err = $('#s-err');
   err.textContent = '';
@@ -504,12 +510,9 @@ $('#s-publicar').onclick = async () => {
     it.estado = 'subiendo'; it.res = ''; pintarLista(); $('#s-publicar').disabled = true;
     try {
       const [g, m] = [await achicar(it.file, 2048, .84), await achicar(it.file, 480, .78)];
-      const fd = new FormData();
-      fd.append('foto', g.blob, 'foto.jpg'); fd.append('mini', m.blob, 'mini.jpg');
-      const campos = { lat: it.lat.toFixed(6), lon: it.lon.toFixed(6), rumbo: it.rumbo ?? '', altitud: it.altitud ?? '', tomada: it.tomada || '', titulo: it.titulo.trim(),
-        descripcion: $('#s-descr').value.trim(), autor, tema: it.tema || $('#s-tema').value, origen: it.origen, acepto: '1', web: $('#s-web').value };
-      for (const [k, v] of Object.entries(campos)) fd.append(k, v);
-      const r = await fetch(API, { method: 'POST', body: fd });
+      const datos = { lat: +it.lat.toFixed(6), lon: +it.lon.toFixed(6), rumbo: it.rumbo ?? null, altitud: it.altitud ?? null, tomada: it.tomada || null, titulo: it.titulo.trim(),
+        descripcion: $('#s-descr').value.trim(), autor, tema: it.tema || $('#s-tema').value, origen: it.origen, acepto: 1, web: $('#s-web').value };
+      const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/octet-stream' }, body: paquete(datos, g.blob, m.blob) });
       const d = await r.json().catch(() => ({ ok: false, error: r.status === 413 ? 'La foto es demasiado pesada para el servidor.' : 'El servidor no respondió bien.' }));
       if (!d.ok) throw new Error(d.error || 'No se pudo subir.');
       MIAS[d.foto.id] = d.token; guardarLS('pc_fotos_mias', MIAS);

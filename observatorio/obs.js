@@ -1,8 +1,8 @@
 // Observatorio Patagonia · visor geoespacial de Aysén y Magallanes (etapa 1)
-import { FONDOS, GRUPOS, CAPAS, VISTAS, colorDe } from './obs-capas.js?v=1794005164';
-import * as C from './obs-coords.js?v=1794005164';
-import { crearImagenes } from './obs-imagen.js?v=1794005164';
-import * as A from './obs-archivos.js?v=1794005164';
+import { FONDOS, GRUPOS, CAPAS, VISTAS, colorDe } from './obs-capas.js?v=1794005392';
+import * as C from './obs-coords.js?v=1794005392';
+import { crearImagenes } from './obs-imagen.js?v=1794005392';
+import * as A from './obs-archivos.js?v=1794005392';
 
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
