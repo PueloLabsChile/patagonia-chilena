@@ -206,3 +206,34 @@ select option{background:#15141f;color:#fff}
 .acceso-msg.mal{color:#ff9d93!important}
 #b-recordar.seguro{background:rgba(245,201,138,.18);border-color:rgba(245,201,138,.5);color:#f5c98a}
 .estado .rec{opacity:.75;margin-left:2px}
+
+/* v3 · redactor de correos y datos adicionales */
+.paso{margin:6px 0 10px;font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--arena,#f5c98a)}
+.tipos{display:grid;gap:8px;margin-bottom:18px}
+.tipo{display:block;cursor:pointer}
+.tipo input{position:absolute;opacity:0;pointer-events:none}
+.tipo span{display:block;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.035);transition:all .15s}
+.tipo b{display:block;font-weight:600;font-size:14.5px}
+.tipo small{display:block;margin-top:3px;color:var(--niebla);font-size:12.5px;line-height:1.4}
+.tipo input:checked+span{border-color:rgba(245,201,138,.65);background:rgba(245,201,138,.09);box-shadow:0 0 0 3px rgba(245,201,138,.1)}
+.tipo input:focus-visible+span{outline:2px solid var(--lavanda)}
+.tipo input:disabled+span{opacity:.45;cursor:default}
+.campos-datos{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.campos-datos label{cursor:pointer}
+.campos-datos input{position:absolute;opacity:0;pointer-events:none}
+.campos-datos span{display:inline-block;padding:9px 13px;border-radius:99px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.04);font-size:13.5px;transition:all .15s}
+.campos-datos input:checked+span{background:var(--lavanda);border-color:var(--lavanda);color:#14101f;font-weight:600}
+.campos-datos input:focus-visible+span{outline:2px solid var(--lavanda);outline-offset:2px}
+.resumen-envio{margin:4px 0 12px;padding:12px 14px;border-radius:14px;background:rgba(127,224,212,.07);border:1px solid rgba(127,224,212,.18);font-size:14px}
+.resumen-envio b{color:var(--turquesa,#7fe0d4)}
+.btn-chico{padding:9px 14px;font-size:13px}
+.vista{margin-top:12px}
+.vista p{margin:0 0 6px;font:500 12px var(--mono);color:var(--niebla)}
+.vista iframe{width:100%;height:520px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:#071a45}
+#b-enviar.seguro{background:linear-gradient(120deg,#f5a35b,#f5c98a);color:#1a1205}
+.estado .dat{opacity:.8;margin-left:4px}
+.datos-extra{margin:10px 0 0;padding:12px 14px;border-radius:14px;background:rgba(203,184,255,.06);border:1px solid rgba(203,184,255,.16)}
+.datos-extra h4{margin:0 0 8px;font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--lavanda)}
+.datos-extra dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:6px 12px;margin:0;font-size:13.5px}
+.datos-extra dt{color:var(--niebla)}
+.datos-extra dd{margin:0;overflow-wrap:anywhere}

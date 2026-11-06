@@ -29,7 +29,7 @@ function migrar(PDO $db): void {
         numero INTEGER UNIQUE, creado TEXT NOT NULL, confirmado TEXT, ip TEXT, envios INTEGER NOT NULL DEFAULT 0, ultimo_envio TEXT)');
     $cols = array_column($db->query('PRAGMA table_info(socios)')->fetchAll(), 'name');
     foreach (['apodo TEXT', 'region INTEGER', 'puesto INTEGER', 'acreditado TEXT', 'visto INTEGER', 'palabra INTEGER',
-              'suspendido INTEGER NOT NULL DEFAULT 0', 'ultimo_mensaje INTEGER', 'ultimo_aplauso INTEGER', 'compromiso INTEGER', 'compromiso_fecha TEXT', 'actividad TEXT', 'actividad_detalle TEXT', 'notas TEXT', 'recordatorios INTEGER NOT NULL DEFAULT 0', 'recordado TEXT'] as $c) {
+              'suspendido INTEGER NOT NULL DEFAULT 0', 'ultimo_mensaje INTEGER', 'ultimo_aplauso INTEGER', 'compromiso INTEGER', 'compromiso_fecha TEXT', 'actividad TEXT', 'actividad_detalle TEXT', 'notas TEXT', 'recordatorios INTEGER NOT NULL DEFAULT 0', 'recordado TEXT', 'telefono TEXT', 'extra TEXT', 'solicitud TEXT', 'respondido TEXT'] as $c) {
         if (!in_array(explode(' ', $c)[0], $cols, true)) $db->exec("ALTER TABLE socios ADD COLUMN $c");
     }
     $db->exec('CREATE UNIQUE INDEX IF NOT EXISTS u_apodo ON socios(apodo COLLATE NOCASE) WHERE apodo IS NOT NULL');
@@ -145,6 +145,37 @@ function monto_compromiso($v): ?int {
     if ($m === 0) return 0;
     return ($m >= 1000 && $m <= 1000000) ? $m : null;
 }
+/** Datos adicionales que gestión puede pedir a los socios: clave → [pregunta, tipo u opciones]. */
+const CAMPOS_DATOS = [
+    'telefono'       => ['Teléfono o WhatsApp', 'telefono'],
+    'actividad'      => ['Oficio, profesión o actividad', 'actividad'],
+    'comuna'         => ['Comuna donde vives', 'comuna'],
+    'nacimiento'     => ['Año de nacimiento', 'anio'],
+    'comision'       => ['Comisión en la que te gustaría participar', ['Comunicaciones y difusión', 'Territorio y medio ambiente', 'Finanzas y aportes', 'Asuntos legales', 'Organización y eventos', 'Tecnología y datos', 'Educación', 'Aún no sé']],
+    'disponibilidad' => ['Tiempo que podrías aportar al mes', ['1 a 2 horas', '3 a 5 horas', '6 a 10 horas', 'Más de 10 horas', 'Por ahora, ninguno']],
+    'patagonia'      => ['Tu vínculo con la Patagonia', ['Vivo allí', 'Nací allí', 'Tengo familia allí', 'La he visitado', 'Aún no la conozco']],
+    'habilidades'    => ['Conocimientos o habilidades que puedes aportar', 'largo'],
+    'comentario'     => ['Un mensaje para el equipo', 'largo'],
+];
+/** Correo para pedir datos adicionales. */
+function plantilla_datos(string $nombre, string $enlace, string $baja, string $mensaje, array $preguntas): string {
+    $h = fn($s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+    $n = $h(explode(' ', trim($nombre))[0]);
+    $lista = implode('', array_map(fn($p) => '<li style="margin:0 0 6px">' . $h($p) . '</li>', $preguntas));
+    $msg = $mensaje !== '' ? '<tr><td style="font:16px/1.6 Arial;color:#ffffff;padding:0 0 18px;border-left:3px solid #d52b1e;padding-left:14px">' . nl2br($h($mensaje)) . '</td></tr>' : '';
+    return '<!doctype html><html><body style="margin:0;background:#071a45;font-family:Arial,Helvetica,sans-serif">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#071a45;padding:32px 12px"><tr><td align="center">
+<table role="presentation" width="100%" style="max-width:520px;background:#0d2c6e;border-radius:18px;padding:36px 30px;color:#f8f6f0">
+<tr><td style="font:600 13px Arial;letter-spacing:2px;color:#c6d6ee;text-transform:uppercase">Patagonia Chilena</td></tr>
+<tr><td style="padding:18px 0 8px;font:400 30px Georgia,serif;color:#ffffff">' . $n . ', ¿nos ayudas con unos datos?</td></tr>
+<tr><td style="font:16px/1.6 Arial;color:#cfe0e7;padding-bottom:18px">Estamos organizando la cooperativa y nos sirve conocerte un poco más. Toma menos de un minuto:</td></tr>
+' . $msg . '
+<tr><td style="font:15px/1.5 Arial;color:#e6eef8;padding-bottom:24px"><ul style="margin:0;padding-left:20px">' . $lista . '</ul></td></tr>
+<tr><td><a href="' . $enlace . '" style="display:inline-block;background:#d52b1e;color:#ffffff;text-decoration:none;font:700 16px Arial;padding:15px 28px;border-radius:30px">Completar mis datos</a></td></tr>
+<tr><td style="font:13px/1.6 Arial;color:#a3b3d1;padding-top:28px">Responder es voluntario. Tus datos solo los ve el equipo de gestión y nunca se publican de forma individual. <a href="' . $baja . '" style="color:#a3b3d1">Darme de baja y borrar mis datos</a>.</td></tr>
+</table></td></tr></table></body></html>';
+}
+
 /** Límite de solicitudes por conexión y por hora (accesos por correo, etc.). */
 function limite_ip(string $tipo, int $max): void {
     $db = db(); $ip = ip_hash();
@@ -161,7 +192,11 @@ function enlaces_socio(array $s): array {
 function invalidar_cache(): void { @unlink(sys_get_temp_dir() . '/pc_fondo_' . md5(cfg('db')) . '.json'); @unlink(sys_get_temp_dir() . '/pc_sala_' . md5(cfg('db')) . '.json'); @unlink(sys_get_temp_dir() . '/pc_estadisticas.json'); }
 
 function enviar_correo(string $para, string $asunto, string $html): bool {
-    if (cfg('dev')) return true;   // en desarrollo no se envían correos
+    if (cfg('dev')) {   // en desarrollo no se envían: se guardan en dev/correos/ para revisarlos
+        $dir = __DIR__ . '/../dev/correos'; @mkdir($dir, 0775, true);
+        @file_put_contents($dir . '/' . date('Ymd-His') . '-' . substr(md5($para . microtime()), 0, 6) . '.html', '<!-- Para: ' . htmlspecialchars($para) . ' | Asunto: ' . htmlspecialchars($asunto) . " -->\n" . $html);
+        return true;
+    }
     $de = cfg('correo_de');
     $cab = ['MIME-Version: 1.0', 'Content-Type: text/html; charset=UTF-8', 'Content-Transfer-Encoding: 8bit',
             'From: Patagonia Chilena <' . $de . '>', 'Reply-To: ' . cfg('correo_contacto'), 'X-Mailer: patagoniachilena'];

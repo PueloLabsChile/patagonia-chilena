@@ -40,6 +40,12 @@ function siguiente_puesto(int $region): int {
     $q = db()->prepare('SELECT COALESCE(MAX(puesto), 0) + 1 FROM socios WHERE region = ? AND numero IS NOT NULL'); $q->execute([$region]);
     return (int)$q->fetchColumn();
 }
+/** Campos válidos pedidos desde el panel (en el orden del catálogo). */
+function campos_pedidos(array $d): array {
+    $c = array_values(array_intersect(array_keys(CAMPOS_DATOS), (array)($d['campos'] ?? [])));
+    if (!$c) error('Elige al menos un dato para pedir.', 422);
+    return $c;
+}
 /** Envía el recordatorio de confirmación y lo registra en la persona. */
 function recordar(array $s): bool {
     [$enlace, $baja] = enlaces_socio($s);
@@ -50,12 +56,13 @@ function recordar(array $s): bool {
 function correo_repetido(PDOException $e): void { if (str_contains($e->getMessage(), 'UNIQUE')) error('Ese correo ya está en la lista.', 409); throw $e; }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $filas = $db->query('SELECT id, numero, nombre, correo, comuna, region, fundador, apodo, actividad, actividad_detalle, compromiso, notas, recordatorios, recordado,
+    $filas = $db->query('SELECT id, numero, nombre, correo, comuna, region, fundador, apodo, actividad, actividad_detalle, compromiso, notas, recordatorios, recordado, telefono, extra, solicitud, respondido,
                          creado, confirmado, suspendido, (SELECT COUNT(*) FROM socios s2 WHERE s2.ref = socios.codigo AND s2.numero IS NOT NULL) invitados
                          FROM socios ORDER BY numero IS NULL, numero, id')->fetchAll();
     foreach ($filas as &$f) foreach (['id', 'numero', 'comuna', 'region', 'fundador', 'compromiso', 'suspendido', 'invitados', 'recordatorios'] as $k) $f[$k] = $f[$k] === null ? null : (int)$f[$k];
+    foreach ($filas as &$f) { $f['extra'] = $f['extra'] ? json_decode($f['extra'], true) : null; $f['solicitud'] = $f['solicitud'] ? json_decode($f['solicitud'], true) : null; }
     unset($f);
-    responder(['ok' => true, 'yo' => ['nombre' => $yo['nombre'], 'admin' => (bool)$yo['admin']], 'socios' => $filas, 'actividades' => ACTIVIDADES]);
+    responder(['ok' => true, 'yo' => ['nombre' => $yo['nombre'], 'admin' => (bool)$yo['admin']], 'socios' => $filas, 'actividades' => ACTIVIDADES, 'campos_datos' => CAMPOS_DATOS]);
 }
 
 solo_post();
@@ -105,6 +112,48 @@ switch ($accion) {
         $db->prepare('DELETE FROM votos WHERE socio_id = ?')->execute([$s['id']]);
         $db->prepare('DELETE FROM socios WHERE id = ?')->execute([$s['id']]);
         anotar('eliminar socio', ($s['numero'] ? 'n.º ' . $s['numero'] : 'pendiente') . ' · ' . $s['nombre']); break;
+    case 'vista_previa':
+        // cómo se verá el correo, con los datos de la primera persona elegida (o un ejemplo)
+        $s = !empty($d['id']) ? socio_por_id((int)$d['id']) : ['nombre' => 'Camila', 'token' => 'ejemplo', 'confirmado' => null];
+        [$enlace, $baja] = enlaces_socio($s);
+        if (($d['tipo'] ?? '') === 'datos') {
+            $campos = campos_pedidos($d);
+            $html = plantilla_datos($s['nombre'], rtrim(cfg('sitio'), '/') . '/completar.html?t=' . $s['token'], $baja, limpiar_texto((string)($d['mensaje'] ?? ''), 600), array_map(fn($k) => CAMPOS_DATOS[$k][0], $campos));
+            $asunto = '¿Nos ayudas con unos datos? · Patagonia Chilena';
+        } else { $html = plantilla_correo($s['nombre'], $enlace, $baja, false, true); $asunto = 'Te falta confirmar tu inscripción en Patagonia Chilena'; }
+        responder(['ok' => true, 'asunto' => $asunto, 'html' => $html]);
+    case 'enviar':
+        // envío por lotes de 100: devuelve los ids que quedan para que el panel siga enviando
+        $tipo = (string)($d['tipo'] ?? '');
+        if (!in_array($tipo, ['recordatorio', 'datos'], true)) error('Elige qué tipo de correo enviar.');
+        $ids = array_values(array_unique(array_filter(array_map('intval', (array)($d['ids'] ?? [])))));
+        if (!$ids) error('No hay destinatarios.');
+        $uno = count($ids) === 1 && empty($d['lote']);
+        $lote = array_slice($ids, 0, 100);
+        $campos = $tipo === 'datos' ? campos_pedidos($d) : [];
+        $mensaje = limpiar_texto((string)($d['mensaje'] ?? ''), 600);
+        $ok = 0; $omitidos = 0; $mal = 0;
+        $q = $db->prepare('SELECT * FROM socios WHERE id = ?');
+        foreach ($lote as $id) {
+            $q->execute([$id]); $s = $q->fetch();
+            if (!$s) { $omitidos++; continue; }
+            if ($tipo === 'recordatorio') {
+                $reciente = $s['recordado'] && strtotime($s['recordado'] . ' UTC') > time() - ($uno ? 600 : 48 * 3600);
+                if ($s['numero'] || $reciente || (!$uno && (int)$s['recordatorios'] >= 3)) { $omitidos++; continue; }
+                recordar($s) ? $ok++ : $mal++;
+            } else {
+                $sol = $s['solicitud'] ? json_decode($s['solicitud'], true) : null;
+                if ($sol && strtotime($sol['fecha'] . ' UTC') > time() - 600) { $omitidos++; continue; }   // evita dobles envíos
+                [, $baja] = enlaces_socio($s);
+                $enl = rtrim(cfg('sitio'), '/') . '/completar.html?t=' . $s['token'];
+                if (enviar_correo($s['correo'], '¿Nos ayudas con unos datos? · Patagonia Chilena', plantilla_datos($s['nombre'], $enl, $baja, $mensaje, array_map(fn($k) => CAMPOS_DATOS[$k][0], $campos)))) {
+                    $db->prepare('UPDATE socios SET solicitud = ?, respondido = NULL WHERE id = ?')->execute([json_encode(['campos' => $campos, 'mensaje' => $mensaje, 'fecha' => ahora(), 'por' => $yo['nombre']], JSON_UNESCAPED_UNICODE), $s['id']]);
+                    $ok++;
+                } else $mal++;
+            }
+        }
+        anotar($tipo === 'datos' ? 'pedir datos' : 'recordatorio', $ok . ' enviados' . ($omitidos ? ", $omitidos omitidos" : '') . ($mal ? ", $mal con error" : '') . ($tipo === 'datos' ? ' · ' . implode(', ', $campos) : ''));
+        $resp += ['enviados' => $ok, 'omitidos' => $omitidos, 'errores' => $mal, 'resto' => array_slice($ids, 100)]; break;
     case 'recordar':
         // un recordatorio a una persona pendiente (máximo uno cada 10 minutos)
         $s = socio_por_id((int)($d['id'] ?? 0));

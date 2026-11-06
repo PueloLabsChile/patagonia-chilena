@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/img/icono.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<link href="assets/css/gestion.css?v=1793989779" rel="stylesheet">
+<link href="assets/css/gestion.css?v=1793990441" rel="stylesheet">
 </head>
 <body>
 <div class="cielo" aria-hidden="true"><i class="au au1"></i><i class="au au2"></i><i class="au au3"></i></div>
@@ -28,7 +28,7 @@
       <p class="bajada" id="actualizado">Cargando…</p>
     </div>
     <div class="intro-acc">
-      <button class="btn btn-sec" id="b-recordar" type="button" title="Envía un correo a quienes no han confirmado (máximo 3 por persona, cada 48 horas)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg><span>Recordar a pendientes</span></button>
+      <button class="btn btn-sec" id="b-correo" type="button" title="Recordatorios para confirmar o pedir más datos a los socios"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg><span>Enviar correo</span></button>
       <button class="btn btn-sec" id="b-csv" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v3h16v-3"/></svg>Descargar Excel</button>
       <button class="btn btn-pri" id="b-agregar" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Agregar persona</button>
     </div>
@@ -108,13 +108,47 @@
       </div>
       <div class="campo"><label for="c-notas">Notas internas <small>(solo las ve el equipo)</small></label><textarea id="c-notas" name="notas" rows="3" maxlength="600" placeholder="Ej.: llamó por teléfono, quiere ayudar en comunicaciones"></textarea></div>
       <dl class="meta" id="ficha-meta"></dl>
+      <div id="ficha-extra"></div>
       <p class="aviso-err" id="ficha-err" role="alert"></p>
     </div>
     <div class="ficha-pie">
       <button class="btn btn-peligro" type="button" id="b-eliminar">Eliminar</button>
-      <button class="btn btn-sec" type="button" id="b-recordar-uno" hidden>Enviar recordatorio</button>
+      <button class="btn btn-sec" type="button" id="b-correo-uno">Enviar correo</button>
       <button class="btn btn-sec" type="button" id="b-confirmar" hidden>Confirmar a mano</button>
       <button class="btn btn-pri" type="submit" id="b-guardar">Guardar cambios</button>
+    </div>
+  </form>
+</aside>
+
+<!-- redactor de correos -->
+<aside class="ficha" id="redactor" aria-hidden="true" aria-labelledby="red-titulo">
+  <form id="form-correo" novalidate>
+    <div class="ficha-cab">
+      <div class="ficha-id"><b class="avatar grande" style="--c:#f5c98a">✉</b><div><h2 id="red-titulo">Enviar correo</h2><p id="red-sub">Recordatorios y pedidos de datos</p></div></div>
+      <button class="cerrar" type="button" id="red-cerrar" aria-label="Cerrar">×</button>
+    </div>
+    <div class="ficha-cuerpo">
+      <p class="paso">1 · ¿Qué quieres enviar?</p>
+      <div class="tipos">
+        <label class="tipo"><input type="radio" name="tipo" value="recordatorio" checked><span><b>Recordatorio para confirmar</b><small>A quienes aún no confirman su correo. Máximo 3 por persona, cada 48 horas.</small></span></label>
+        <label class="tipo"><input type="radio" name="tipo" value="datos"><span><b>Pedir más datos</b><small>Reciben un enlace a un formulario corto con las preguntas que elijas.</small></span></label>
+      </div>
+      <div id="red-datos" hidden>
+        <p class="paso">2 · ¿Qué datos quieres pedir?</p>
+        <div class="campos-datos" id="campos-datos"></div>
+        <div class="campo"><label for="red-mensaje">Mensaje para ellos <small>(opcional, aparece en el correo)</small></label>
+          <textarea id="red-mensaje" name="mensaje" rows="3" maxlength="600" placeholder="Ej.: Estamos armando las comisiones de trabajo para la Asamblea del 5 de diciembre."></textarea></div>
+      </div>
+      <p class="paso" id="paso-quien">2 · ¿A quién?</p>
+      <div class="tipos" id="destinos"></div>
+      <label class="interruptor" id="sw-omitir-caja" hidden><input type="checkbox" id="sw-omitir" checked><span></span>Omitir a quienes ya respondieron</label>
+      <div class="resumen-envio" id="resumen-envio"></div>
+      <button class="btn btn-sec btn-chico" type="button" id="b-vista">Ver cómo se ve el correo</button>
+      <div class="vista" id="vista" hidden><p id="vista-asunto"></p><iframe id="vista-marco" title="Vista previa del correo" sandbox=""></iframe></div>
+      <p class="aviso-err" id="red-err" role="alert"></p>
+    </div>
+    <div class="ficha-pie">
+      <button class="btn btn-pri" type="submit" id="b-enviar">Enviar</button>
     </div>
   </form>
 </aside>
@@ -122,6 +156,6 @@
 <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
 
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-<script type="module" src="assets/js/gestion.js?v=1793989779"></script>
+<script type="module" src="assets/js/gestion.js?v=1793990441"></script>
 </body>
 </html>

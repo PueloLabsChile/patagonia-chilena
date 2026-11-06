@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Completar mis datos · Patagonia Chilena</title>
+<link rel="icon" href="assets/img/icono.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--fondo:#07080c;--hielo:#f8f6f0;--niebla:rgba(248,246,240,.68);--tenue:rgba(248,246,240,.45);--borde:rgba(255,255,255,.12);--oro:#e9c46a;--rojo:#d52b1e;
+    --serif:"Instrument Serif",Georgia,serif;--sans:"Geist",system-ui,sans-serif;--mono:"Geist Mono",ui-monospace,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:var(--fondo);color:var(--hielo);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(700px 500px at 10% 0%,rgba(123,134,255,.18),transparent 70%),radial-gradient(600px 500px at 100% 40%,rgba(79,216,198,.12),transparent 70%),radial-gradient(600px 500px at 30% 110%,rgba(255,107,107,.14),transparent 70%)}
+  header{position:relative;display:flex;align-items:center;gap:10px;padding:20px 22px}
+  header a{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;font:400 22px var(--serif)}
+  header img{width:28px;height:28px}
+  header em{color:var(--oro)}
+  main{position:relative;max-width:560px;margin:0 auto;padding:10px 18px 60px}
+  .caja{padding:32px 28px;border-radius:24px;background:linear-gradient(160deg,rgba(28,27,40,.9),rgba(12,13,18,.9));border:1px solid var(--borde);box-shadow:0 40px 100px -40px #000;backdrop-filter:blur(10px)}
+  .ante{margin:0 0 10px;font:500 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--oro)}
+  h1{margin:0 0 10px;font:400 40px/1.05 var(--serif)}
+  h1 em{color:var(--oro)}
+  .intro{margin:0 0 20px;color:var(--niebla)}
+  .mensaje{margin:0 0 22px;padding:12px 16px;border-left:3px solid var(--rojo);background:rgba(255,255,255,.04);border-radius:0 12px 12px 0;white-space:pre-line}
+  .campo{margin:0 0 18px}
+  label,.pregunta{display:block;margin:0 0 8px;font-weight:600;font-size:15px}
+  input,select,textarea{width:100%;padding:14px 15px;border-radius:14px;border:1px solid var(--borde);background:rgba(255,255,255,.06);color:inherit;font:400 16px var(--sans);outline:none}
+  select option{background:#16151f}
+  textarea{resize:vertical;min-height:96px}
+  input:focus,select:focus,textarea:focus{border-color:rgba(233,196,106,.7)}
+  .opciones{display:flex;flex-wrap:wrap;gap:8px}
+  .opciones label{margin:0;font-weight:500;font-size:14.5px;cursor:pointer}
+  .opciones input{position:absolute;opacity:0;width:1px;height:1px}
+  .opciones span{display:inline-block;padding:10px 14px;border-radius:999px;border:1px solid var(--borde);background:rgba(255,255,255,.04);transition:all .15s}
+  .opciones input:checked+span{background:var(--oro);border-color:var(--oro);color:#17130a}
+  .opciones input:focus-visible+span{outline:2px solid var(--oro);outline-offset:2px}
+  .detalle{margin-top:8px}
+  button{width:100%;margin-top:6px;padding:16px 24px;border:0;border-radius:999px;background:var(--rojo);color:#fff;font:700 16px var(--sans);cursor:pointer;box-shadow:0 12px 30px -10px rgba(213,43,30,.7)}
+  button:disabled{opacity:.6;cursor:default}
+  .err{min-height:1.3em;margin:12px 0 0;color:#ff9d93;font-size:14.5px}
+  .pie{margin:18px 0 0;font-size:13px;color:var(--tenue)}
+  .pie a{color:var(--niebla)}
+  .gracias{text-align:center}
+  .gracias .check{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;background:rgba(127,224,212,.12);color:#7fe0d4;font-size:30px}
+  .gracias a{display:inline-block;margin-top:16px;color:var(--oro)}
+</style>
+</head>
+<body>
+<header><a href="./"><img src="assets/img/icono.svg" alt=""><span>Patagonia <em>Chilena</em></span></a></header>
+<main>
+  <div class="caja" id="caja">
+    <p class="ante">★ Tus datos</p>
+    <h1 id="titulo">Cargando…</h1>
+  </div>
+</main>
+<script type="module">
+import { NOMBRE_REGION } from './assets/js/hemiciclo.js';
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const sinTilde = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const t = new URLSearchParams(location.search).get('t') || '';
+const caja = $('#caja');
+const fallo = txt => { caja.innerHTML = `<p class="ante">★ Tus datos</p><h1>Enlace <em>no válido</em></h1><p class="intro">${esc(txt)}</p><p class="pie"><a href="./">Ir a Patagonia Chilena</a></p>`; };
+
+let d;
+try { d = await (await fetch('api/datos.php?t=' + encodeURIComponent(t), { cache: 'no-store' })).json(); } catch { d = { ok: false, error: 'No pudimos conectarnos. Intenta de nuevo en un rato.' }; }
+if (!d.ok) fallo(d.error || 'Este enlace no es válido.');
+else if (!d.preguntas.length) { caja.innerHTML = `<p class="ante">★ Tus datos</p><h1>Todo al <em>día</em></h1><p class="intro">Por ahora no tenemos datos pendientes que pedirte, ${esc(d.nombre)}. ¡Gracias por ser parte!</p><p class="pie"><a href="./">Ir a Patagonia Chilena</a></p>`; }
+else {
+  const comunas = d.preguntas.some(p => p.tipo === 'comuna') ? await fetch('datos/comunas.json').then(r => r.json()) : [];
+  const porLabel = new Map(); let comunaActual = '';
+  for (const c of comunas) { c.label = `${c.n} · ${NOMBRE_REGION[c.r] || ''}`; porLabel.set(sinTilde(c.label), c.c); if (!porLabel.has(sinTilde(c.n))) porLabel.set(sinTilde(c.n), c.c); if (c.c === d.actual.comuna) comunaActual = c.label; }
+  const a = d.actual;
+  const campo = p => {
+    const v = a[p.clave] ?? '';
+    if (p.tipo === 'opciones') return `<div class="campo"><span class="pregunta">${esc(p.texto)}</span><div class="opciones">${p.opciones.map(o => `<label><input type="radio" name="${p.clave}" value="${esc(o)}" ${o === v ? 'checked' : ''}><span>${esc(o)}</span></label>`).join('')}</div></div>`;
+    if (p.tipo === 'actividad') return `<div class="campo"><label for="c-actividad">${esc(p.texto)}</label><select id="c-actividad" name="actividad"><option value="">Prefiero no decirlo</option>${Object.entries(d.actividades).map(([k, n]) => `<option value="${k}" ${k === a.actividad ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>
+      <input class="detalle" name="actividad_detalle" maxlength="80" placeholder="¿Cuál? Ej.: carpintero, abogada, geólogo" value="${esc(a.actividad_detalle || '')}" aria-label="Detalle de tu actividad"></div>`;
+    if (p.tipo === 'comuna') return `<div class="campo"><label for="c-comuna">${esc(p.texto)}</label><input id="c-comuna" name="comuna_txt" list="l-comunas" autocomplete="off" placeholder="Escribe y elige de la lista" value="${esc(comunaActual)}"><datalist id="l-comunas">${comunas.map(c => `<option value="${esc(c.label)}">`).join('')}</datalist></div>`;
+    if (p.tipo === 'telefono') return `<div class="campo"><label for="c-tel">${esc(p.texto)}</label><input id="c-tel" name="telefono" type="tel" inputmode="tel" maxlength="20" placeholder="+56 9 1234 5678" value="${esc(v)}" autocomplete="tel"></div>`;
+    if (p.tipo === 'anio') return `<div class="campo"><label for="c-${p.clave}">${esc(p.texto)}</label><input id="c-${p.clave}" name="${p.clave}" inputmode="numeric" maxlength="4" placeholder="Ej.: 1985" value="${esc(v)}"></div>`;
+    return `<div class="campo"><label for="c-${p.clave}">${esc(p.texto)}</label><textarea id="c-${p.clave}" name="${p.clave}" maxlength="600">${esc(v)}</textarea></div>`;
+  };
+  caja.innerHTML = `<p class="ante">★ Tus datos</p>
+    <h1>Hola, <em>${esc(d.nombre)}</em></h1>
+    <p class="intro">${d.respondido ? 'Ya nos respondiste: puedes revisar o corregir tus respuestas.' : 'Nos ayuda a organizar la cooperativa. Responde lo que quieras: todo es voluntario.'}</p>
+    ${d.mensaje ? `<p class="mensaje">${esc(d.mensaje)}</p>` : ''}
+    <form id="f" novalidate>${d.preguntas.map(campo).join('')}<button type="submit">Guardar mis datos</button><p class="err" id="err" role="alert"></p></form>
+    <p class="pie">Solo los ve el equipo de gestión y nunca se publican de forma individual. <a href="privacidad.html">Privacidad</a></p>`;
+  $('#f').addEventListener('submit', async e => {
+    e.preventDefault(); const f = e.target, err = $('#err'), b = f.querySelector('button'); err.textContent = '';
+    const valores = {};
+    for (const p of d.preguntas) {
+      if (p.tipo === 'opciones') valores[p.clave] = f.querySelector(`[name="${p.clave}"]:checked`)?.value || '';
+      else if (p.tipo === 'actividad') { valores.actividad = f.actividad.value; valores.actividad_detalle = f.actividad_detalle.value; }
+      else if (p.tipo === 'comuna') {
+        const txt = f.comuna_txt.value.trim();
+        if (txt) { const c = porLabel.get(sinTilde(txt)); if (!c) { err.textContent = 'Elige tu comuna desde la lista que aparece al escribir.'; f.comuna_txt.focus(); return; } valores.comuna = c; }
+      } else valores[p.clave] = f[p.clave].value;
+    }
+    b.disabled = true; b.textContent = 'Guardando…';
+    let r; try { r = await (await fetch('api/datos.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ t, valores }) })).json(); } catch { r = { ok: false, error: 'No pudimos guardar. Revisa tu conexión.' }; }
+    if (!r.ok) { b.disabled = false; b.textContent = 'Guardar mis datos'; err.textContent = r.error || 'No se pudo guardar.'; return; }
+    caja.innerHTML = `<div class="gracias"><div class="check">✓</div><h1>¡Gracias, <em>${esc(d.nombre)}</em>!</h1><p class="intro">Tus datos quedaron guardados. Nos ayudan a organizar las comisiones y la Asamblea.</p><a href="./">Volver a Patagonia Chilena →</a></div>`;
+  });
+}
+</script>
+</body>
+</html>
