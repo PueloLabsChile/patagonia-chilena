@@ -1,9 +1,9 @@
 // Patagonia Chilena · relato con mapa, historia, contador, mapa de inscritos, anticipo de la Asamblea e inscripción
-import { iniciarViento } from './viento.js?v=1793990441';
-import { iniciarRelieve } from './relieve.js?v=1793990441';
-import { iniciarParalaje } from './paralaje.js?v=1793990441';
-import { iniciarHistoria } from './historia.js?v=1793990441';
-import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1793990441';
+import { iniciarViento } from './viento.js?v=1793991830';
+import { iniciarRelieve } from './relieve.js?v=1793991830';
+import { iniciarParalaje } from './paralaje.js?v=1793991830';
+import { iniciarHistoria } from './historia.js?v=1793991830';
+import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1793991830';
 // siempre partir desde la portada (salvo que el enlace apunte a una sección)
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (!location.hash) { scrollTo(0, 0); addEventListener('load', () => scrollTo(0, 0)); }
@@ -454,23 +454,24 @@ modal.addEventListener('click', e => { if (e.target === modal || e.target.closes
 addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) cerrarModal(); });
 function cerrarModal() { modal.hidden = true; document.body.style.overflow = ''; history.replaceState(null, '', location.pathname); }
 
-async function bienvenida(token) {
-  let s;
-  try { s = await json(API + 'socio.php?t=' + encodeURIComponent(token)); } catch { return; }
+async function bienvenida(token, datos = null) {
+  let s = datos;
+  if (!s) { try { s = await json(API + 'socio.php?t=' + encodeURIComponent(token)); } catch { return; } }
   if (!s.ok) return;
   await pDatos;
   const comuna = datos.porCut?.get(s.comuna)?.n || '';
-  try { localStorage.setItem('pc_token', token); } catch { }
+  if (token) { try { localStorage.setItem('pc_token', token); } catch { } }
+  { const at = document.querySelector('#bienvenida .antetitulo'); if (at) at.textContent = token ? 'Inscripción confirmada' : 'Tu espacio de socio'; }
   miSocio = s;
   let pendiente = 0; try { pendiente = Number(localStorage.getItem('pc_compromiso') || 0); localStorage.removeItem('pc_compromiso'); } catch { }
   if (pendiente >= 1000 && !s.compromiso) { const rc = await comprometer(pendiente); if (rc.ok) s.compromiso = pendiente; }
-  $('#bv-compromiso').hidden = !!s.compromiso;
+  $('#bv-compromiso').hidden = !!s.compromiso || !token;
   $$('[data-bv]').forEach(b => b.onclick = async () => {
     const rc = await comprometer(+b.dataset.bv);
     if (rc.ok) { s.compromiso = +b.dataset.bv; $('#bv-compromiso').innerHTML = `<p>Gracias. Quedó tu compromiso de <b>$${fmt(s.compromiso)} al mes</b> (aún no se cobra).</p>`; await dibujarTarjeta($('#tarjeta'), { numero: s.numero, comuna: datos.porCut?.get(s.comuna)?.n || '', nombre: s.nombre.split(' ')[0], compromiso: s.compromiso }); }
   });
   miRegion = s.region || regionDeComuna(s.comuna); pintarRanking();
-  $('#c-asiento').href = 'asamblea.html?s=' + encodeURIComponent(token);
+  $('#c-asiento').href = token ? 'asamblea.html?s=' + encodeURIComponent(token) : 'asamblea.html';
   $('[data-socio-n]').textContent = fmt(s.numero);
   $('[data-socio-nombre]').textContent = s.nombre.split(' ')[0];
   $('[data-socio-invitados]').textContent = fmt(s.invitados || 0);
@@ -637,7 +638,7 @@ iniciarParalaje({
 /* ------------------------------------------------------------------ botón «Socios»: si ya entró en este equipo, va directo; si no, pide su acceso por correo */
 {
   const modal = document.getElementById('modal-socios'), f = document.getElementById('f-socios'), msg = document.getElementById('ms-msg');
-  const abrir = () => { modal.hidden = false; msg.textContent = ''; msg.classList.remove('mal'); setTimeout(() => f.correo.focus(), 50); };
+  const abrir = () => { modal.hidden = false; msg.textContent = ''; msg.classList.remove('mal'); try { if (!f.correo.value) f.correo.value = localStorage.getItem('pc_correo') || ''; } catch { } setTimeout(() => f.correo.focus(), 50); };
   const cerrar = () => { modal.hidden = true; };
   document.getElementById('b-socios').addEventListener('click', async () => {
     let t = null; try { t = localStorage.getItem('pc_token'); } catch { }
@@ -656,7 +657,14 @@ iniciarParalaje({
     let d; try { d = await (await fetch(API + 'acceso.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ correo: f.correo.value, sitio: f.sitio.value }) })).json(); } catch { d = { ok: false }; }
     b.disabled = false;
     if (!d.ok) { msg.classList.add('mal'); msg.textContent = d.error || 'No se pudo enviar. Intenta en un rato.'; return; }
-    msg.textContent = 'Listo. Si ese correo está inscrito, te llegará tu enlace en unos minutos (revisa también spam). Si no te llega, puede que aún no te hayas inscrito.';
-    if (d.dev_enlace) msg.innerHTML += ' <a href="' + d.dev_enlace + '" style="color:inherit">(desarrollo) abrir</a>';
+    try { localStorage.setItem('pc_correo', f.correo.value.trim()); } catch { }
+    if (d.estado === 'socio') { cerrar(); bienvenida(null, d.socio); return; }
+    if (d.estado === 'pendiente') {
+      msg.textContent = 'Te inscribiste, pero falta confirmar tu correo. Te acabamos de reenviar el enlace: ábrelo y entras con tu número de socio (revisa también spam).';
+      if (d.dev_enlace) msg.innerHTML += ' <a href="' + d.dev_enlace + '" style="color:inherit">(desarrollo) abrir</a>';
+      return;
+    }
+    msg.classList.add('mal');
+    msg.innerHTML = 'No encontramos ese correo. ¿Te inscribiste con otro? Si aún no eres socio, <a href="#sumate" data-cerrar style="color:inherit">súmate aquí</a>.';
   });
 }

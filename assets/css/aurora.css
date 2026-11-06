@@ -223,3 +223,6 @@ html,body,.cielo{background:#030304!important}
 .ma-pie{margin:16px 0 0;font-size:13.5px;color:rgba(248,246,240,.55)}
 .ma-pie a{color:var(--estepa-2,#e9c46a)}
 @media (max-width:520px){.barra .marca span{display:none}}
+.modal-caja .antetitulo{display:flex;margin:0 48px 14px 0}
+.modal-caja h2{margin-top:0;position:relative}
+.modal .antetitulo,.modal-acceso .antetitulo{translate:none!important;transform:none!important}
