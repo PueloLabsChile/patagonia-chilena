@@ -1,0 +1,8 @@
+# Capas del Observatorio: se comprimen y se guardan 1 día en el navegador
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/json
+</IfModule>
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType application/json "access plus 1 day"
+</IfModule>

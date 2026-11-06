@@ -1,0 +1,18 @@
+{
+ "generado": "2026-11-06",
+ "capas": {
+  "predios_fiscales": 754,
+  "bnp": 25,
+  "areas_protegidas": 87,
+  "sitios_prioritarios": 24,
+  "areas_marinas": 7,
+  "glaciares": 8951,
+  "lagos": 405,
+  "acuicultura": 1684,
+  "seia": 2798,
+  "estaciones": 482,
+  "red_vial": 494,
+  "localidades": 168,
+  "comunas": 20
+ }
+}
