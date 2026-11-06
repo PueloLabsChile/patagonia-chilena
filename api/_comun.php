@@ -29,7 +29,7 @@ function migrar(PDO $db): void {
         numero INTEGER UNIQUE, creado TEXT NOT NULL, confirmado TEXT, ip TEXT, envios INTEGER NOT NULL DEFAULT 0, ultimo_envio TEXT)');
     $cols = array_column($db->query('PRAGMA table_info(socios)')->fetchAll(), 'name');
     foreach (['apodo TEXT', 'region INTEGER', 'puesto INTEGER', 'acreditado TEXT', 'visto INTEGER', 'palabra INTEGER',
-              'suspendido INTEGER NOT NULL DEFAULT 0', 'ultimo_mensaje INTEGER', 'ultimo_aplauso INTEGER', 'compromiso INTEGER', 'compromiso_fecha TEXT', 'actividad TEXT', 'actividad_detalle TEXT', 'notas TEXT'] as $c) {
+              'suspendido INTEGER NOT NULL DEFAULT 0', 'ultimo_mensaje INTEGER', 'ultimo_aplauso INTEGER', 'compromiso INTEGER', 'compromiso_fecha TEXT', 'actividad TEXT', 'actividad_detalle TEXT', 'notas TEXT', 'recordatorios INTEGER NOT NULL DEFAULT 0', 'recordado TEXT'] as $c) {
         if (!in_array(explode(' ', $c)[0], $cols, true)) $db->exec("ALTER TABLE socios ADD COLUMN $c");
     }
     $db->exec('CREATE UNIQUE INDEX IF NOT EXISTS u_apodo ON socios(apodo COLLATE NOCASE) WHERE apodo IS NOT NULL');
@@ -51,6 +51,8 @@ function migrar(PDO $db): void {
     $db->exec('CREATE TABLE IF NOT EXISTS moderadores (id INTEGER PRIMARY KEY, nombre TEXT NOT NULL, token TEXT NOT NULL UNIQUE, correo TEXT, creado TEXT)');
     $db->exec('CREATE TABLE IF NOT EXISTS bitacora (id INTEGER PRIMARY KEY, moderador TEXT, accion TEXT, detalle TEXT, creado INTEGER)');
     $db->exec('CREATE TABLE IF NOT EXISTS gestores (id INTEGER PRIMARY KEY, nombre TEXT NOT NULL, token TEXT NOT NULL UNIQUE, creado TEXT, visto TEXT)');
+    if (!in_array('correo', array_column($db->query('PRAGMA table_info(gestores)')->fetchAll(), 'name'), true)) $db->exec('ALTER TABLE gestores ADD COLUMN correo TEXT');
+    $db->exec('CREATE TABLE IF NOT EXISTS accesos (ip TEXT, tipo TEXT, creado INTEGER)');
     // administrador: el único que ve la lista de socios con nombre y correo (por defecto, Gonzalo)
     if (!in_array('admin', array_column($db->query('PRAGMA table_info(moderadores)')->fetchAll(), 'name'), true)) {
         $db->exec('ALTER TABLE moderadores ADD COLUMN admin INTEGER NOT NULL DEFAULT 0');
@@ -143,6 +145,19 @@ function monto_compromiso($v): ?int {
     if ($m === 0) return 0;
     return ($m >= 1000 && $m <= 1000000) ? $m : null;
 }
+/** Límite de solicitudes por conexión y por hora (accesos por correo, etc.). */
+function limite_ip(string $tipo, int $max): void {
+    $db = db(); $ip = ip_hash();
+    $db->prepare('DELETE FROM accesos WHERE creado < ?')->execute([time() - 86400]);
+    $q = $db->prepare('SELECT COUNT(*) FROM accesos WHERE ip = ? AND tipo = ? AND creado > ?'); $q->execute([$ip, $tipo, time() - 3600]);
+    if ((int)$q->fetchColumn() >= $max) error('Demasiados intentos desde esta conexión. Prueba en una hora.', 429);
+    $db->prepare('INSERT INTO accesos (ip, tipo, creado) VALUES (?,?,?)')->execute([$ip, $tipo, time()]);
+}
+/** Enlaces del correo de un socio: [botón, darse de baja]. */
+function enlaces_socio(array $s): array {
+    $sitio = rtrim(cfg('sitio'), '/');
+    return [$s['confirmado'] ? $sitio . '/?s=' . $s['token'] : $sitio . '/api/confirmar.php?t=' . $s['token'], $sitio . '/api/baja.php?t=' . $s['token']];
+}
 function invalidar_cache(): void { @unlink(sys_get_temp_dir() . '/pc_fondo_' . md5(cfg('db')) . '.json'); @unlink(sys_get_temp_dir() . '/pc_sala_' . md5(cfg('db')) . '.json'); @unlink(sys_get_temp_dir() . '/pc_estadisticas.json'); }
 
 function enviar_correo(string $para, string $asunto, string $html): bool {
@@ -153,12 +168,14 @@ function enviar_correo(string $para, string $asunto, string $html): bool {
     return @mail($para, '=?UTF-8?B?' . base64_encode($asunto) . '?=', $html, implode("\r\n", $cab), '-f' . $de);
 }
 
-function plantilla_correo(string $nombre, string $enlace, string $baja, bool $yaConfirmado): string {
+function plantilla_correo(string $nombre, string $enlace, string $baja, bool $yaConfirmado, bool $recordatorio = false): string {
     $n = htmlspecialchars(explode(' ', trim($nombre))[0], ENT_QUOTES, 'UTF-8');
-    $titulo = $yaConfirmado ? 'Aquí está tu acceso' : 'Confirma tu inscripción';
+    $titulo = $yaConfirmado ? 'Aquí está tu acceso' : ($recordatorio ? 'Te falta un paso' : 'Confirma tu inscripción');
     $texto = $yaConfirmado
         ? 'Ya eras parte de Patagonia Chilena. Con este botón vuelves a ver tu número de socio fundador, tu asiento en la Asamblea y tu enlace para invitar.'
-        : 'Gracias por sumarte. Falta un paso: confirma tu correo y recibirás tu número de socio fundador y tu asiento en la Asamblea.';
+        : ($recordatorio
+            ? 'Te inscribiste en Patagonia Chilena, pero tu correo aún no está confirmado. Confírmalo con un clic y recibirás tu número de socio fundador y tu asiento en la Asamblea.'
+            : 'Gracias por sumarte. Falta un paso: confirma tu correo y recibirás tu número de socio fundador y tu asiento en la Asamblea.');
     $boton = $yaConfirmado ? 'Ver mi número' : 'Confirmar mi inscripción';
     return '<!doctype html><html><body style="margin:0;background:#071a45;font-family:Arial,Helvetica,sans-serif">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#071a45;padding:32px 12px"><tr><td align="center">

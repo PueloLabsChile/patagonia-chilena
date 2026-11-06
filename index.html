@@ -17,9 +17,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<link href="assets/css/sitio.css?v=1793989043" rel="stylesheet">
-<link href="assets/css/nacional.css?v=1793989043" rel="stylesheet">
-<link href="assets/css/aurora.css?v=1793989043" rel="stylesheet">
+<link href="assets/css/sitio.css?v=1793989779" rel="stylesheet">
+<link href="assets/css/nacional.css?v=1793989779" rel="stylesheet">
+<link href="assets/css/aurora.css?v=1793989779" rel="stylesheet">
 </head>
 <body>
 
@@ -39,8 +39,29 @@
     <a href="observatorio/">Observatorio</a>
     <a href="asamblea.html" class="menu-asamblea"><span class="punto-vivo"></span>Asamblea</a>
   </nav>
+  <div class="accesos">
+    <button class="acceso" id="b-socios" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Socios</button>
+    <a class="acceso" href="gestion.html" title="Panel interno de gestión de socios"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Gestión</a>
+  </div>
   <a class="boton boton-rojo boton-chico" href="#sumate">Sumarme</a>
 </header>
+
+<!-- Acceso de socios: se envía el enlace personal al correo -->
+<div class="modal-acceso" id="modal-socios" role="dialog" aria-modal="true" aria-labelledby="ms-tit" hidden>
+  <div class="ma-caja">
+    <button class="ma-cerrar" type="button" data-cerrar aria-label="Cerrar">×</button>
+    <p class="ma-ante">★ Socios</p>
+    <h2 id="ms-tit">Entra a tu <em>espacio</em></h2>
+    <p class="ma-txt">Escribe el correo con que te inscribiste y te enviaremos tu enlace personal: tu número de socio fundador, tu asiento en la Asamblea y tu enlace para invitar.</p>
+    <form id="f-socios" novalidate>
+      <input type="email" name="correo" required maxlength="120" placeholder="tu@correo.cl" autocomplete="email" aria-label="Tu correo">
+      <input type="text" name="sitio" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="boton boton-rojo" type="submit">Enviarme mi acceso</button>
+    </form>
+    <p class="ma-msg" id="ms-msg" role="status"></p>
+    <p class="ma-pie">¿Aún no te inscribes? <a href="#sumate" data-cerrar>Súmate aquí</a></p>
+  </div>
+</div>
 
 <!-- Mapa fijo de fondo para el relato -->
 <div class="escenario" id="escenario" aria-hidden="true">
@@ -436,6 +457,6 @@
 </footer>
 
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-<script src="assets/js/sitio.js?v=1793989043" type="module"></script>
+<script src="assets/js/sitio.js?v=1793989779" type="module"></script>
 </body>
 </html>

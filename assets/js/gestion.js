@@ -1,8 +1,11 @@
 // Panel interno de gestión de socios fundadores: mapa de Chile por comuna + lista editable.
-import { NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js?v=1793989043';
+import { NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js?v=1793989779';
 
 const $ = s => document.querySelector(s);
-const g = new URLSearchParams(location.search).get('g') || '';
+// el enlace ?g= se guarda en este equipo y se quita de la barra de direcciones
+const enlaceG = new URLSearchParams(location.search).get('g');
+if (enlaceG) { try { localStorage.setItem('pc_gestion', enlaceG); } catch { } history.replaceState(null, '', location.pathname); }
+let g = enlaceG || (() => { try { return localStorage.getItem('pc_gestion') || ''; } catch { return ''; } })();
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmt = n => Number(n || 0).toLocaleString('es-CL');
 const sinTilde = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -24,7 +27,7 @@ async function api(cuerpo) {
 }
 async function cargar() {
   const d = await api();
-  if (!d.ok) { $('#bloqueo').hidden = false; $('#bloqueo-txt').textContent = d.error || 'Pide un enlace nuevo a la administración.'; return false; }
+  if (!d.ok) { try { localStorage.removeItem('pc_gestion'); } catch { } $('#bloqueo').hidden = false; $('#bloqueo-txt').textContent = 'Tu enlace ya no es válido. Escribe tu correo y te enviamos uno nuevo.'; return false; }
   SOCIOS = d.socios; ACT = d.actividades;
   $('#app').hidden = false; $('#quien').hidden = false;
   $('#quien-nombre').textContent = 'Hola, ' + d.yo.nombre.split(' ')[0]; $('#quien-ini').textContent = iniciales(d.yo.nombre);
@@ -39,6 +42,9 @@ function pintarKpis() {
   const mes = SOCIOS.reduce((a, s) => a + (s.compromiso || 0), 0);
   const k = [[fmt(conf.length), 'Confirmados', '#7fe0d4'], [fmt(SOCIOS.length - conf.length), 'Por confirmar', '#f5c98a'], [fmt(fund.length), 'Socios fundadores', '#cbb8ff'],
              [fmt(comunas.size), 'Comunas', '#ff7a6b'], [`${regiones.size}<small style="font-size:.5em;color:var(--niebla)">/16</small>`, 'Regiones', '#5d92b8'], ['$' + fmt(mes), 'Comprometido al mes', '#ff5f8f']];
+  const pend = SOCIOS.length - conf.length;
+  $('#b-recordar span').textContent = pend ? `Recordar a pendientes (${fmt(pend)})` : 'Sin pendientes';
+  $('#b-recordar').disabled = !pend;
   $('#kpis').innerHTML = k.map(([v, t, c], i) => `<div class="kpi" style="--c:${c};animation-delay:${i * 60}ms"><b>${v}</b><span>${t}</span></div>`).join('');
 }
 
@@ -71,7 +77,7 @@ function pintarLista() {
       <span class="p"><b>${esc(s.nombre)}${s.fundador ? '<span class="estrella" title="Socio fundador">★</span>' : ''}</b><small>${esc(s.correo)}</small></span>
       <span class="c">${esc(c?.n || s.comuna)}<small>${esc(NOMBRE_REGION[r] || '')}</small></span>
       <span class="a">${s.actividad ? esc(ACT[s.actividad]) + (s.actividad_detalle ? ` <small>· ${esc(s.actividad_detalle)}</small>` : '') : '<small>—</small>'}</span>
-      <span class="e">${s.numero ? `<span class="estado ok">n.º ${s.numero}</span>` : '<span class="estado pe">pendiente</span>'}</span>
+      <span class="e">${s.numero ? `<span class="estado ok">n.º ${s.numero}</span>` : `<span class="estado pe">pendiente${s.recordatorios ? `<span class="rec" title="${s.recordatorios} recordatorio(s), último ${fecha(s.recordado)}">· ✉${s.recordatorios}</span>` : ''}</span>`}</span>
       <span class="m">${s.compromiso ? '$' + fmt(s.compromiso) : ''}</span></button>`;
   }).join('') || `<p class="vacio">${SOCIOS.length ? 'Nadie coincide con estos filtros.' : 'Aún no hay inscritos.'}</p>`;
   $('#pie-lista').textContent = `${fmt(v.length)} de ${fmt(SOCIOS.length)} personas · toca una fila para editarla`;
@@ -187,10 +193,12 @@ function abrirFicha(s) {
   if (![...f.compromiso.options].some(o => o.value === comp)) f.compromiso.add(new Option('$' + fmt(comp), comp));
   f.compromiso.value = comp; f.fundador.checked = nuevo ? true : !!s.fundador; f.notas.value = s?.notas || '';
   $('#ficha-meta').innerHTML = nuevo ? '' : [['Inscripción', fecha(s.creado)], ['Confirmó', s.confirmado ? fecha(s.confirmado) : 'aún no'], ['Apodo en la Asamblea', s.apodo || '—'],
+    ...(s.numero ? [] : [['Recordatorios', s.recordatorios ? `${s.recordatorios} · último ${fecha(s.recordado)}` : 'ninguno']]),
     ['Personas que invitó', s.invitados || 0], ...(s.suspendido ? [['Chat', 'suspendido por moderación']] : [])].map(([a, b]) => `<dt>${a}</dt><dd>${esc(b)}</dd>`).join('');
   $('#ficha-meta').hidden = nuevo;
   $('#b-eliminar').hidden = nuevo; $('#b-eliminar').classList.remove('seguro'); $('#b-eliminar').textContent = 'Eliminar';
   $('#b-confirmar').hidden = nuevo || !!s.numero;
+  $('#b-recordar-uno').hidden = nuevo || !!s.numero;
   $('#b-guardar').textContent = nuevo ? 'Agregar a la lista' : 'Guardar cambios';
   $('#velo').hidden = false; $('#ficha').classList.add('abierta'); $('#ficha').setAttribute('aria-hidden', 'false');
   setTimeout(() => (nuevo ? f.nombre : $('#cerrar')).focus(), 60);
@@ -216,6 +224,33 @@ $('#form-ficha').addEventListener('submit', e => {
   else ejecutar($('#b-guardar'), { accion: 'agregar', ...datos }, d => `Agregada como socio n.º ${d.numero}`);
 });
 $('#b-confirmar').onclick = () => ejecutar($('#b-confirmar'), { accion: 'confirmar', id: actual.id }, d => `Confirmada como socio n.º ${d.numero}`);
+$('#b-recordar-uno').onclick = () => ejecutar($('#b-recordar-uno'), { accion: 'recordar', id: actual.id }, () => 'Recordatorio enviado a ' + actual.correo);
+$('#b-recordar').onclick = async () => {
+  const b = $('#b-recordar'), pend = SOCIOS.filter(s => !s.numero).length;
+  if (!b.classList.contains('seguro')) {
+    b.classList.add('seguro'); b.querySelector('span').textContent = `¿Enviar a ${fmt(pend)}? Sí, enviar`;
+    clearTimeout(b.t); b.t = setTimeout(() => { b.classList.remove('seguro'); pintarKpis(); }, 5000); return;
+  }
+  clearTimeout(b.t); b.classList.remove('seguro'); b.disabled = true; b.querySelector('span').textContent = 'Enviando…';
+  const d = await api({ accion: 'recordar_todos' });
+  b.disabled = false;
+  if (!d.ok) { pintarKpis(); return aviso(d.error || 'No se pudieron enviar los recordatorios.'); }
+  await cargar(); pintarTodo();
+  aviso(d.enviados ? `Recordatorio enviado a ${fmt(d.enviados)} ${d.enviados === 1 ? 'persona' : 'personas'}${d.errores ? ` (${d.errores} con error)` : ''}`
+    : 'Nadie para recordar ahora: ya se les escribió en las últimas 48 horas o ya tienen 3 recordatorios.');
+};
+$('#b-salir').onclick = () => { try { localStorage.removeItem('pc_gestion'); } catch { } location.href = 'gestion.html'; };
+$('#f-acceso').addEventListener('submit', async e => {
+  e.preventDefault(); const f = e.target, m = $('#acceso-msg'), b = f.querySelector('button');
+  m.classList.remove('mal');
+  if (!f.correo.checkValidity()) { m.classList.add('mal'); m.textContent = 'Escribe un correo válido.'; return; }
+  b.disabled = true; m.textContent = 'Enviando…';
+  let d; try { d = await (await fetch('api/gestion_acceso.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ correo: f.correo.value }) })).json(); } catch { d = { ok: false }; }
+  b.disabled = false;
+  if (!d.ok) { m.classList.add('mal'); m.textContent = d.error || 'No se pudo enviar. Intenta en un rato.'; return; }
+  m.textContent = 'Si ese correo tiene acceso de gestión, te llegará el enlace en unos minutos. Revisa también spam.';
+  if (d.dev_enlace) m.innerHTML += `<br><a href="${esc(d.dev_enlace)}" style="color:var(--lavanda)">(desarrollo) abrir enlace</a>`;
+});
 $('#b-eliminar').onclick = () => {
   const b = $('#b-eliminar');
   if (!b.classList.contains('seguro')) { b.classList.add('seguro'); b.textContent = '¿Seguro? Sí, eliminar'; setTimeout(() => { b.classList.remove('seguro'); b.textContent = 'Eliminar'; }, 4000); return; }
@@ -250,7 +285,7 @@ $('#b-csv').onclick = () => {
 
 /* ------------------------------------------------------------------ inicio */
 (async () => {
-  if (!g) { $('#bloqueo').hidden = false; return; }
+  if (!g) { $('#bloqueo').hidden = false; $('#f-acceso input').focus(); return; }
   const [ok, comunas] = await Promise.all([cargar(), fetch('datos/comunas.json').then(r => r.json())]);
   for (const c of comunas) {
     c.label = `${c.n} · ${NOMBRE_REGION[c.r] || ''}`;

@@ -1,9 +1,9 @@
 // Patagonia Chilena · relato con mapa, historia, contador, mapa de inscritos, anticipo de la Asamblea e inscripción
-import { iniciarViento } from './viento.js?v=1793989043';
-import { iniciarRelieve } from './relieve.js?v=1793989043';
-import { iniciarParalaje } from './paralaje.js?v=1793989043';
-import { iniciarHistoria } from './historia.js?v=1793989043';
-import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1793989043';
+import { iniciarViento } from './viento.js?v=1793989779';
+import { iniciarRelieve } from './relieve.js?v=1793989779';
+import { iniciarParalaje } from './paralaje.js?v=1793989779';
+import { iniciarHistoria } from './historia.js?v=1793989779';
+import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1793989779';
 // siempre partir desde la portada (salvo que el enlace apunte a una sección)
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (!location.hash) { scrollTo(0, 0); addEventListener('load', () => scrollTo(0, 0)); }
@@ -633,3 +633,30 @@ iniciarParalaje({
              ['.fondo-montos', .03], ['.portada-txt', .05], ['.condor', -.25], ['.cuenta-mini', .08], ['.mapa-chile-marco', .025]],
   revelar: ['.paso', '.desb', '.principios li', '.faq details', '.fondo-panel', '.monto', '.check li', '.formulario'],
 });
+
+/* ------------------------------------------------------------------ botón «Socios»: si ya entró en este equipo, va directo; si no, pide su acceso por correo */
+{
+  const modal = document.getElementById('modal-socios'), f = document.getElementById('f-socios'), msg = document.getElementById('ms-msg');
+  const abrir = () => { modal.hidden = false; msg.textContent = ''; msg.classList.remove('mal'); setTimeout(() => f.correo.focus(), 50); };
+  const cerrar = () => { modal.hidden = true; };
+  document.getElementById('b-socios').addEventListener('click', async () => {
+    let t = null; try { t = localStorage.getItem('pc_token'); } catch { }
+    if (t) {
+      try { const s = await json(API + 'socio.php?t=' + encodeURIComponent(t)); if (s.ok) { bienvenida(t); return; } } catch { }
+      try { localStorage.removeItem('pc_token'); } catch { }
+    }
+    abrir();
+  });
+  modal.addEventListener('click', e => { if (e.target === modal || e.target.closest('[data-cerrar]')) cerrar(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) cerrar(); });
+  f.addEventListener('submit', async e => {
+    e.preventDefault(); msg.classList.remove('mal');
+    if (!f.correo.checkValidity()) { msg.classList.add('mal'); msg.textContent = 'Escribe un correo válido.'; return; }
+    const b = f.querySelector('button'); b.disabled = true; msg.textContent = 'Enviando…';
+    let d; try { d = await (await fetch(API + 'acceso.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ correo: f.correo.value, sitio: f.sitio.value }) })).json(); } catch { d = { ok: false }; }
+    b.disabled = false;
+    if (!d.ok) { msg.classList.add('mal'); msg.textContent = d.error || 'No se pudo enviar. Intenta en un rato.'; return; }
+    msg.textContent = 'Listo. Si ese correo está inscrito, te llegará tu enlace en unos minutos (revisa también spam). Si no te llega, puede que aún no te hayas inscrito.';
+    if (d.dev_enlace) msg.innerHTML += ' <a href="' + d.dev_enlace + '" style="color:inherit">(desarrollo) abrir</a>';
+  });
+}

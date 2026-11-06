@@ -194,3 +194,32 @@ html,body,.cielo{background:#030304!important}
 
 /* v5.4 actividad en la inscripción */
 .ayuda-campo{display:block;margin-top:8px;font:400 12.5px/1.45 var(--sans);color:rgba(248,246,240,.5)}
+
+/* v5.5 botones de acceso (Socios, Gestión) y ventana de acceso */
+.accesos{display:flex;gap:8px;margin-left:22px;margin-right:12px}
+.acceso{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:999px;border:1px solid rgba(248,246,240,.18);background:rgba(255,255,255,.04);
+  color:rgba(248,246,240,.85);font:600 13.5px/1 var(--sans);text-decoration:none;cursor:pointer;backdrop-filter:blur(8px);transition:background .2s,border-color .2s,color .2s}
+.acceso:hover{background:rgba(255,255,255,.1);border-color:rgba(248,246,240,.35);color:#fff}
+.acceso svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:860px){.accesos{margin-left:auto;margin-right:8px}.barra .boton{margin-left:0}}
+@media (max-width:520px){.acceso{padding:9px 11px;font-size:12.5px}.acceso svg{display:none}.accesos{gap:6px}.barra .boton-chico{padding:10px 13px;font-size:13px}}
+.modal-acceso{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:18px;background:rgba(4,5,8,.7);backdrop-filter:blur(8px);animation:ma-entra .25s ease}
+.modal-acceso[hidden]{display:none}
+@keyframes ma-entra{from{opacity:0}}
+.ma-caja{position:relative;width:min(460px,100%);padding:34px 30px 26px;border-radius:24px;background:linear-gradient(160deg,rgba(28,27,40,.96),rgba(12,13,18,.96));
+  border:1px solid rgba(255,255,255,.1);box-shadow:0 40px 100px -30px #000;color:var(--hielo,#f8f6f0)}
+.ma-cerrar{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.07);color:inherit;font-size:22px;line-height:1;cursor:pointer}
+.ma-cerrar:hover{background:rgba(255,255,255,.14)}
+.ma-ante{margin:0 0 10px;font:500 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--estepa-2,#e9c46a)}
+.ma-caja h2{margin:0 0 10px;font:400 36px/1.05 var(--serif)}
+.ma-caja h2 em{color:var(--estepa-2,#e9c46a)}
+.ma-txt{margin:0 0 18px;font-size:15px;line-height:1.55;color:rgba(248,246,240,.7)}
+#f-socios{display:flex;flex-direction:column;gap:10px}
+#f-socios input[type=email]{box-sizing:border-box;width:100%;padding:15px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:inherit;font:400 16px var(--sans);outline:none}
+#f-socios input[type=email]:focus{border-color:rgba(233,196,106,.7)}
+#f-socios .trampa{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.ma-msg{min-height:1.3em;margin:14px 0 0;font-size:14.5px;line-height:1.5;color:#bfe8d4}
+.ma-msg.mal{color:#ff9d93}
+.ma-pie{margin:16px 0 0;font-size:13.5px;color:rgba(248,246,240,.55)}
+.ma-pie a{color:var(--estepa-2,#e9c46a)}
+@media (max-width:520px){.barra .marca span{display:none}}

@@ -192,3 +192,17 @@ select option{background:#15141f;color:#fff}
   .intro-acc{width:100%}.intro-acc .btn{flex:1;justify-content:center}
 }
 @media (max-width:760px){.fila{grid-template-columns:40px minmax(0,1fr) auto}.fila .p,.fila .c,.fila .a{min-width:0}.lista-caja{padding:12px}}
+
+/* v2 · acceso por correo, salir y recordatorios */
+.salir{all:unset;cursor:pointer;margin-left:4px;padding:7px 12px;border-radius:99px;font:600 12px/1 var(--sans);color:var(--niebla);border:1px solid var(--borde)}
+.salir:hover{color:#fff;background:rgba(255,255,255,.08)}
+.bloqueo .ante{font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--lavanda);margin:0 0 12px}
+.bloqueo h1 em{color:var(--lavanda)}
+.f-acceso{display:flex;flex-direction:column;gap:10px;margin:22px 0 0}
+.f-acceso input{box-sizing:border-box;width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--borde);background:rgba(255,255,255,.06);color:inherit;font:400 16px var(--sans);outline:none}
+.f-acceso input:focus{border-color:rgba(203,184,255,.6)}
+.f-acceso .btn{justify-content:center}
+.acceso-msg{min-height:1.2em;margin:14px 0 0!important;font-size:14px}
+.acceso-msg.mal{color:#ff9d93!important}
+#b-recordar.seguro{background:rgba(245,201,138,.18);border-color:rgba(245,201,138,.5);color:#f5c98a}
+.estado .rec{opacity:.75;margin-left:2px}

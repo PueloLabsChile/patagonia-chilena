@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/img/icono.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<link href="assets/css/gestion.css?v=1793989043" rel="stylesheet">
+<link href="assets/css/gestion.css?v=1793989779" rel="stylesheet">
 </head>
 <body>
 <div class="cielo" aria-hidden="true"><i class="au au1"></i><i class="au au2"></i><i class="au au3"></i></div>
@@ -17,7 +17,7 @@
 <header class="cab">
   <a class="marca" href="./" target="_blank" rel="noopener"><img src="assets/img/icono.svg" alt=""><span>Patagonia <em>Chilena</em></span></a>
   <span class="sello">Gestión interna</span>
-  <div class="quien" id="quien" hidden><span id="quien-nombre"></span><b id="quien-ini"></b></div>
+  <div class="quien" id="quien" hidden><span id="quien-nombre"></span><b id="quien-ini"></b><button class="salir" id="b-salir" type="button" title="Cerrar la sesión en este equipo">Salir</button></div>
 </header>
 
 <main class="gestion" id="app" hidden>
@@ -28,6 +28,7 @@
       <p class="bajada" id="actualizado">Cargando…</p>
     </div>
     <div class="intro-acc">
+      <button class="btn btn-sec" id="b-recordar" type="button" title="Envía un correo a quienes no han confirmado (máximo 3 por persona, cada 48 horas)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg><span>Recordar a pendientes</span></button>
       <button class="btn btn-sec" id="b-csv" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v3h16v-3"/></svg>Descargar Excel</button>
       <button class="btn btn-pri" id="b-agregar" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Agregar persona</button>
     </div>
@@ -72,7 +73,16 @@
   </section>
 </main>
 
-<div class="bloqueo" id="bloqueo" hidden><div class="vidrio"><h1>Enlace no válido</h1><p id="bloqueo-txt">Pide un enlace nuevo a la administración.</p></div></div>
+<div class="bloqueo" id="bloqueo" hidden><div class="vidrio">
+  <p class="ante">★ Gestión interna</p>
+  <h1>Acceso de <em>gestión</em></h1>
+  <p id="bloqueo-txt">Escribe tu correo y te enviaremos tu enlace de acceso al panel.</p>
+  <form class="f-acceso" id="f-acceso" novalidate>
+    <input type="email" name="correo" required maxlength="120" placeholder="tu@correo.cl" autocomplete="email" aria-label="Tu correo">
+    <button class="btn btn-pri" type="submit">Enviar mi enlace</button>
+  </form>
+  <p class="acceso-msg" id="acceso-msg" role="status"></p>
+</div></div>
 
 <!-- ficha lateral -->
 <div class="velo" id="velo" hidden></div>
@@ -102,6 +112,7 @@
     </div>
     <div class="ficha-pie">
       <button class="btn btn-peligro" type="button" id="b-eliminar">Eliminar</button>
+      <button class="btn btn-sec" type="button" id="b-recordar-uno" hidden>Enviar recordatorio</button>
       <button class="btn btn-sec" type="button" id="b-confirmar" hidden>Confirmar a mano</button>
       <button class="btn btn-pri" type="submit" id="b-guardar">Guardar cambios</button>
     </div>
@@ -111,6 +122,6 @@
 <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
 
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-<script type="module" src="assets/js/gestion.js?v=1793989043"></script>
+<script type="module" src="assets/js/gestion.js?v=1793989779"></script>
 </body>
 </html>
