@@ -1,0 +1,59 @@
+{
+ "generado": "2026-11-06",
+ "regiones": {
+  "Aysén": {
+   "superficie_km2": 106610,
+   "protegida_km2": 53224,
+   "privada_km2": 966,
+   "protegida_pct": 49.9,
+   "n_protegidas": 25,
+   "n_glaciares": 4982,
+   "glaciares_km2": 10675.96,
+   "n_predios_fiscales": 451,
+   "predios_fiscales_ha": 37554.32,
+   "n_concesiones": 746,
+   "acuicultura_ha": 6411.64,
+   "n_solicitudes": 48,
+   "n_seia": 1599,
+   "n_seia_en_evaluacion": 5,
+   "n_eia": 16,
+   "n_estaciones": 238
+  },
+  "Magallanes": {
+   "superficie_km2": 129749,
+   "protegida_km2": 72058,
+   "privada_km2": 3060,
+   "protegida_pct": 55.5,
+   "n_protegidas": 19,
+   "n_glaciares": 3969,
+   "glaciares_km2": 10790.51,
+   "n_predios_fiscales": 303,
+   "predios_fiscales_ha": 68480.27,
+   "n_concesiones": 519,
+   "acuicultura_ha": 12961.96,
+   "n_solicitudes": 371,
+   "n_seia": 1199,
+   "n_seia_en_evaluacion": 13,
+   "n_eia": 33,
+   "n_estaciones": 244
+  }
+ },
+ "total": {
+  "superficie_km2": 236359,
+  "protegida_km2": 125282,
+  "privada_km2": 4026,
+  "n_protegidas": 44,
+  "n_glaciares": 8951,
+  "glaciares_km2": 21466.47,
+  "n_predios_fiscales": 754,
+  "predios_fiscales_ha": 106034.59,
+  "n_concesiones": 1265,
+  "acuicultura_ha": 19373.6,
+  "n_solicitudes": 419,
+  "n_seia": 2798,
+  "n_seia_en_evaluacion": 18,
+  "n_eia": 49,
+  "n_estaciones": 482,
+  "protegida_pct": 53.0
+ }
+}

@@ -1,18 +1,18 @@
 // Observatorio Patagonia · visor geoespacial de Aysén y Magallanes (etapa 1)
-import { FONDOS, GRUPOS, CAPAS, colorDe } from './obs-capas.js?v=1793993092';
-import * as C from './obs-coords.js?v=1793993092';
-import * as A from './obs-archivos.js?v=1793993092';
+import { FONDOS, GRUPOS, CAPAS, VISTAS, colorDe } from './obs-capas.js?v=1793994042';
+import * as C from './obs-coords.js?v=1793994042';
+import * as A from './obs-archivos.js?v=1793994042';
 
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const sinTilde = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const fmtN = (n, d = 0) => Number(n).toLocaleString('es-CL', { maximumFractionDigits: d });
 const LIMITES = [[-76.2, -56.1], [-66.3, -43.5]];
-const PALETA = ['#ffd166', '#06d6a0', '#ef476f', '#4cc9f0', '#f78c6b', '#b388eb', '#9ef01a', '#ff9ec7'];
+const PALETA = ['#d4572a', '#2a7f9e', '#8a4f9e', '#4f8a2a', '#c99a1e', '#1c2326', '#b8392c', '#2f6f8f'];
 const CAPA = Object.fromEntries(CAPAS.map(c => [c.id, c]));
 const DATOS = {};              // id de capa oficial → FeatureCollection completa
 const MIS = new Map();         // capas del investigador
-let fondo = 'satelite', tresD = false;
+let fondo = 'papel', tresD = false;
 
 // ------------------------------------------------------------------ estado desde el enlace (#@lat,lon,zoomz&f=fondo&c=capa,capa)
 const H = new URLSearchParams(location.hash.replace(/^#@?[^&]*&?/, ''));
@@ -32,9 +32,9 @@ const mapa = new maplibregl.Map({
   style: {
     version: 8, glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf', sources: fuentes,
     layers: [
-      { id: 'fondo-base', type: 'background', paint: { 'background-color': '#0a0d12' } },
+      { id: 'fondo-base', type: 'background', paint: { 'background-color': '#ece9e2' } },
       ...FONDOS.map(f => ({ id: 'f-' + f.id, type: 'raster', source: 'f-' + f.id, layout: { visibility: f.id === fondo ? 'visible' : 'none' },
-        paint: f.id === 'satelite' || f.id === 's2' ? { 'raster-saturation': -.12, 'raster-contrast': .06 } : {} })),
+        paint: f.id === 'papel' ? { 'raster-opacity': .7, 'raster-saturation': -1, 'raster-contrast': .1 } : f.id === 'satelite' || f.id === 's2' ? { 'raster-saturation': -.12, 'raster-contrast': .06 } : {} })),
       { id: 'sombra', type: 'hillshade', source: 'demsombra', paint: { 'hillshade-exaggeration': .3, 'hillshade-shadow-color': '#05070a', 'hillshade-highlight-color': '#ffffff', 'hillshade-accent-color': '#1b232c' } },
       ancla('z-raster'), ancla('z-pol'), ancla('z-lin'), ancla('z-pun'), ancla('z-eti'), ancla('z-usr'), ancla('z-sel'), ancla('z-dib'),
     ],
@@ -59,11 +59,24 @@ function pintarFondos() {
   $('#fondos').innerHTML = FONDOS.map(f => `<button class="fondo" type="button" data-fondo="${f.id}" aria-pressed="${f.id === fondo}" title="${esc(f.nota)}"
     style="background-image:url('${f.tiles[0].replace('{z}', 6).replace('{x}', 19).replace('{y}', 41)}')"><span>${esc(f.nombre)}</span></button>`).join('');
 }
-const sombraDe = id => id === 'oscuro' ? ['interpolate', ['linear'], ['zoom'], 5, .55, 12, .4] : id === 'topo' ? .12 : ['interpolate', ['linear'], ['zoom'], 5, .3, 9, .2, 12, .06, 14, 0];
+const SOMBRA = { claro: { 'hillshade-shadow-color': '#5a4a38', 'hillshade-highlight-color': '#fffaf0', 'hillshade-accent-color': '#7d6e5c' }, oscuro: { 'hillshade-shadow-color': '#05070a', 'hillshade-highlight-color': '#ffffff', 'hillshade-accent-color': '#1b232c' } };
+const esClaro = id => !!FONDOS.find(f => f.id === id)?.claro;
+/** Rótulos legibles según el fondo: tinta con halo de papel, o blanco con halo oscuro sobre imagen. */
+function estiloTextos() {
+  const claro = esClaro(fondo);
+  for (const l of mapa.getStyle().layers) {
+    if (!/^(c|u)-.*-t$/.test(l.id)) continue;
+    mapa.setPaintProperty(l.id, 'text-color', claro ? '#1c2326' : '#ffffff');
+    mapa.setPaintProperty(l.id, 'text-halo-color', claro ? 'rgba(236,233,226,.92)' : 'rgba(0,0,0,.8)');
+  }
+}
+const sombraDe = id => id === 'papel' ? ['interpolate', ['linear'], ['zoom'], 4, .55, 9, .45, 13, .25] : id === 'oscuro' ? ['interpolate', ['linear'], ['zoom'], 5, .55, 12, .4] : id === 'topo' ? .12 : ['interpolate', ['linear'], ['zoom'], 5, .3, 9, .2, 12, .06, 14, 0];
 function ponerFondo(id) {
   fondo = id;
   for (const f of FONDOS) mapa.setLayoutProperty('f-' + f.id, 'visibility', f.id === id ? 'visible' : 'none');
   mapa.setPaintProperty('sombra', 'hillshade-exaggeration', sombraDe(id));
+  for (const [k, v] of Object.entries(SOMBRA[esClaro(id) ? 'claro' : 'oscuro'])) mapa.setPaintProperty('sombra', k, v);
+  estiloTextos();
   $$('.fondo').forEach(b => b.setAttribute('aria-pressed', b.dataset.fondo === id));
   guardarVista();
 }
@@ -74,10 +87,10 @@ $('#sw-relieve').addEventListener('change', e => mapa.setLayoutProperty('sombra'
 function pintarCatalogo() {
   $('#grupos').innerHTML = GRUPOS.map(g => `<div class="grupo"><h3>${esc(g.nombre)}</h3>${CAPAS.filter(c => c.grupo === g.id).map(filaCapa).join('')}</div>`).join('');
 }
-const svgI = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg>';
+const svgI = 'i';
 function filaCapa(c) {
-  const ley = c.cats ? `<div class="leyenda">${Object.entries(c.cats).map(([k, v]) => `<span style="--c:${v}"><i></i>${esc(k)}</span>`).join('')}</div>` : '';
-  const desc = c.archivo && !c.archivo.startsWith('..') ? `<button class="btn btn-chico" data-bajar="${c.id}" data-fmt="geojson">GeoJSON</button><button class="btn btn-chico" data-bajar="${c.id}" data-fmt="csv">CSV</button><button class="btn btn-chico" data-bajar="${c.id}" data-fmt="kml">KML</button>` : '';
+  const ley = c.cats ? `<div class="leyenda-capa">${Object.entries(c.cats).map(([k, v]) => `<span style="--c:${v}"><i></i>${esc(k)}</span>`).join('')}</div>` : '';
+  const desc = c.archivo && !c.archivo.startsWith('..') ? `<button class="h-btn" data-bajar="${c.id}" data-fmt="geojson">GeoJSON</button><button class="h-btn" data-bajar="${c.id}" data-fmt="csv">CSV</button><button class="h-btn" data-bajar="${c.id}" data-fmt="kml">KML</button>` : '';
   return `<div class="capa" data-capa="${c.id}" style="--c:${c.color}">
     <div class="capa-fila">
       <label class="capa-chk"><input type="checkbox" data-act="${c.id}" ${activasIni.has(c.id) ? 'checked' : ''}><span class="caja"></span>
@@ -89,11 +102,11 @@ function filaCapa(c) {
       <p>${esc(c.descr || '')}</p>${ley}
       <label class="op">Opacidad <input type="range" min="10" max="100" value="100" data-op="${c.id}"></label>
       <p class="fte">Fuente: ${c.enlace ? `<a href="${esc(c.enlace)}" target="_blank" rel="noopener">${esc(c.fuente)} ↗</a>` : esc(c.fuente)}${c.fecha ? ' · ' + esc(c.fecha) : ''}</p>
-      <div class="acc"><button class="btn btn-chico" data-zoom="${c.id}">Acercar</button>${desc}</div>
+      <div class="acc"><button class="h-btn" data-zoom="${c.id}">Acercar</button>${desc}</div>
     </div></div>`;
 }
 $('#grupos').addEventListener('change', e => {
-  const id = e.target.dataset.act; if (id) { e.target.checked ? activar(CAPA[id]) : desactivar(CAPA[id]); guardarVista(); }
+  const id = e.target.dataset.act; if (id) { e.target.checked ? activar(CAPA[id]) : desactivar(CAPA[id]); guardarVista(); marcarVista(null); pintarLeyenda(); }
 });
 $('#grupos').addEventListener('input', e => { const id = e.target.dataset.op; if (id) opacidad(CAPA[id], e.target.value / 100); });
 $('#grupos').addEventListener('click', async e => {
@@ -146,12 +159,12 @@ async function activar(c) {
   if (mapa.getSource(src)) return;   // otra llamada la agregó mientras cargaba
   mapa.addSource(src, { type: 'geojson', data: fc, attribution: c.fuente, tolerance: .45 });
   const col = colorDe(c);
-  const rel = { glaciares: .55, lagos: .6, predios: .4, acuicultura: .55, bnp: .35, marinas: .3 }[c.id] ?? .26;
+  const rel = { glaciares: .7, lagos: .75, predios: .45, acuicultura: .6, bnp: .35, marinas: .22, protegidas: .3 }[c.id] ?? .26;
   if (c.tipo === 'poligono' || c.tipo === 'poligono-trazo') {
     mapa.addLayer({ id: src + '-f', type: 'fill', source: src, metadata: { rel: c.tipo === 'poligono' ? rel : .07, zoomFade: true },
       paint: { 'fill-color': col, 'fill-opacity': opZoom(c.tipo === 'poligono' ? rel : .07) } }, 'z-pol');
     mapa.addLayer({ id: src + '-l', type: 'line', source: src, metadata: { rel: .9 },
-      paint: { 'line-color': col, 'line-opacity': .9, 'line-width': ['interpolate', ['linear'], ['zoom'], 5, c.tipo === 'poligono-trazo' ? 1.2 : .6, 11, 1.8],
+      paint: { 'line-color': c.trazo || col, 'line-opacity': .9, 'line-width': ['interpolate', ['linear'], ['zoom'], 5, c.tipo === 'poligono-trazo' ? 1.2 : .6, 11, 1.8],
                ...(c.tipo === 'poligono-trazo' ? { 'line-dasharray': [3, 2] } : {}) } }, 'z-lin');
   } else if (c.tipo === 'linea') {
     mapa.addLayer({ id: src + '-l', type: 'line', source: src, metadata: { rel: .85 }, layout: { 'line-cap': 'round', 'line-join': 'round' },
@@ -168,7 +181,7 @@ async function activar(c) {
     const et = c.tipo === 'punto-etiqueta';
     mapa.addLayer({ id: src + '-p', type: 'circle', source: src, metadata: { rel: 1 }, ...(et ? { minzoom: 5.5 } : {}),
       paint: { 'circle-color': col, 'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, et ? 2.2 : 2.6, 9, et ? 3.6 : 4.6, 13, 7],
-               'circle-stroke-color': 'rgba(5,7,10,.85)', 'circle-stroke-width': 1, 'circle-opacity': 1, 'circle-stroke-opacity': 1 } }, 'z-pun');
+               'circle-stroke-color': 'rgba(247,245,240,.95)', 'circle-stroke-width': 1.2, 'circle-opacity': 1, 'circle-stroke-opacity': 1 } }, 'z-pun');
     if (et) mapa.addLayer({ id: src + '-t', type: 'symbol', source: src, metadata: { rel: 1 },
       layout: { 'text-field': ['get', 'nombre'], 'text-font': ['Open Sans Semibold'], 'text-size': ['interpolate', ['linear'], ['zoom'], 5, ['case', ['==', ['get', 'clase'], 'Capital'], 11.5, 0], 7, ['case', ['==', ['get', 'clase'], 'Capital'], 12.5, 10.5], 11, 13],
                 'text-variable-anchor': ['left', 'right', 'top', 'bottom'], 'text-radial-offset': .55, 'text-justify': 'auto', 'symbol-sort-key': ['case', ['==', ['get', 'clase'], 'Capital'], 0, 1] },
@@ -177,11 +190,12 @@ async function activar(c) {
     mapa.addLayer({ id: src + '-h', type: 'circle', source: src, metadata: { rel: .35 },
       paint: { 'circle-color': '#ff4d1a', 'circle-blur': 1, 'circle-opacity': .35, 'circle-radius': ['interpolate', ['linear'], ['zoom'], 4, 6, 10, 18] } }, 'z-pun');
     mapa.addLayer({ id: src + '-p', type: 'circle', source: src, metadata: { rel: 1 },
-      paint: { 'circle-color': ['interpolate', ['linear'], ['get', 'frp_mw'], 0, '#ffd166', 10, '#ff8c42', 50, '#ff3b1f'], 'circle-opacity': 1, 'circle-stroke-opacity': 1,
-               'circle-radius': ['interpolate', ['linear'], ['zoom'], 4, 2.5, 10, 6], 'circle-stroke-color': '#2a0a00', 'circle-stroke-width': .8 } }, 'z-pun');
+      paint: { 'circle-color': ['interpolate', ['linear'], ['get', 'frp_mw'], 0, '#e9a23b', 10, '#e2733a', 50, '#b8392c'], 'circle-opacity': 1, 'circle-stroke-opacity': 1,
+               'circle-radius': ['interpolate', ['linear'], ['zoom'], 4, 2.5, 10, 6], 'circle-stroke-color': '#fff7ea', 'circle-stroke-width': 1 } }, 'z-pun');
     $('#n-' + c.id).textContent = fc.features.length ? fmtN(fc.features.length) : 'sin focos';
   }
   const op = $(`[data-op="${c.id}"]`); if (op && op.value < 100) opacidad(c, op.value / 100);
+  estiloTextos(); pintarLeyenda();
 }
 /** Opacidad de relleno que baja al acercarse, para que se vea la imagen debajo. */
 function opZoom(x) { return ['interpolate', ['linear'], ['zoom'], 6, x, 11, x * .55, 14, x * .35]; }
@@ -321,18 +335,18 @@ function abrirFicha(items, idx = 0) {
   const filas = Object.entries(campos).filter(([k]) => p[k] !== undefined && p[k] !== null && p[k] !== '').map(([k, n]) => `<tr><th>${esc(n)}</th><td>${fmtValor(k, p[k])}</td></tr>`).join('');
   const otros = items.length > 1 ? `<p class="f-varios">${idx + 1} de ${items.length} elementos aquí · ${items.map((it, i) => i === idx ? '' : `<button data-fi="${i}">${esc(it.capa.nombre)}</button>`).filter(Boolean).slice(0, 6).join(' · ')}</p>` : '';
   $('#ficha-cuerpo').innerHTML = `
-    <p class="f-capa" style="--c:${capa.color}"><i></i>${esc(capa.nombre)}</p>
-    ${usr && usr.editable ? `<input class="f-nombre" id="f-nombre" value="${esc(p.nombre || '')}" maxlength="80" aria-label="Nombre">` : `<h2 class="f-tit">${esc(titulo)}</h2>`}
+    <div class="f-cab"><span class="etq" style="--c:${capa.color}"><i></i>${esc(capa.nombre)}</span>
+    ${usr && usr.editable ? `<input class="f-nombre" id="f-nombre" value="${esc(p.nombre || '')}" maxlength="80" aria-label="Nombre">` : `<h2>${esc(titulo)}</h2>`}</div>
     ${otros}
     ${p.foto ? `<img class="f-foto" src="${p.foto}" alt="Foto de terreno">` : ''}
     ${med.length ? `<div class="f-medidas">${med.map(([k, v]) => `<div><small>${k}</small><b>${v}</b></div>`).join('')}</div>` : ''}
-    ${filas ? `<table class="f-tabla">${filas}</table>` : ''}
+    ${filas ? `<table class="t-ficha">${filas}</table>` : ''}
     <div class="f-ubic">${g.type === 'Point' ? 'Ubicación' : 'Centro'} <b>${lat.toFixed(5)}, ${lon.toFixed(5)}</b><br>${C.aGMS(lat, 'lat')} ${C.aGMS(lon, 'lon')}<br>UTM ${u.huso}${u.hemisferio} · ${fmtN(u.este)} E · ${fmtN(u.norte)} N<br>Altitud <b id="f-alt">…</b></div>
     <div class="f-acc">
-      <button class="btn btn-chico" id="fa-zoom">Acercar</button>
-      <button class="btn btn-chico" id="fa-copiar">Copiar coordenadas</button>
-      <button class="btn btn-chico" id="fa-bajar">Descargar</button>
-      ${usr ? '<button class="btn btn-chico btn-peligro" id="fa-borrar">Quitar</button>' : ''}
+      <button class="h-btn" id="fa-zoom">Acercar</button>
+      <button class="h-btn" id="fa-copiar">Copiar coordenadas</button>
+      <button class="h-btn" id="fa-bajar">Descargar</button>
+      ${usr ? '<button class="h-btn peligro" id="fa-borrar">Quitar</button>' : ''}
     </div>
     <p class="f-fte">${capa.fuente ? `Fuente: ${capa.enlace ? `<a href="${esc(capa.enlace)}" target="_blank" rel="noopener">${esc(capa.fuente)}</a>` : esc(capa.fuente)}${capa.fecha ? ' · ' + esc(capa.fecha) : ''}` : ''}</p>`;
   $('#ficha').hidden = false; $('#ficha').scrollTop = 0;
@@ -356,14 +370,13 @@ function fichaPunto([lon, lat], titulo = 'Punto en el mapa', extra = '') {
   const resto = dentro.filter(d => d.c.id !== 'comunas');
   fichaLista = []; resaltar({ geometry: { type: 'Point', coordinates: [lon, lat] } });
   $('#ficha-cuerpo').innerHTML = `
-    <p class="f-capa" style="--c:var(--hielo)"><i></i>Ubicación</p>
-    <h2 class="f-tit">${esc(titulo)}</h2>
+    <div class="f-cab"><span class="etq" style="--c:#b8392c"><i></i>Ubicación</span><h2>${esc(titulo)}</h2></div>
     ${extra}
     <div class="f-ubic"><b>${lat.toFixed(6)}, ${lon.toFixed(6)}</b><br>${C.aGMS(lat, 'lat')} ${C.aGMS(lon, 'lon')}<br>UTM ${u.huso}${u.hemisferio} · ${fmtN(u.este, 1)} E · ${fmtN(u.norte, 1)} N<br>Altitud <b id="f-alt">…</b></div>
-    <table class="f-tabla"><tr><th>Comuna</th><td>${comuna ? esc(comuna.comuna + ' · ' + comuna.region) : 'Fuera de las comunas de Aysén y Magallanes (o en el mar)'}</td></tr>
-      ${resto.length ? `<tr><th>Dentro de</th><td>${resto.map(d => `<button class="f-dentro" data-c="${d.c.id}" data-i="${d.f.id}" style="all:unset;cursor:pointer;color:var(--hielo)">${esc((d.c.titulo?.(d.f.properties)) || d.c.nombre)}</button> <small style="color:var(--mudo)">(${esc(d.f.properties.designacion || d.c.nombre)})</small>`).join('<br>')}</td></tr>` : ''}
+    <table class="t-ficha"><tr><th>Comuna</th><td>${comuna ? esc(comuna.comuna + ' · ' + comuna.region) : 'Fuera de las comunas de Aysén y Magallanes (o en el mar)'}</td></tr>
+      ${resto.length ? `<tr><th>Dentro de</th><td>${resto.map(d => `<button class="f-dentro" data-c="${d.c.id}" data-i="${d.f.id}" >${esc((d.c.titulo?.(d.f.properties)) || d.c.nombre)}</button> <small>(${esc(d.f.properties.designacion || d.c.nombre)})</small>`).join('<br>')}</td></tr>` : ''}
     </table>
-    <div class="f-acc"><button class="btn btn-chico" id="fa-copiar">Copiar coordenadas</button><button class="btn btn-chico" id="fa-guardar">Guardar como punto</button></div>
+    <div class="f-acc"><button class="h-btn" id="fa-copiar">Copiar coordenadas</button><button class="h-btn" id="fa-guardar">Guardar como punto</button></div>
     <p class="f-fte">Altitud: modelo de elevación Terrarium (SRTM/GMTED), precisión de decenas de metros. «Dentro de» considera solo las capas ya cargadas.</p>`;
   $('#ficha').hidden = false;
   altitud(lon, lat, 13).then(h => { const el = $('#f-alt'); if (el) el.textContent = fmtAlt(h); });
@@ -456,7 +469,7 @@ function terminar() {
   if (modo === 'distancia' || modo === 'area') {
     mapa.getSource('medida').setData({ type: 'FeatureCollection', features: [{ type: 'Feature', properties: {}, geometry: g }] });
     const f = { type: 'Feature', properties: { nombre: modo === 'area' ? 'Área medida' : 'Distancia medida' }, geometry: g };
-    abrirFicha([{ f, capa: { nombre: 'Medición', color: '#8fd8ea', campos: {}, titulo: () => modo === 'area' ? 'Área medida' : 'Distancia medida', fuente: 'Cálculo geodésico sobre el elipsoide WGS84 (esfera media)' } }]);
+    abrirFicha([{ f, capa: { nombre: 'Medición', color: '#b8392c', campos: {}, titulo: () => modo === 'area' ? 'Área medida' : 'Distancia medida', fuente: 'Cálculo geodésico sobre el elipsoide WGS84 (esfera media)' } }]);
     const b = document.createElement('button'); b.className = 'btn btn-chico'; b.textContent = 'Guardar en Mis datos';
     b.onclick = () => { mapa.getSource('medida').setData({ type: 'FeatureCollection', features: [] }); guardarDibujo(g); };
     $('.f-acc').prepend(b);
@@ -464,7 +477,7 @@ function terminar() {
 }
 function guardarDibujo(g) {
   let d = MIS.get('dibujos');
-  if (!d) { d = { id: 'dibujos', nombre: 'Mis dibujos', color: '#ffd166', fc: { type: 'FeatureCollection', features: [] }, visible: true, nota: 'dibujados en el visor', creado: Date.now() }; }
+  if (!d) { d = { id: 'dibujos', nombre: 'Mis dibujos', color: '#b8392c', fc: { type: 'FeatureCollection', features: [] }, visible: true, nota: 'dibujados en el visor', creado: Date.now() }; }
   const tipo = { Point: 'Punto', LineString: 'Línea', Polygon: 'Polígono' }[g.type];
   const n = d.fc.features.filter(f => f.geometry.type === g.type).length + 1;
   const p = { nombre: `${tipo} ${n}`, creado: new Date().toLocaleString('es-CL') };
@@ -494,9 +507,10 @@ function agregarMia(m, zoom = true) {
   mapa.addLayer({ id: src + '-f', type: 'fill', source: src, filter: esPol, layout: vis, paint: { 'fill-color': m.color, 'fill-opacity': .22 } }, 'z-usr');
   mapa.addLayer({ id: src + '-l', type: 'line', source: src, filter: esLin, layout: { ...vis, 'line-join': 'round', 'line-cap': 'round' }, paint: { 'line-color': m.color, 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 1.4, 12, 2.6] } }, 'z-usr');
   mapa.addLayer({ id: src + '-p', type: 'circle', source: src, filter: esPun, layout: vis,
-    paint: { 'circle-color': m.color, 'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, m.fotos ? 5 : 3.5, 12, m.fotos ? 8 : 6.5], 'circle-stroke-color': m.fotos ? '#fff' : 'rgba(5,7,10,.9)', 'circle-stroke-width': m.fotos ? 2 : 1.2 } }, 'z-usr');
+    paint: { 'circle-color': m.color, 'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, m.fotos ? 5 : 3.5, 12, m.fotos ? 8 : 6.5], 'circle-stroke-color': m.fotos ? '#fff' : 'rgba(247,245,240,.95)', 'circle-stroke-width': m.fotos ? 2 : 1.2 } }, 'z-usr');
   mapa.addLayer({ id: src + '-t', type: 'symbol', source: src, filter: esPun, minzoom: 9, layout: { ...vis, 'text-field': ['coalesce', ['get', 'nombre'], ['get', 'name'], ['get', 'Name'], ''], 'text-font': ['Open Sans Semibold'], 'text-size': 11.5, 'text-offset': [0, 1.1], 'text-anchor': 'top', 'text-optional': true },
-    paint: { 'text-color': '#fff', 'text-halo-color': 'rgba(0,0,0,.85)', 'text-halo-width': 1.2 } }, 'z-usr');
+    paint: { 'text-color': '#1c2326', 'text-halo-color': 'rgba(236,233,226,.92)', 'text-halo-width': 1.2 } }, 'z-usr');
+  estiloTextos();
   A.guardarCapa(serial(m));
   pintarMis();
   if (zoom) { const b = C.bbox(m.fc); if (b) mapa.fitBounds(b, { padding: 80, maxZoom: 14, duration: 900 }); }
@@ -522,9 +536,9 @@ function pintarMis() {
       <label class="capa-chk"><input type="checkbox" data-mia="${esc(m.id)}" ${m.visible ? 'checked' : ''}><span class="caja"></span>
         <span class="capa-nom">${esc(m.nombre)}<small>${fmtN(n)} ${n === 1 ? 'elemento' : 'elementos'} · ${esc(tipos)}${m.nota ? ' · ' + esc(m.nota) : ''}</small></span></label>
       <div class="mi-acc">
-        <button class="capa-i" data-mzoom="${esc(m.id)}" title="Acercar" aria-label="Acercar"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M11 8v6M8 11h6"/></svg></button>
-        <button class="capa-i" data-mbajar="${esc(m.id)}" title="Descargar GeoJSON" aria-label="Descargar"><svg viewBox="0 0 24 24"><path d="M12 4v12m0 0-4-4m4 4 4-4M4 20h16"/></svg></button>
-        <button class="capa-i" data-mquitar="${esc(m.id)}" title="Quitar" aria-label="Quitar"><svg viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2m-7 0 1 12h8l1-12"/></svg></button>
+        <button data-mzoom="${esc(m.id)}" title="Acercar" aria-label="Acercar">⌕</button>
+        <button data-mbajar="${esc(m.id)}" title="Descargar GeoJSON" aria-label="Descargar">↓</button>
+        <button data-mquitar="${esc(m.id)}" title="Quitar" aria-label="Quitar">×</button>
       </div></div>`;
   }).join('');
 }
@@ -538,7 +552,7 @@ $('#mis-capas').addEventListener('click', e => {
   if (b) { const m = MIS.get(b.dataset.mbajar); A.descargar(sinTilde(m.nombre).replace(/[^a-z0-9]+/g, '-') + '.geojson', A.aGeoJSON(sinId(m.fc)), 'application/geo+json'); }
   if (q) {
     if (q.dataset.confirmar) { quitarMia(MIS.get(q.dataset.mquitar)); cerrarFicha(); }
-    else { q.dataset.confirmar = 1; q.style.color = 'var(--peligro)'; q.title = 'Toca de nuevo para quitar'; aviso('Toca de nuevo el basurero para quitar la capa.'); setTimeout(() => { delete q.dataset.confirmar; q.style.color = ''; }, 3500); }
+    else { q.dataset.confirmar = 1; q.style.color = 'var(--acento)'; q.title = 'Toca de nuevo para quitar'; aviso('Toca de nuevo el basurero para quitar la capa.'); setTimeout(() => { delete q.dataset.confirmar; q.style.color = ''; }, 3500); }
   }
 });
 
@@ -554,7 +568,7 @@ async function procesar(files) {
       if (r.esFoto) {
         let m = MIS.get('fotos');
         if (m) { m.fc.features.push(...r.fc.features); actualizarMia(m); }
-        else agregarMia({ id: 'fotos', nombre: 'Fotos de terreno', color: '#ffffff', fotos: true, fc: r.fc, visible: true, nota: 'con GPS', creado: Date.now() }, false);
+        else agregarMia({ id: 'fotos', nombre: 'Fotos de terreno', color: '#1c2326', fotos: true, fc: r.fc, visible: true, nota: 'con GPS', creado: Date.now() }, false);
         ok.push(file.name);
         continue;
       }
@@ -596,13 +610,14 @@ function exportarPNG() {
     const src = mapa.getCanvas(), w = src.width, h = src.height, pie = Math.round(46 * devicePixelRatio);
     const cv = document.createElement('canvas'); cv.width = w; cv.height = h + pie;
     const cx = cv.getContext('2d'); cx.drawImage(src, 0, 0);
-    cx.fillStyle = '#0b0e13'; cx.fillRect(0, h, w, pie);
+    cx.fillStyle = '#ece9e2'; cx.fillRect(0, h, w, pie); cx.fillStyle = '#b8392c'; cx.fillRect(0, h, w, 2 * devicePixelRatio);
     const s = devicePixelRatio, c = mapa.getCenter();
-    cx.fillStyle = '#ece8df'; cx.font = `${18 * s}px "Instrument Serif", Georgia, serif`; cx.fillText('Observatorio Patagonia', 14 * s, h + 20 * s);
-    cx.font = `${10.5 * s}px "Geist Mono", monospace`; cx.fillStyle = 'rgba(236,232,223,.6)';
+    cx.fillStyle = '#1c2326'; cx.font = `600 ${16 * s}px Archivo, Arial, sans-serif`; cx.fillText('Observatorio Patagonia · Aysén y Magallanes', 14 * s, h + 20 * s);
+    cx.font = `500 ${10 * s}px "IBM Plex Mono", monospace`; cx.fillStyle = '#4f5655';
     cx.fillText(`${new Date().toLocaleDateString('es-CL')} · centro ${c.lat.toFixed(4)}, ${c.lng.toFixed(4)} · zoom ${mapa.getZoom().toFixed(1)} · capas: ${activas().map(x => x.nombre).join(', ') || '—'}`.slice(0, 180), 14 * s, h + 36 * s);
     const fondoN = FONDOS.find(f => f.id === fondo); cx.textAlign = 'right';
-    cx.fillText(('Fondo: ' + fondoN.nombre + ' · patagoniadechile.cl/observatorio').slice(0, 90), w - 14 * s, h + 20 * s);
+    cx.fillStyle = '#b8392c'; cx.font = `700 ${12 * s}px Archivo, Arial, sans-serif`; cx.fillText('GEOGES ANALYTICS', w - 14 * s, h + 20 * s);
+    cx.fillStyle = '#4f5655'; cx.font = `500 ${10 * s}px "IBM Plex Mono", monospace`; cx.fillText(('Fondo: ' + fondoN.nombre + ' · patagoniadechile.cl/observatorio').slice(0, 90), w - 14 * s, h + 36 * s);
     cv.toBlob(b => A.descargar(`observatorio-mapa-${new Date().toISOString().slice(0, 10)}.png`, b), 'image/png');
   });
   mapa.triggerRepaint();
@@ -746,23 +761,80 @@ function guardarVista() {
 }
 mapa.on('moveend', guardarVista);
 
+// ------------------------------------------------------------------ «Qué ver», leyenda, resumen y norte
+function pintarVistas() {
+  $('#vistas').innerHTML = VISTAS.map(v => `<button type="button" data-vista="${v.id}" aria-pressed="false" style="--c:${v.color}">${esc(v.nombre)}<small>${esc(v.sub)}</small></button>`).join('');
+}
+function marcarVista(id) { $$('#vistas [data-vista]').forEach(b => b.setAttribute('aria-pressed', b.dataset.vista === id)); }
+$('#vistas').addEventListener('click', e => {
+  const b = e.target.closest('[data-vista]'); if (!b) return;
+  const v = VISTAS.find(x => x.id === b.dataset.vista);
+  for (const c of CAPAS) {
+    const chk = $(`[data-act="${c.id}"]`), on = v.capas.includes(c.id);
+    if (chk.checked !== on) { chk.checked = on; on ? activar(c) : desactivar(c); }
+  }
+  marcarVista(v.id); guardarVista(); pintarLeyenda();
+  mapa.fitBounds(LIMITES, { padding: 30, duration: 900 });
+});
+function pintarLeyenda() {
+  const l = activas().filter(c => !['comunas', 'localidades'].includes(c.id));
+  const sim = (c, col) => c.tipo.startsWith('poligono') && c.tipo !== 'poligono-trazo' || c.tipo === 'raster' ? `<i style="--c:${col}"></i>` : c.tipo.startsWith('linea') || c.tipo === 'poligono-trazo' ? `<i class="l" style="--c:${col}"></i>` : `<i class="p" style="--c:${col}"></i>`;
+  $('#leyenda').innerHTML = l.length ? l.flatMap(c => c.cats ? Object.entries(c.cats).map(([k, v]) => `<span class="clave">${sim(c, v)}${esc(c.nombre)}: ${esc(k)}</span>`) : [`<span class="clave">${sim(c, c.color)}${esc(c.nombre)}</span>`]).join('')
+    : '<span class="clave">Elige capas en «Qué ver» o en la lista de capas</span>';
+}
+const fmtKm = n => fmtN(n) + ' km²';
+async function pintarResumen() {
+  let r; try { r = await (await fetch('datos/resumen.json?v=1')).json(); } catch { return; }
+  const A = r.regiones['Aysén'], M = r.regiones['Magallanes'], T = r.total;
+  $('#resumen').innerHTML = `<span>Superficie <b>${fmtKm(T.superficie_km2)}</b></span><span>Protegida <b>${fmtN(T.protegida_pct, 1)} %</b></span><span>Glaciares <b>${fmtN(T.n_glaciares)}</b></span><span>Predios fiscales <b>${fmtN(T.n_predios_fiscales)}</b></span><span>Concesiones acuícolas <b>${fmtN(T.n_concesiones)}</b></span><span id="r-focos"></span>`;
+  const fila = (t, k, f = fmtN, alto) => `<tr><td>${t}</td><td${alto === 'A' ? ' class="alto"' : ''}>${f(A[k] || 0)}</td><td${alto === 'M' ? ' class="alto"' : ''}>${f(M[k] || 0)}</td><td>${f(T[k] || 0)}</td></tr>`;
+  const pct = v => fmtN(v, 1) + ' %';
+  $('#resumen-der').innerHTML = `
+    <div><span class="etq">Territorio · datos públicos oficiales</span><h2>Aysén y Magallanes</h2><p>Monitoreo abierto de la Patagonia chilena. Cifras calculadas sobre las capas del visor · ${esc(r.generado)}.</p></div>
+    <div class="cifra"><b>${fmtN(T.protegida_pct, 1)} %</b><span>de la superficie terrestre está bajo protección oficial: ${fmtKm(T.protegida_km2)} de ${fmtKm(T.superficie_km2)}</span></div>
+    <table class="reg-tabla"><thead><tr><th></th><th>Aysén</th><th>Magallanes</th><th>Total</th></tr></thead><tbody>
+      ${fila('Superficie (km²)', 'superficie_km2')}
+      ${fila('Protegida (oficial)', 'protegida_pct', pct)}
+      ${fila('Conservación privada (km²)', 'privada_km2')}
+      ${fila('Glaciares', 'n_glaciares')}
+      ${fila('Hielo (km²)', 'glaciares_km2')}
+      ${fila('Predios fiscales', 'n_predios_fiscales')}
+      ${fila('Concesiones acuícolas', 'n_concesiones', fmtN, A.n_concesiones > M.n_concesiones ? 'A' : 'M')}
+      ${fila('Solicitudes en trámite', 'n_solicitudes', fmtN, M.n_solicitudes > A.n_solicitudes ? 'M' : 'A')}
+      ${fila('Proyectos SEIA', 'n_seia')}
+      ${fila('· en evaluación', 'n_seia_en_evaluacion')}
+      ${fila('Estaciones DGA', 'n_estaciones')}
+    </tbody></table>
+    <p class="nota">Protegida: SNASPE y otras áreas oficiales del Registro Nacional, solo la parte terrestre y sin contar dos veces las superposiciones. Glaciares: inventario DGA 2022 (mayores a 0,05 km²).</p>
+    <div id="r-focos-caja"></div>
+    <div class="aviso-caja">Haz clic en cualquier elemento del mapa para ver su ficha, o en un punto vacío para saber en qué comuna y áreas cae.</div>`;
+  // focos de calor de 7 días (se consulta aparte, en segundo plano)
+  const fc = await cargarDatos(CAPA.focos, true).catch(() => null);
+  if (fc) {
+    $('#r-focos').innerHTML = `Focos 7 días <b>${fmtN(fc.features.length)}</b>`;
+    $('#r-focos-caja').innerHTML = `<h3>Focos de calor · últimos 7 días</h3><p><b style="color:var(--acento);font:700 20px var(--titulo)">${fmtN(fc.features.length)}</b> ${fc.features.length === 1 ? 'detección' : 'detecciones'} VIIRS en Aysén y Magallanes${fc.features.length ? ' · <button class="volver" id="ver-focos" type="button">verlas en el mapa</button>' : ''}.</p>`;
+    $('#ver-focos')?.addEventListener('click', () => { const chk = $('[data-act="focos"]'); if (!chk.checked) { chk.checked = true; activar(CAPA.focos); } const b = C.bbox(fc); if (b) mapa.fitBounds(b, { padding: 80, maxZoom: 9 }); });
+  }
+}
+mapa.on('rotate', () => { $('#norte .aguja').style.transform = `rotate(${-mapa.getBearing()}deg)`; });
+
 // ------------------------------------------------------------------ arranque
-pintarFondos(); pintarCatalogo(); pintarMis();
+pintarFondos(); pintarCatalogo(); pintarMis(); pintarVistas(); pintarLeyenda(); pintarResumen();
 mapa.on('load', async () => {
   // fuentes de trabajo: selección, chincheta, dibujo y medición
   const vacia = { type: 'geojson', data: { type: 'FeatureCollection', features: [] } };
   for (const s of ['sel', 'pin', 'dib', 'medida']) mapa.addSource(s, structuredClone(vacia));
-  mapa.addLayer({ id: 'sel-f', type: 'fill', source: 'sel', filter: ['match', ['geometry-type'], ['Polygon', 'MultiPolygon'], true, false], paint: { 'fill-color': '#ffffff', 'fill-opacity': .12 } }, 'z-sel');
-  mapa.addLayer({ id: 'sel-halo', type: 'line', source: 'sel', paint: { 'line-color': '#8fd8ea', 'line-width': 7, 'line-opacity': .35, 'line-blur': 3 } }, 'z-sel');
-  mapa.addLayer({ id: 'sel-l', type: 'line', source: 'sel', paint: { 'line-color': '#ffffff', 'line-width': 2 } }, 'z-sel');
-  mapa.addLayer({ id: 'sel-p', type: 'circle', source: 'sel', filter: ['match', ['geometry-type'], ['Point', 'MultiPoint'], true, false], paint: { 'circle-radius': 9, 'circle-color': 'rgba(143,216,234,.2)', 'circle-stroke-color': '#fff', 'circle-stroke-width': 2 } }, 'z-sel');
-  mapa.addLayer({ id: 'pin', type: 'circle', source: 'pin', paint: { 'circle-radius': 6, 'circle-color': '#8fd8ea', 'circle-stroke-color': '#0b0e13', 'circle-stroke-width': 2.5 } }, 'z-sel');
-  mapa.addLayer({ id: 'medida-f', type: 'fill', source: 'medida', paint: { 'fill-color': '#8fd8ea', 'fill-opacity': .15 } }, 'z-dib');
-  mapa.addLayer({ id: 'medida-l', type: 'line', source: 'medida', paint: { 'line-color': '#8fd8ea', 'line-width': 2.4, 'line-dasharray': [2, 1.5] } }, 'z-dib');
-  mapa.addLayer({ id: 'dib-f', type: 'fill', source: 'dib', filter: ['==', ['geometry-type'], 'Polygon'], paint: { 'fill-color': '#ffd166', 'fill-opacity': .14 } }, 'z-dib');
-  mapa.addLayer({ id: 'dib-l', type: 'line', source: 'dib', filter: ['==', ['geometry-type'], 'LineString'], paint: { 'line-color': '#ffd166', 'line-width': 2.2, 'line-dasharray': [2, 1.2] } }, 'z-dib');
-  mapa.addLayer({ id: 'dib-v', type: 'circle', source: 'dib', filter: ['==', ['geometry-type'], 'Point'], paint: { 'circle-radius': 4.5, 'circle-color': '#0b0e13', 'circle-stroke-color': '#ffd166', 'circle-stroke-width': 2 } }, 'z-dib');
-  pintarZoom(); mapa.setPaintProperty('sombra', 'hillshade-exaggeration', sombraDe(fondo));
+  mapa.addLayer({ id: 'sel-f', type: 'fill', source: 'sel', filter: ['match', ['geometry-type'], ['Polygon', 'MultiPolygon'], true, false], paint: { 'fill-color': '#b8392c', 'fill-opacity': .1 } }, 'z-sel');
+  mapa.addLayer({ id: 'sel-halo', type: 'line', source: 'sel', paint: { 'line-color': '#fff7ea', 'line-width': 6, 'line-opacity': .85 } }, 'z-sel');
+  mapa.addLayer({ id: 'sel-l', type: 'line', source: 'sel', paint: { 'line-color': '#b8392c', 'line-width': 2.2 } }, 'z-sel');
+  mapa.addLayer({ id: 'sel-p', type: 'circle', source: 'sel', filter: ['match', ['geometry-type'], ['Point', 'MultiPoint'], true, false], paint: { 'circle-radius': 9, 'circle-color': 'rgba(184,57,44,.15)', 'circle-stroke-color': '#b8392c', 'circle-stroke-width': 2.2 } }, 'z-sel');
+  mapa.addLayer({ id: 'pin', type: 'circle', source: 'pin', paint: { 'circle-radius': 6, 'circle-color': '#b8392c', 'circle-stroke-color': '#fff7ea', 'circle-stroke-width': 2.5 } }, 'z-sel');
+  mapa.addLayer({ id: 'medida-f', type: 'fill', source: 'medida', paint: { 'fill-color': '#b8392c', 'fill-opacity': .12 } }, 'z-dib');
+  mapa.addLayer({ id: 'medida-l', type: 'line', source: 'medida', paint: { 'line-color': '#b8392c', 'line-width': 2.4, 'line-dasharray': [2, 1.5] } }, 'z-dib');
+  mapa.addLayer({ id: 'dib-f', type: 'fill', source: 'dib', filter: ['==', ['geometry-type'], 'Polygon'], paint: { 'fill-color': '#b8392c', 'fill-opacity': .12 } }, 'z-dib');
+  mapa.addLayer({ id: 'dib-l', type: 'line', source: 'dib', filter: ['==', ['geometry-type'], 'LineString'], paint: { 'line-color': '#b8392c', 'line-width': 2.2, 'line-dasharray': [2, 1.2] } }, 'z-dib');
+  mapa.addLayer({ id: 'dib-v', type: 'circle', source: 'dib', filter: ['==', ['geometry-type'], 'Point'], paint: { 'circle-radius': 4.5, 'circle-color': '#fff7ea', 'circle-stroke-color': '#b8392c', 'circle-stroke-width': 2 } }, 'z-dib');
+  pintarZoom(); ponerFondo(fondo);
   $('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show');
 
   // capas activas al abrir (las más livianas primero)

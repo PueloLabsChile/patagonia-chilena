@@ -8,141 +8,149 @@
 <meta property="og:title" content="Observatorio Patagonia">
 <meta property="og:description" content="Monitoreo abierto de Aysén y Magallanes con datos públicos oficiales.">
 <link rel="icon" href="../assets/img/icono.svg" type="image/svg+xml">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<link href="obs.css?v=1793993092" rel="stylesheet">
+<link href="obs.css?v=1793994042" rel="stylesheet">
 </head>
 <body>
+<main id="hoja">
 
-<header class="barra">
-  <button class="ico solo-movil" id="b-panel" type="button" aria-label="Capas" aria-controls="panel"><svg viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/></svg></button>
-  <a class="marca" href="../" title="Volver a Patagonia Chilena">
-    <img src="../assets/img/icono.svg" alt="">
-    <span><b>Observatorio <em>Patagonia</em></b><small>Aysén · Magallanes</small></span>
-  </a>
+  <header id="cabeza">
+    <div class="titulo">
+      <p>Observatorio abierto · <b>Aysén y Magallanes</b></p>
+      <h1><a href="../" title="Volver a Patagonia Chilena">Observatorio Patagonia</a></h1>
+    </div>
+    <div id="marca" lang="en"><b>GEOGES Analytics</b><span>We know the place</span></div>
+    <section id="resumen" aria-label="Cifras del territorio"></section>
+  </header>
 
-  <form class="buscador" id="buscador" role="search" autocomplete="off">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-    <input id="q" type="search" placeholder="Lugar o coordenadas: Cochrane · -47.25, -72.57 · 18S 650000 4765000" aria-label="Buscar un lugar o ir a unas coordenadas">
-    <ul class="resultados" id="resultados" role="listbox" hidden></ul>
-  </form>
+  <aside id="panel" aria-label="Controles">
+    <form class="buscador" id="buscador" role="search" autocomplete="off">
+      <label class="etq" for="q">Ir a un lugar o coordenada</label>
+      <input id="q" type="search" placeholder="Cochrane · -47.25, -72.57 · 18S 650000 4765000">
+      <ul class="resultados" id="resultados" role="listbox" hidden></ul>
+    </form>
 
-  <nav class="acciones" aria-label="Herramientas">
-    <button class="btn btn-pri" id="b-subir" type="button" title="GeoJSON, KML/KMZ, GPX, Shapefile (.zip), CSV o fotos con GPS">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg><span>Subir archivo</span></button>
-    <div class="menu-caja">
-      <button class="btn" id="b-herr" type="button" aria-haspopup="true" aria-expanded="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17 17 3l4 4L7 21H3v-4Z"/><path d="m14 6 4 4"/></svg><span>Herramientas</span></button>
-      <div class="menu" id="m-herr" role="menu" hidden>
-        <p class="menu-tit">Medir</p>
-        <button role="menuitem" data-herr="distancia"><svg viewBox="0 0 24 24"><path d="M4 20 20 4M7 17l-2-2m5-1-2-2m5-1-2-2m5-1-2-2"/></svg>Distancia <kbd>D</kbd></button>
-        <button role="menuitem" data-herr="area"><svg viewBox="0 0 24 24"><path d="M4 7 12 3l8 5-2 11H7L4 7Z"/></svg>Área <kbd>A</kbd></button>
-        <p class="menu-tit">Dibujar y guardar</p>
-        <button role="menuitem" data-herr="punto"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>Punto <kbd>P</kbd></button>
-        <button role="menuitem" data-herr="linea"><svg viewBox="0 0 24 24"><path d="M4 18 10 9l5 5 5-9"/></svg>Línea <kbd>L</kbd></button>
-        <button role="menuitem" data-herr="poligono"><svg viewBox="0 0 24 24"><path d="M5 6h10l4 7-6 6H6L3 12l2-6Z"/></svg>Polígono <kbd>G</kbd></button>
-        <p class="menu-tit">Ubicar</p>
-        <button role="menuitem" id="b-gps"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/><circle cx="12" cy="12" r="7"/></svg>Mi ubicación (GPS)</button>
+    <div class="herramientas" role="toolbar" aria-label="Herramientas">
+      <button class="h-btn h-pri" id="b-subir" type="button" title="GeoJSON, KML/KMZ, GPX, Shapefile (.zip), CSV o fotos con GPS">Subir archivo</button>
+      <div class="menu-caja">
+        <button class="h-btn" id="b-herr" type="button" aria-haspopup="true" aria-expanded="false">Medir y dibujar</button>
+        <div class="menu" id="m-herr" role="menu" hidden>
+          <p class="menu-tit">Medir</p>
+          <button role="menuitem" data-herr="distancia">Distancia <kbd>D</kbd></button>
+          <button role="menuitem" data-herr="area">Área <kbd>A</kbd></button>
+          <p class="menu-tit">Dibujar y guardar</p>
+          <button role="menuitem" data-herr="punto">Punto <kbd>P</kbd></button>
+          <button role="menuitem" data-herr="linea">Línea <kbd>L</kbd></button>
+          <button role="menuitem" data-herr="poligono">Polígono <kbd>G</kbd></button>
+          <p class="menu-tit">Ubicar</p>
+          <button role="menuitem" id="b-gps">Mi ubicación (GPS)</button>
+        </div>
       </div>
-    </div>
-    <div class="menu-caja">
-      <button class="btn" id="b-exp" type="button" aria-haspopup="true" aria-expanded="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12m0 0-4-4m4 4 4-4M4 20h16"/></svg><span>Exportar</span></button>
-      <div class="menu" id="m-exp" role="menu" hidden>
-        <p class="menu-tit">Mis capas y dibujos</p>
-        <button role="menuitem" data-exp="geojson">GeoJSON <small>QGIS, ArcGIS, web</small></button>
-        <button role="menuitem" data-exp="kml">KML <small>Google Earth</small></button>
-        <button role="menuitem" data-exp="csv">CSV <small>Excel, con lat/lon</small></button>
-        <p class="menu-tit">Mapa</p>
-        <button role="menuitem" data-exp="png">Imagen del mapa (PNG)</button>
-        <button role="menuitem" data-exp="enlace">Copiar enlace a esta vista</button>
+      <div class="menu-caja">
+        <button class="h-btn" id="b-exp" type="button" aria-haspopup="true" aria-expanded="false">Exportar</button>
+        <div class="menu" id="m-exp" role="menu" hidden>
+          <p class="menu-tit">Mis capas y dibujos</p>
+          <button role="menuitem" data-exp="geojson">GeoJSON <small>QGIS, ArcGIS</small></button>
+          <button role="menuitem" data-exp="kml">KML <small>Google Earth</small></button>
+          <button role="menuitem" data-exp="csv">CSV <small>Excel</small></button>
+          <p class="menu-tit">Mapa</p>
+          <button role="menuitem" data-exp="png">Lámina del mapa (PNG)</button>
+          <button role="menuitem" data-exp="enlace">Copiar enlace a esta vista</button>
+        </div>
       </div>
+      <button class="h-btn" id="b-3d" type="button" aria-pressed="false" title="Relieve en 3D">Ver en 3D</button>
+      <button class="h-btn h-ico" id="b-ayuda" type="button" aria-label="Ayuda y fuentes" title="Ayuda y fuentes">?</button>
     </div>
-    <button class="btn" id="b-3d" type="button" aria-pressed="false" title="Relieve en 3D (inclina con clic derecho o Ctrl + arrastrar)">3D</button>
-    <button class="ico" id="b-ayuda" type="button" aria-label="Ayuda y fuentes" title="Ayuda y fuentes"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14m0 3h.01"/></svg></button>
-  </nav>
-</header>
 
-<aside class="panel" id="panel" aria-label="Capas del mapa">
-  <div class="pestanas" role="tablist">
-    <button role="tab" aria-selected="true" data-pes="capas">Capas</button>
-    <button role="tab" aria-selected="false" data-pes="mis">Mis datos <b id="n-mis">0</b></button>
-    <button role="tab" aria-selected="false" data-pes="tele">Teledetección</button>
-  </div>
-
-  <section class="pes" data-pes="capas">
-    <div class="bloque">
-      <h3>Fondo</h3>
-      <div class="fondos" id="fondos"></div>
-      <label class="fila-sw"><input type="checkbox" id="sw-relieve" checked><span class="sw"></span>Sombreado de relieve</label>
+    <div class="grupo">
+      <h2>Qué ver</h2>
+      <div class="vistas" id="vistas"></div>
     </div>
-    <div id="grupos"></div>
-    <p class="pie-panel">Datos públicos oficiales recortados a Aysén y Magallanes. Toca <b>ⓘ</b> para ver la fuente, la fecha y descargar cada capa.</p>
+
+    <div class="pestanas" role="tablist">
+      <button role="tab" aria-selected="true" data-pes="capas">Capas</button>
+      <button role="tab" aria-selected="false" data-pes="mis">Mis datos <b id="n-mis">0</b></button>
+      <button role="tab" aria-selected="false" data-pes="tele">Teledetección</button>
+    </div>
+
+    <section class="pes" data-pes="capas">
+      <div class="grupo">
+        <h2>Fondo</h2>
+        <div class="fondos" id="fondos"></div>
+        <label class="marca"><input type="checkbox" id="sw-relieve" checked> Sombreado de relieve</label>
+      </div>
+      <div id="grupos"></div>
+      <p class="nota">Datos públicos oficiales recortados a Aysén y Magallanes. Toca <b>i</b> para ver la fuente, la fecha y descargar cada capa.</p>
+    </section>
+
+    <section class="pes" data-pes="mis" hidden>
+      <label class="subir" id="zona-subir">
+        <input type="file" id="archivo" multiple accept=".geojson,.json,.kml,.kmz,.gpx,.zip,.csv,.txt,.tsv,.jpg,.jpeg,.png,.heic,.tif,.tiff">
+        <b>Subir o arrastrar archivos</b>
+        <span>GeoJSON · KML/KMZ · GPX · Shapefile (.zip) · CSV con coordenadas · fotos con GPS</span>
+      </label>
+      <p class="nota">Tus archivos se procesan en tu navegador y se guardan solo en este equipo. No se suben a ningún servidor.</p>
+      <div id="mis-capas"></div>
+      <p class="nota" id="mis-vacio">Aún no tienes capas. Sube un archivo o usa <b>Medir y dibujar</b> para crear puntos, líneas y polígonos.</p>
+    </section>
+
+    <section class="pes" data-pes="tele" hidden>
+      <div class="grupo">
+        <h2>Disponible hoy</h2>
+        <div class="vistas">
+          <button type="button" data-ir-fondo="s2" style="--c:#2f6f8f">Mosaico Sentinel-2 2023<small>Imagen sin nubes a 10 m, como fondo</small></button>
+          <button type="button" data-ir-capa="focos" style="--c:#b8392c">Focos de calor · NASA FIRMS<small>VIIRS, últimos 7 días, cada 3 horas</small></button>
+          <button type="button" data-ir-capa="bosque" style="--c:#3f7a4a">Catastro de vegetación · CONAF<small>Uso de suelo y bosque nativo, en vivo</small></button>
+        </div>
+      </div>
+      <div class="grupo etapa2">
+        <h2>Etapa 2 · en desarrollo</h2>
+        <ul>
+          <li><b>Imágenes Sentinel-2 por fecha</b> desde 2017, filtradas por nubosidad</li>
+          <li><b>Índices espectrales</b>: NDVI, NDWI, NBR y NDSI</li>
+          <li><b>Antes y después</b> con cortina deslizable</li>
+          <li><b>Series de tiempo</b> por polígono o predio</li>
+          <li><b>Radar Sentinel-1</b>, que ve a través de las nubes</li>
+          <li><b>Landsat desde 1984</b> para el retroceso de glaciares</li>
+        </ul>
+      </div>
+    </section>
+  </aside>
+
+  <section id="mapa-caja">
+    <div id="mapa" role="region" aria-label="Mapa de Aysén y Magallanes"></div>
+    <div id="norte" aria-hidden="true"><svg viewBox="0 0 60 60"><circle cx="30" cy="32" r="22"/><path class="aguja" d="M30 14 35.5 36 30 32.5 24.5 36Z"/><text x="30" y="8">N</text></svg></div>
+    <div class="hud" id="hud" hidden>
+      <span id="hud-txt"></span>
+      <button class="h-btn" id="hud-fin" type="button">Terminar</button>
+      <button class="h-btn" id="hud-cancelar" type="button">Cancelar <kbd>Esc</kbd></button>
+    </div>
+    <div class="cargando" id="cargando" hidden><span>Cargando capa…</span></div>
+    <button id="b-panel" type="button" hidden></button>
   </section>
 
-  <section class="pes" data-pes="mis" hidden>
-    <label class="soltar-aqui" id="zona-subir">
-      <input type="file" id="archivo" multiple accept=".geojson,.json,.kml,.kmz,.gpx,.zip,.csv,.txt,.tsv,.jpg,.jpeg,.png,.heic,.tif,.tiff">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg>
-      <b>Sube o arrastra tus archivos</b>
-      <span>GeoJSON · KML/KMZ · GPX · Shapefile (.zip) · CSV con coordenadas · fotos con GPS</span>
-    </label>
-    <p class="nota-priv"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Tus archivos se procesan en tu navegador y se guardan solo en este computador. No se suben a ningún servidor.</p>
-    <div id="mis-capas"></div>
-    <p class="vacio" id="mis-vacio">Aún no tienes capas. Sube un archivo, o usa <b>Herramientas</b> para dibujar puntos, líneas y polígonos.</p>
-  </section>
-
-  <section class="pes" data-pes="tele" hidden>
-    <div class="bloque">
-      <h3>Disponible hoy</h3>
-      <button class="tarjeta-tele" data-ir-fondo="s2"><b>Mosaico Sentinel-2 2023</b><span>Imagen sin nubes a 10 m de toda la Patagonia, como fondo del mapa.</span></button>
-      <button class="tarjeta-tele" data-ir-capa="focos"><b>Focos de calor (NASA FIRMS)</b><span>Detecciones térmicas VIIRS de los últimos 7 días, actualizadas cada 3 horas.</span></button>
-      <button class="tarjeta-tele" data-ir-capa="bosque"><b>Catastro de vegetación (CONAF)</b><span>Uso de suelo y bosque nativo, en vivo desde el servidor del MMA.</span></button>
+  <aside id="der" aria-live="polite">
+    <div id="ficha" hidden>
+      <button class="volver" id="ficha-cerrar" type="button">← Volver al resumen</button>
+      <div id="ficha-cuerpo"></div>
     </div>
-    <div class="bloque etapa2">
-      <h3>Etapa 2 · en desarrollo</h3>
-      <ul>
-        <li><b>Imágenes Sentinel-2 por fecha</b> desde 2017, filtradas por nubosidad</li>
-        <li><b>Índices espectrales</b>: NDVI vegetación · NDWI agua · NBR incendios · NDSI nieve y glaciares</li>
-        <li><b>Antes y después</b> con cortina deslizable</li>
-        <li><b>Series de tiempo</b> por polígono o predio</li>
-        <li><b>Radar Sentinel-1</b>, que ve a través de las nubes</li>
-        <li><b>Landsat desde 1984</b> para el retroceso de glaciares</li>
-      </ul>
-    </div>
-  </section>
-</aside>
+    <div id="resumen-der"></div>
+  </aside>
 
-<main class="mapa-caja">
-  <div id="mapa" role="region" aria-label="Mapa de Aysén y Magallanes"></div>
-  <div class="hud" id="hud" hidden>
-    <span id="hud-txt"></span>
-    <button class="btn btn-chico" id="hud-fin" type="button">Terminar</button>
-    <button class="btn btn-chico btn-fantasma" id="hud-cancelar" type="button">Cancelar <kbd>Esc</kbd></button>
-  </div>
-  <div class="cargando" id="cargando" hidden><i></i><span>Cargando capa…</span></div>
+  <footer id="pie">
+    <span id="leyenda"></span>
+    <span class="coords"><span id="e-dd" title="Grados decimales (WGS84)">—</span><span id="e-gms">—</span><span id="e-utm" title="UTM WGS84">—</span><span id="e-alt" title="Altitud aproximada">—</span><span id="e-zoom">—</span></span>
+  </footer>
 </main>
 
-<aside class="ficha" id="ficha" aria-live="polite" hidden>
-  <button class="cerrar" id="ficha-cerrar" type="button" aria-label="Cerrar ficha">×</button>
-  <div id="ficha-cuerpo"></div>
-</aside>
-
-<footer class="estado" aria-live="off">
-  <span class="est" id="e-dd" title="Grados decimales (WGS84)">—</span>
-  <span class="est" id="e-gms">—</span>
-  <span class="est" id="e-utm" title="UTM WGS84 (husos 18S y 19S)">—</span>
-  <span class="est" id="e-alt" title="Altitud aproximada (modelo de elevación Terrarium / SRTM)">—</span>
-  <span class="est est-der" id="e-zoom">—</span>
-</footer>
-
-<div class="soltar" id="soltar" hidden><div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg><b>Suelta tus archivos para verlos en el mapa</b><span>Se procesan en tu navegador</span></div></div>
+<div class="soltar" id="soltar" hidden><div><b>Suelta tus archivos para verlos en el mapa</b><span>Se procesan en tu navegador</span></div></div>
 
 <div class="velo" id="ayuda" hidden>
   <div class="ayuda" role="dialog" aria-modal="true" aria-labelledby="ayuda-tit">
     <button class="cerrar" type="button" data-cerrar aria-label="Cerrar">×</button>
-    <p class="ante">Observatorio Patagonia · etapa 1</p>
-    <h2 id="ayuda-tit">Cómo usar el <em>visor</em></h2>
+    <p class="etq">Observatorio Patagonia · etapa 1</p>
+    <h2 id="ayuda-tit">Cómo usar el visor</h2>
     <div class="ayuda-cols">
       <div>
         <h4>Ir a un lugar</h4>
@@ -150,18 +158,17 @@
         <ul class="ej">
           <li><code>-46.78, -72.68</code> grados decimales</li>
           <li><code>46°47'S 72°41'O</code> grados, minutos, segundos</li>
-          <li><code>18S 640000 4815000</code> UTM WGS84 (husos 18 o 19, hemisferio sur)</li>
+          <li><code>18S 640000 4815000</code> UTM WGS84 (husos 18 o 19, sur)</li>
         </ul>
         <h4>Subir archivos</h4>
-        <p>GeoJSON, KML/KMZ, GPX, Shapefile comprimido en .zip (con .shp, .shx, .dbf y .prj), CSV con columnas <code>latitud</code>/<code>longitud</code> o <code>este</code>/<code>norte</code>/<code>huso</code>, y fotos con GPS. Puedes arrastrarlos al mapa.</p>
-        <p class="nota">Tus archivos <b>no salen de tu computador</b>: se procesan y guardan en tu navegador.</p>
+        <p>GeoJSON, KML/KMZ, GPX, Shapefile en .zip (con .shp, .shx, .dbf y .prj), CSV con <code>latitud</code>/<code>longitud</code> o <code>este</code>/<code>norte</code>/<code>huso</code>, y fotos con GPS. También puedes arrastrarlos al mapa. <b>No salen de tu equipo.</b></p>
         <h4>Atajos</h4>
         <p><kbd>D</kbd> distancia · <kbd>A</kbd> área · <kbd>P</kbd> punto · <kbd>L</kbd> línea · <kbd>G</kbd> polígono · <kbd>Esc</kbd> cancelar · doble clic o <kbd>Enter</kbd> para terminar · <kbd>Ctrl</kbd> + arrastrar para inclinar.</p>
       </div>
       <div>
         <h4>Fuentes de datos</h4>
         <ul class="fuentes" id="lista-fuentes"></ul>
-        <p class="nota">Las capas se muestran simplificadas para el visor (precisión de decenas de metros). Para trabajo de precisión, usa la fuente oficial.</p>
+        <p class="nota">Las capas se muestran simplificadas para el visor (decenas de metros). Para trabajo de precisión, usa la fuente oficial.</p>
       </div>
     </div>
   </div>
@@ -174,6 +181,6 @@
 <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js" defer></script>
 <script src="https://unpkg.com/shpjs@4.0.4/dist/shp.min.js" defer></script>
 <script src="https://unpkg.com/exifr@7.1.3/dist/lite.umd.js" defer></script>
-<script type="module" src="obs.js?v=1793993092"></script>
+<script type="module" src="obs.js?v=1793994042"></script>
 </body>
 </html>
