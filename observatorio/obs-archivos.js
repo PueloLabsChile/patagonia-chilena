@@ -1,5 +1,5 @@
 // Archivos del investigador: lectura (GeoJSON, KML/KMZ, GPX, Shapefile .zip, CSV/TXT, fotos con GPS), exportación y guardado local.
-import { deUTM, leerCoordenadas } from './obs-coords.js?v=1793994042';
+import { deUTM, leerCoordenadas } from './obs-coords.js?v=1793996586';
 
 const ext = n => (n.match(/\.([a-z0-9]+)$/i) || [])[1]?.toLowerCase() || '';
 export const FORMATOS = '.geojson,.json,.kml,.kmz,.gpx,.zip,.csv,.txt,.tsv,.jpg,.jpeg,.png,.heic,.tif,.tiff';

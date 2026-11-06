@@ -1,7 +1,8 @@
 // Observatorio Patagonia · visor geoespacial de Aysén y Magallanes (etapa 1)
-import { FONDOS, GRUPOS, CAPAS, VISTAS, colorDe } from './obs-capas.js?v=1793994042';
-import * as C from './obs-coords.js?v=1793994042';
-import * as A from './obs-archivos.js?v=1793994042';
+import { FONDOS, GRUPOS, CAPAS, VISTAS, colorDe } from './obs-capas.js?v=1793996586';
+import * as C from './obs-coords.js?v=1793996586';
+import { crearImagenes } from './obs-imagen.js?v=1793996586';
+import * as A from './obs-archivos.js?v=1793996586';
 
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -388,6 +389,7 @@ function fichaPunto([lon, lat], titulo = 'Punto en el mapa', extra = '') {
 // ------------------------------------------------------------------ clic en el mapa: identificar
 const idsInteractivos = () => mapa.getStyle().layers.filter(l => (/^c-.*-(f|l|p)$/.test(l.id) || /^u-.*-(f|l|p)$/.test(l.id)) && l.layout?.visibility !== 'none').map(l => l.id);
 mapa.on('click', async e => {
+  if (imagenes?.capturaClic(e)) return;
   if (herr) return clicDibujo(e);
   const p = e.point, caja = [[p.x - 4, p.y - 4], [p.x + 4, p.y + 4]];
   const hits = mapa.queryRenderedFeatures(caja, { layers: idsInteractivos() });
@@ -407,7 +409,7 @@ mapa.on('click', async e => {
   fichaPunto([e.lngLat.lng, e.lngLat.lat]);
 });
 mapa.on('mousemove', e => {
-  if (herr) return;
+  if (herr || imagenes?.editando()) return;
   const n = mapa.queryRenderedFeatures([[e.point.x - 3, e.point.y - 3], [e.point.x + 3, e.point.y + 3]], { layers: idsInteractivos() }).length;
   mapa.getCanvas().style.cursor = n ? 'pointer' : '';
 });
@@ -527,6 +529,7 @@ function quitarMia(m) {
 }
 const serial = m => ({ id: m.id, nombre: m.nombre, color: m.color, visible: m.visible, nota: m.nota, creado: m.creado, fotos: !!m.fotos, fc: m.fc });
 function pintarMis() {
+  queueMicrotask(() => imagenes?.pintarLista());
   const l = [...MIS.values()];
   $('#n-mis').textContent = l.length;
   $('#mis-vacio').hidden = l.length > 0;
@@ -575,7 +578,10 @@ async function procesar(files) {
       const m = { id: 'a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), nombre: r.nombre, color: PALETA[nColor++ % PALETA.length], fc: r.fc, visible: true, nota: r.nota || '', creado: Date.now() };
       agregarMia(m, files.length === 1);
       ok.push(`${file.name} (${fmtN(r.fc.features.length)})`);
-    } catch (e) { mal.push(`<b>${esc(file.name)}</b>: ${esc(e.message)}`); }
+    } catch (e) {
+      if (/GPS/.test(e.message) && /\.(jpe?g|png|webp|gif)$/i.test(file.name)) { await imagenes.subir(file); ok.push(file.name + ' (para georreferenciar)'); continue; }
+      mal.push(`<b>${esc(file.name)}</b>: ${esc(e.message)}`);
+    }
   }
   cargando(false);
   if (MIS.has('fotos') && files.some(f => /\.(jpe?g|png|heic|tiff?)$/i.test(f.name)) && ok.length) { const b = C.bbox(MIS.get('fotos').fc); if (b && files.length > 1) mapa.fitBounds(b, { padding: 80, maxZoom: 14 }); }
@@ -818,6 +824,17 @@ async function pintarResumen() {
 }
 mapa.on('rotate', () => { $('#norte .aguja').style.transform = `rotate(${-mapa.getBearing()}deg)`; });
 
+// ------------------------------------------------------------------ imágenes georreferenciadas
+const imagenes = crearImagenes({ mapa, aviso, A, C, verPestana });
+const subirImg = () => $('#archivo-img').click();
+$('#b-img').addEventListener('click', subirImg);
+$('#zona-img').addEventListener('click', subirImg);
+$('#archivo-img').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  try { cargando(true, 'Preparando la imagen…'); await imagenes.subir(f); } catch { aviso('No se pudo abrir esa imagen. Usa JPG o PNG.', true); } finally { cargando(false); }
+});
+
 // ------------------------------------------------------------------ arranque
 pintarFondos(); pintarCatalogo(); pintarMis(); pintarVistas(); pintarLeyenda(); pintarResumen();
 mapa.on('load', async () => {
@@ -840,7 +857,7 @@ mapa.on('load', async () => {
   // capas activas al abrir (las más livianas primero)
   for (const c of CAPAS.filter(c => activasIni.has(c.id))) activar(c);
   // capas del investigador guardadas en este navegador
-  for (const m of await A.leerCapas()) { try { if (m.id?.startsWith('a')) nColor++; agregarMia(m, false); } catch {} }
+  for (const m of await A.leerCapas()) { if (m.tipo === 'imagen') { try { imagenes.restaurar(m); } catch {} continue; } try { if (m.id?.startsWith('a')) nColor++; agregarMia(m, false); } catch {} }
   // índice de búsqueda: carga en segundo plano las capas con nombres que no están activas
   setTimeout(() => { for (const id of ['lagos', 'marinas', 'bnp', 'sitios', 'estaciones']) if (!DATOS[id]) cargarDatos(CAPA[id], true).catch(() => {}); }, 2500);
 });

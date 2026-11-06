@@ -229,3 +229,10 @@ a{color:var(--tinta)}
 @media (max-width:560px){.titulo h1{font-size:21px}#hoja{grid-template-rows:auto 60vh auto auto auto}.coords span:nth-child(2){display:none}}
 #der .reg-tabla td:not(:first-child){white-space:nowrap}
 #der .reg-tabla td:first-child{width:38%}
+
+/* imágenes georreferenciadas: tiradores de esquina y centro, puntos de control */
+.mk-img{cursor:move}
+.mk-esq{width:14px;height:14px;background:#b8392c;border:2px solid #fff7ea;box-shadow:0 0 0 1px #1c2326}
+.mk-centro{width:26px;height:26px;display:grid;place-items:center;font:700 15px/1 var(--titulo);color:#fff;background:#1c2326;border:2px solid #fff7ea;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.gcp-coord{display:flex;gap:4px;margin-top:6px}
+.gcp-coord input{flex:1;min-width:0;min-height:30px;padding:0 7px;font:500 11.5px var(--mono);background:#fff;border:1px solid var(--tinta-3);border-radius:0}
