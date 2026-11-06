@@ -17,9 +17,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<link href="assets/css/sitio.css?v=1793991830" rel="stylesheet">
-<link href="assets/css/nacional.css?v=1793991830" rel="stylesheet">
-<link href="assets/css/aurora.css?v=1793991830" rel="stylesheet">
+<link href="assets/css/sitio.css?v=1793993092" rel="stylesheet">
+<link href="assets/css/nacional.css?v=1793993092" rel="stylesheet">
+<link href="assets/css/aurora.css?v=1793993092" rel="stylesheet">
 </head>
 <body>
 
@@ -31,7 +31,7 @@
     <img class="marca-icono" src="assets/img/icono.svg" alt="">
     <span>Patagonia <em>Chilena</em></span>
   </a>
-  <nav class="menu" aria-label="Secciones">
+  <nav class="menu" id="menu-principal" aria-label="Secciones">
     <a href="#territorio">El territorio</a>
     <a href="#historia">Historia</a>
     <a href="#cooperativa">La cooperativa</a>
@@ -39,6 +39,7 @@
     <a href="observatorio/">Observatorio</a>
     <a href="asamblea.html" class="menu-asamblea"><span class="punto-vivo"></span>Asamblea</a>
   </nav>
+  <button class="b-menu" id="b-menu" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir el menú"><span></span><span></span><span></span></button>
   <div class="accesos">
     <button class="acceso" id="b-socios" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Socios</button>
     <a class="acceso" href="gestion.html" title="Panel interno de gestión de socios"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Gestión</a>
@@ -457,6 +458,6 @@
 </footer>
 
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-<script src="assets/js/sitio.js?v=1793991830" type="module"></script>
+<script src="assets/js/sitio.js?v=1793993092" type="module"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 // Panel interno de gestión de socios fundadores: mapa de Chile por comuna + lista editable.
-import { NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js?v=1793991830';
+import { NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js?v=1793993092';
 
 const $ = s => document.querySelector(s);
 // el enlace ?g= se guarda en este equipo y se quita de la barra de direcciones

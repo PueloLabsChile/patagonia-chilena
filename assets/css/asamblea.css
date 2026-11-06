@@ -129,3 +129,16 @@
 .convocatoria{margin-top:40px;display:flex;gap:30px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:30px;border-radius:24px;background:rgba(213,43,30,.08);border:1px solid rgba(232,64,47,.3)}
 .convocatoria h3{font-size:32px;margin-bottom:8px}
 .convocatoria p{margin:0;max-width:680px;color:rgba(248,246,240,.82)}
+
+/* entrar con el correo desde el chat */
+.r-entrar{padding:14px 16px}
+.r-entrar p{margin:0 0 10px;font-size:14px;color:rgba(248,246,240,.8)}
+.r-entrar-fila{display:flex;gap:8px}
+.r-entrar-fila input{flex:1;min-width:0;padding:11px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:inherit;font:400 15px var(--sans);outline:none}
+.r-entrar-fila input:focus{border-color:rgba(233,196,106,.7)}
+.r-entrar-msg{min-height:1.2em;margin:8px 0 0!important;font-size:13px!important}
+.r-entrar-msg.mal{color:#ff9d93!important}
+.r-entrar-msg a,.r-entrar-pie a{color:var(--estepa-2,#e9c46a)}
+.r-entrar-pie{margin:6px 0 0!important;font-size:12.5px!important;color:rgba(248,246,240,.55)!important}
+.redactar .r-entrar{display:block!important;flex:1 1 100%;width:100%;min-width:0;box-sizing:border-box}
+.r-entrar-fila .boton{flex:none}

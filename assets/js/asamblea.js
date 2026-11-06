@@ -1,8 +1,8 @@
 // La Asamblea: hemiciclo 3D + participación en vivo (presencia, chat, palabra, votación consultiva, aplausos).
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { iniciarParalaje } from './paralaje.js?v=1793991830';
-import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js?v=1793991830';
+import { iniciarParalaje } from './paralaje.js?v=1793993092';
+import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js?v=1793993092';
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const fmt = n => Number(n || 0).toLocaleString('es-CL');
@@ -305,7 +305,28 @@ $$('.chat-pestanas button').forEach(b => b.addEventListener('click', () => {
 /* redactar */
 const caja = $('#redactar');
 function pintarRedactar() {
-  if (!yo) { caja.innerHTML = `<div class="r-invitacion">Para escribir necesitas tu asiento.<br><a class="boton boton-rojo boton-chico" href="./#sumate">Inscribirme gratis</a></div>`; return; }
+  if (!yo) {
+    caja.innerHTML = `<form class="r-entrar" id="f-entrar" novalidate>
+        <p>¿Ya eres socio? Entra con tu correo para escribir y votar.</p>
+        <div class="r-entrar-fila"><input type="email" name="correo" required maxlength="120" placeholder="tu@correo.cl" autocomplete="email" aria-label="Tu correo"><button class="boton boton-rojo boton-chico" type="submit">Entrar</button></div>
+        <p class="r-entrar-msg" id="r-entrar-msg" role="status"></p>
+        <p class="r-entrar-pie">¿Aún no? <a href="./#sumate">Inscríbete gratis</a></p></form>`;
+    try { const c = localStorage.getItem('pc_correo'); if (c) $('#f-entrar').correo.value = c; } catch { }
+    $('#f-entrar').onsubmit = async e => {
+      e.preventDefault(); const f = e.target, m = $('#r-entrar-msg'); m.className = 'r-entrar-msg';
+      if (!f.correo.checkValidity()) { m.classList.add('mal'); m.textContent = 'Escribe un correo válido.'; return; }
+      f.querySelector('button').disabled = true; m.textContent = 'Entrando…';
+      let d; try { d = await (await fetch('api/acceso.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ correo: f.correo.value }) })).json(); } catch { d = { ok: false }; }
+      f.querySelector('button').disabled = false;
+      try { localStorage.setItem('pc_correo', f.correo.value.trim()); } catch { }
+      if (d.ok && d.estado === 'socio') { location.href = 'asamblea.html?s=' + encodeURIComponent(d.token) + '#chat'; return; }
+      m.classList.add('mal');
+      m.innerHTML = !d.ok ? (d.error || 'No se pudo entrar. Intenta de nuevo.')
+        : d.estado === 'pendiente' ? 'Falta confirmar tu correo: te reenviamos el enlace (revisa también spam).'
+        : 'No encontramos ese correo. <a href="./#sumate">Inscríbete gratis</a>.';
+    };
+    return;
+  }
   if (yo.suspendido) { caja.innerHTML = `<div class="r-invitacion r-error">Tu participación en el chat está suspendida por la moderación.</div>`; return; }
   if (!yo.apodo) { caja.innerHTML = `<div class="r-invitacion">Elige un apodo para empezar a conversar.<br><button class="boton boton-rojo boton-chico" type="button" id="b-apodo">Elegir apodo</button></div>`; $('#b-apodo').onclick = abrirApodo; return; }
   if (salaChat === 'sesion' && vivo?.asamblea.estado !== 'en_vivo') { caja.innerHTML = `<div class="r-invitacion">El chat de la sesión se abre el sábado 5 de diciembre a las 19:00. Mientras tanto, conversa en La Plaza.</div>`; return; }

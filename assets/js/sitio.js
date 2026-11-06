@@ -1,9 +1,9 @@
 // Patagonia Chilena · relato con mapa, historia, contador, mapa de inscritos, anticipo de la Asamblea e inscripción
-import { iniciarViento } from './viento.js?v=1793991830';
-import { iniciarRelieve } from './relieve.js?v=1793991830';
-import { iniciarParalaje } from './paralaje.js?v=1793991830';
-import { iniciarHistoria } from './historia.js?v=1793991830';
-import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1793991830';
+import { iniciarViento } from './viento.js?v=1793993092';
+import { iniciarRelieve } from './relieve.js?v=1793993092';
+import { iniciarParalaje } from './paralaje.js?v=1793993092';
+import { iniciarHistoria } from './historia.js?v=1793993092';
+import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1793993092';
 // siempre partir desde la portada (salvo que el enlace apunte a una sección)
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (!location.hash) { scrollTo(0, 0); addEventListener('load', () => scrollTo(0, 0)); }
@@ -461,7 +461,7 @@ async function bienvenida(token, datos = null) {
   await pDatos;
   const comuna = datos.porCut?.get(s.comuna)?.n || '';
   if (token) { try { localStorage.setItem('pc_token', token); } catch { } }
-  { const at = document.querySelector('#bienvenida .antetitulo'); if (at) at.textContent = token ? 'Inscripción confirmada' : 'Tu espacio de socio'; }
+  { const at = document.querySelector('#bienvenida .antetitulo'); if (at) at.textContent = params.get('s') ? 'Inscripción confirmada' : 'Tu espacio de socio'; }
   miSocio = s;
   let pendiente = 0; try { pendiente = Number(localStorage.getItem('pc_compromiso') || 0); localStorage.removeItem('pc_compromiso'); } catch { }
   if (pendiente >= 1000 && !s.compromiso) { const rc = await comprometer(pendiente); if (rc.ok) s.compromiso = pendiente; }
@@ -658,7 +658,7 @@ iniciarParalaje({
     b.disabled = false;
     if (!d.ok) { msg.classList.add('mal'); msg.textContent = d.error || 'No se pudo enviar. Intenta en un rato.'; return; }
     try { localStorage.setItem('pc_correo', f.correo.value.trim()); } catch { }
-    if (d.estado === 'socio') { cerrar(); bienvenida(null, d.socio); return; }
+    if (d.estado === 'socio') { try { localStorage.setItem('pc_token', d.token); } catch { } cerrar(); bienvenida(d.token, d.socio); return; }
     if (d.estado === 'pendiente') {
       msg.textContent = 'Te inscribiste, pero falta confirmar tu correo. Te acabamos de reenviar el enlace: ábrelo y entras con tu número de socio (revisa también spam).';
       if (d.dev_enlace) msg.innerHTML += ' <a href="' + d.dev_enlace + '" style="color:inherit">(desarrollo) abrir</a>';
@@ -667,4 +667,14 @@ iniciarParalaje({
     msg.classList.add('mal');
     msg.innerHTML = 'No encontramos ese correo. ¿Te inscribiste con otro? Si aún no eres socio, <a href="#sumate" data-cerrar style="color:inherit">súmate aquí</a>.';
   });
+}
+
+/* menú desplegable (pantallas medianas y celular) */
+{
+  const b = document.getElementById('b-menu'), barra = document.getElementById('barra');
+  const fijar = abierto => { barra.classList.toggle('menu-abierto', abierto); b.setAttribute('aria-expanded', abierto); b.setAttribute('aria-label', abierto ? 'Cerrar el menú' : 'Abrir el menú'); };
+  b.addEventListener('click', e => { e.stopPropagation(); fijar(!barra.classList.contains('menu-abierto')); });
+  document.getElementById('menu-principal').addEventListener('click', e => { if (e.target.closest('a')) fijar(false); });
+  document.addEventListener('click', e => { if (!e.target.closest('#menu-principal')) fijar(false); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') fijar(false); });
 }
