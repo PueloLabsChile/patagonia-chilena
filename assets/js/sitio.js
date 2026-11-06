@@ -1,9 +1,9 @@
 // Patagonia Chilena · relato con mapa, historia, contador, mapa de inscritos, anticipo de la Asamblea e inscripción
-import { iniciarViento } from './viento.js?v=1793890595';
-import { iniciarRelieve } from './relieve.js?v=1793890595';
-import { iniciarParalaje } from './paralaje.js?v=1793890595';
-import { iniciarHistoria } from './historia.js?v=1793890595';
-import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1793890595';
+import { iniciarViento } from './viento.js?v=1793979188';
+import { iniciarRelieve } from './relieve.js?v=1793979188';
+import { iniciarParalaje } from './paralaje.js?v=1793979188';
+import { iniciarHistoria } from './historia.js?v=1793979188';
+import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION, regionDeComuna } from './hemiciclo.js?v=1793979188';
 // siempre partir desde la portada (salvo que el enlace apunte a una sección)
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (!location.hash) { scrollTo(0, 0); addEventListener('load', () => scrollTo(0, 0)); }
@@ -403,6 +403,7 @@ inCom.addEventListener('blur', () => setTimeout(() => { lista.hidden = true; if 
 
 /* ------------------------------------------------------------------ inscripción */
 const form = $('#formulario'), msg = $('#form-msg');
+form.actividad.addEventListener('change', () => { const d = form.actividad_detalle; d.hidden = !form.actividad.value; if (!d.hidden) d.focus(); });
 const params = new URLSearchParams(location.search);
 try { if (params.get('r')) localStorage.setItem('pc_ref', params.get('r').slice(0, 12)); } catch { }
 const ref = () => { try { return localStorage.getItem('pc_ref') || ''; } catch { return ''; } };
@@ -432,7 +433,7 @@ form.addEventListener('submit', async e => {
   }
   const btn = form.querySelector('button[type=submit]');
   btn.disabled = true; $('.btn-txt', btn).hidden = true; $('.btn-cargando', btn).hidden = false;
-  ultimoEnvio = { nombre: form.nombre.value.trim(), correo: form.correo.value.trim().toLowerCase(), comuna: Number(inCut.value), fundador: form.fundador.checked ? 1 : 0, acepto: 1, sitio: form.sitio.value, ref: ref(), compromiso: Number(form.compromiso.value || 0) };
+  ultimoEnvio = { nombre: form.nombre.value.trim(), correo: form.correo.value.trim().toLowerCase(), comuna: Number(inCut.value), fundador: form.fundador.checked ? 1 : 0, acepto: 1, sitio: form.sitio.value, ref: ref(), compromiso: Number(form.compromiso.value || 0), actividad: form.actividad.value, actividad_detalle: form.actividad_detalle.value.trim() };
   try {
     const j = await enviar(ultimoEnvio);
     form.hidden = true; $('#revisa').hidden = false; $('[data-correo]').textContent = ultimoEnvio.correo;

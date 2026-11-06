@@ -17,9 +17,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<link href="assets/css/sitio.css?v=1793890595" rel="stylesheet">
-<link href="assets/css/nacional.css?v=1793890595" rel="stylesheet">
-<link href="assets/css/aurora.css?v=1793890595" rel="stylesheet">
+<link href="assets/css/sitio.css?v=1793979188" rel="stylesheet">
+<link href="assets/css/nacional.css?v=1793979188" rel="stylesheet">
+<link href="assets/css/aurora.css?v=1793979188" rel="stylesheet">
 </head>
 <body>
 
@@ -322,6 +322,28 @@
         <ul class="sugerencias" id="f-comuna-lista" role="listbox" hidden></ul>
       </div>
       <div class="campo">
+        <label for="f-actividad">¿A qué te dedicas? <span class="opcional">(opcional)</span></label>
+        <select id="f-actividad" name="actividad">
+          <option value="">Prefiero no decirlo</option>
+          <option value="oficio">Oficio o técnico</option>
+          <option value="profesional">Profesional</option>
+          <option value="especialista">Especialista o investigador</option>
+          <option value="empresario">Empresario o emprendedor</option>
+          <option value="comercio">Comercio</option>
+          <option value="campo_mar">Agricultura, ganadería o pesca</option>
+          <option value="publico">Funcionario público</option>
+          <option value="docente">Docente o educador</option>
+          <option value="salud">Salud</option>
+          <option value="arte">Arte, cultura o comunicación</option>
+          <option value="estudiante">Estudiante</option>
+          <option value="cuidados">Dueño/a de casa o cuidados</option>
+          <option value="jubilado">Jubilado/a</option>
+          <option value="otro">Otra actividad</option>
+        </select>
+        <input id="f-actividad-detalle" name="actividad_detalle" maxlength="80" placeholder="¿Cuál? Ej.: carpintero, abogada, geólogo, dueña de pyme" hidden style="margin-top:10px" aria-label="Detalle de tu actividad">
+        <small class="ayuda-campo">Nos ayuda a saber con qué oficios, profesiones y emprendimientos cuenta la cooperativa.</small>
+      </div>
+      <div class="campo">
         <label for="f-compromiso">Compromiso mensual <span class="opcional">(opcional · aún no se cobra)</span></label>
         <select id="f-compromiso" name="compromiso">
           <option value="0">Por ahora, solo inscribirme</option>
@@ -413,6 +435,6 @@
 </footer>
 
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-<script src="assets/js/sitio.js?v=1793890595" type="module"></script>
+<script src="assets/js/sitio.js?v=1793979188" type="module"></script>
 </body>
 </html>

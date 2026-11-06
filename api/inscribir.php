@@ -1,5 +1,5 @@
 <?php
-// POST {nombre, correo, comuna, fundador, acepto, sitio(trampa), ref} → envía el enlace de confirmación
+// POST {nombre, correo, comuna, actividad, actividad_detalle, compromiso, fundador, acepto, sitio(trampa), ref} → envía el enlace de confirmación
 require __DIR__ . '/_comun.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') responder(['ok' => false, 'error' => 'Método no permitido'], 405);
@@ -14,6 +14,8 @@ $comuna = (int)($d['comuna'] ?? 0);
 $fundador = !empty($d['fundador']) ? 1 : 0;
 $ref = preg_replace('/[^a-z0-9]/', '', strtolower((string)($d['ref'] ?? ''))) ?: null;
 $compromiso = monto_compromiso($d['compromiso'] ?? 0);
+$actividad = actividad_valida($d['actividad'] ?? '');
+$actividad_detalle = $actividad ? (limpiar_texto((string)($d['actividad_detalle'] ?? ''), 80) ?: null) : null;
 if ($compromiso === null) responder(['ok' => false, 'error' => 'El compromiso mensual mínimo es de $1.000.'], 422);
 
 if (mb_strlen($nombre) < 3 || mb_strlen($nombre) > 80) responder(['ok' => false, 'error' => 'Escribe tu nombre (3 a 80 letras).'], 422);
@@ -37,6 +39,9 @@ if ($s) {
     if (!$s['confirmado']) {
         $db->prepare('UPDATE socios SET nombre = ?, comuna = ?, fundador = ? WHERE id = ?')->execute([$nombre, $comuna, $fundador, $s['id']]);
     }
+    if ($actividad) {
+        $db->prepare('UPDATE socios SET actividad = ?, actividad_detalle = ? WHERE id = ?')->execute([$actividad, $actividad_detalle, $s['id']]);
+    }
     if ($compromiso) {
         $db->prepare('UPDATE socios SET compromiso = ?, compromiso_fecha = ? WHERE id = ?')->execute([$compromiso, ahora(), $s['id']]);
     }
@@ -47,8 +52,8 @@ if ($s) {
     if ($ref) { $q = $db->prepare('SELECT 1 FROM socios WHERE codigo = ?'); $q->execute([$ref]); if (!$q->fetchColumn()) $ref = null; }
     for ($i = 0; $i < 5; $i++) {
         try {
-            $db->prepare('INSERT INTO socios (nombre, correo, comuna, fundador, token, codigo, ref, creado, ip, envios, ultimo_envio, compromiso, compromiso_fecha) VALUES (?,?,?,?,?,?,?,?,?,1,?,?,?)')
-               ->execute([$nombre, $correo, $comuna, $fundador, $token, codigo_invitacion(), $ref, ahora(), $ip, ahora(), $compromiso ?: null, $compromiso ? ahora() : null]);
+            $db->prepare('INSERT INTO socios (nombre, correo, comuna, fundador, token, codigo, ref, creado, ip, envios, ultimo_envio, compromiso, compromiso_fecha, actividad, actividad_detalle) VALUES (?,?,?,?,?,?,?,?,?,1,?,?,?,?,?)')
+               ->execute([$nombre, $correo, $comuna, $fundador, $token, codigo_invitacion(), $ref, ahora(), $ip, ahora(), $compromiso ?: null, $compromiso ? ahora() : null, $actividad, $actividad_detalle]);
             break;
         } catch (PDOException $e) { if ($i === 4) throw $e; }
     }

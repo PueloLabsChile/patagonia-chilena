@@ -1,8 +1,8 @@
 // La Asamblea: hemiciclo 3D + participación en vivo (presencia, chat, palabra, votación consultiva, aplausos).
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { iniciarParalaje } from './paralaje.js?v=1793890595';
-import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js?v=1793890595';
+import { iniciarParalaje } from './paralaje.js?v=1793979188';
+import { trazar, ocupar, porRegionDesde, ORDEN_REGIONES, NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js?v=1793979188';
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const fmt = n => Number(n || 0).toLocaleString('es-CL');

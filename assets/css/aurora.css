@@ -191,3 +191,6 @@ html,body,.cielo{background:#030304!important}
 .pagina-asamblea .pie::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,transparent,rgba(176,124,255,.08),rgba(255,122,107,.06),transparent);background-size:200% 100%;animation:barrido 14s linear infinite}
 @keyframes barrido{to{background-position:-200% 0}}
 @media (prefers-reduced-motion:reduce){.participar::before,.participar::after,.reglas div::after,.etapa::after,.convocatoria::after,.etapa-barra i::after,.reglas span,.pagina-asamblea .pie::before{animation:none}}
+
+/* v5.4 actividad en la inscripción */
+.ayuda-campo{display:block;margin-top:8px;font:400 12.5px/1.45 var(--sans);color:rgba(248,246,240,.5)}

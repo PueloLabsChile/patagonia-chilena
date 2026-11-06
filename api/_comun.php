@@ -29,7 +29,7 @@ function migrar(PDO $db): void {
         numero INTEGER UNIQUE, creado TEXT NOT NULL, confirmado TEXT, ip TEXT, envios INTEGER NOT NULL DEFAULT 0, ultimo_envio TEXT)');
     $cols = array_column($db->query('PRAGMA table_info(socios)')->fetchAll(), 'name');
     foreach (['apodo TEXT', 'region INTEGER', 'puesto INTEGER', 'acreditado TEXT', 'visto INTEGER', 'palabra INTEGER',
-              'suspendido INTEGER NOT NULL DEFAULT 0', 'ultimo_mensaje INTEGER', 'ultimo_aplauso INTEGER', 'compromiso INTEGER', 'compromiso_fecha TEXT'] as $c) {
+              'suspendido INTEGER NOT NULL DEFAULT 0', 'ultimo_mensaje INTEGER', 'ultimo_aplauso INTEGER', 'compromiso INTEGER', 'compromiso_fecha TEXT', 'actividad TEXT', 'actividad_detalle TEXT'] as $c) {
         if (!in_array(explode(' ', $c)[0], $cols, true)) $db->exec("ALTER TABLE socios ADD COLUMN $c");
     }
     $db->exec('CREATE UNIQUE INDEX IF NOT EXISTS u_apodo ON socios(apodo COLLATE NOCASE) WHERE apodo IS NOT NULL');
@@ -126,6 +126,15 @@ function limpiar_texto(string $s, int $max): string {
     $s = trim(preg_replace('/\s+/u', ' ', strip_tags($s)));
     return mb_substr($s, 0, $max);
 }
+
+/** Actividades que se pueden elegir al inscribirse (la clave se guarda; el texto se muestra). */
+const ACTIVIDADES = [
+    'oficio' => 'Oficio o técnico', 'profesional' => 'Profesional', 'especialista' => 'Especialista o investigador',
+    'empresario' => 'Empresario o emprendedor', 'comercio' => 'Comercio', 'campo_mar' => 'Agricultura, ganadería o pesca',
+    'publico' => 'Funcionario público', 'docente' => 'Docente o educador', 'salud' => 'Salud', 'arte' => 'Arte, cultura o comunicación',
+    'estudiante' => 'Estudiante', 'cuidados' => 'Dueño/a de casa o cuidados', 'jubilado' => 'Jubilado/a', 'otro' => 'Otra actividad',
+];
+function actividad_valida($v): ?string { $v = (string)$v; return isset(ACTIVIDADES[$v]) ? $v : null; }
 
 /** Monto mensual válido (0 = sin compromiso; mínimo $1.000, máximo $1.000.000) o null si no es válido. */
 function monto_compromiso($v): ?int {
