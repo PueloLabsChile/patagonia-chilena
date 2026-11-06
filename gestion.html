@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/img/icono.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<link href="assets/css/gestion.css?v=1793996586" rel="stylesheet">
+<link href="assets/css/gestion.css?v=1794001518" rel="stylesheet">
 </head>
 <body>
 <div class="cielo" aria-hidden="true"><i class="au au1"></i><i class="au au2"></i><i class="au au3"></i></div>
@@ -53,7 +53,7 @@
     <div class="vidrio lista-caja">
       <div class="herr">
         <label class="buscar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input id="q" type="search" placeholder="Buscar nombre, correo, comuna, oficio…" aria-label="Buscar"></label>
+          <input id="q" type="search" placeholder="Buscar nombre, correo, teléfono, comuna, oficio…" aria-label="Buscar"></label>
         <div class="seg" role="tablist" aria-label="Estado">
           <button role="tab" aria-selected="true" data-estado="todos">Todos</button>
           <button role="tab" aria-selected="false" data-estado="confirmados">Confirmados</button>
@@ -94,7 +94,10 @@
     </div>
     <div class="ficha-cuerpo">
       <div class="campo"><label for="c-nombre">Nombre completo</label><input id="c-nombre" name="nombre" maxlength="80" required></div>
-      <div class="campo"><label for="c-correo">Correo</label><input id="c-correo" name="correo" type="email" maxlength="120" required></div>
+      <div class="dos">
+        <div class="campo"><label for="c-correo">Correo</label><input id="c-correo" name="correo" type="email" maxlength="120" required></div>
+        <div class="campo"><label for="c-telefono">Teléfono o WhatsApp <small>(opcional)</small></label><input id="c-telefono" name="telefono" type="tel" inputmode="tel" maxlength="20" placeholder="+56 9 1234 5678" autocomplete="off"></div>
+      </div>
       <div class="campo"><label for="c-comuna">Comuna</label><input id="c-comuna" name="comuna_txt" list="lista-comunas" autocomplete="off" required placeholder="Escribe y elige de la lista"></div>
       <datalist id="lista-comunas"></datalist>
       <div class="dos">
@@ -156,6 +159,6 @@
 <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
 
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-<script type="module" src="assets/js/gestion.js?v=1793996586"></script>
+<script type="module" src="assets/js/gestion.js?v=1794001518"></script>
 </body>
 </html>

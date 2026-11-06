@@ -1,5 +1,5 @@
 // Panel interno de gestión de socios fundadores: mapa de Chile por comuna + lista editable.
-import { NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js?v=1793996586';
+import { NOMBRE_REGION, COLOR_REGION } from './hemiciclo.js?v=1794001518';
 
 const $ = s => document.querySelector(s);
 // el enlace ?g= se guarda en este equipo y se quita de la barra de direcciones
@@ -56,7 +56,7 @@ function visibles() {
     if (filtro.region && region(s.comuna) !== filtro.region) return false;
     if (q) {
       const c = COMUNAS.get(s.comuna);
-      if (!sinTilde([s.nombre, s.correo, c?.n, NOMBRE_REGION[region(s.comuna)], ACT[s.actividad], s.actividad_detalle, s.apodo, s.notas, s.numero].join(' ')).includes(q)) return false;
+      if (!sinTilde([s.nombre, s.correo, c?.n, NOMBRE_REGION[region(s.comuna)], ACT[s.actividad], s.actividad_detalle, s.apodo, s.notas, s.numero, s.telefono, (s.telefono || '').replace(/\D/g, '')].join(' ')).includes(q)) return false;
     }
     return true;
   });
@@ -71,7 +71,7 @@ function pintarLista() {
     const c = COMUNAS.get(s.comuna), r = region(s.comuna);
     return `<button class="fila ${s.numero ? '' : 'pend'}" role="listitem" data-id="${s.id}" style="animation-delay:${Math.min(i, 20) * 18}ms">
       <b class="avatar" style="--c:${COLOR_REGION[r] || '#cbb8ff'}">${esc(iniciales(s.nombre))}</b>
-      <span class="p"><b>${esc(s.nombre)}${s.fundador ? '<span class="estrella" title="Socio fundador">★</span>' : ''}</b><small>${esc(s.correo)}</small></span>
+      <span class="p"><b>${esc(s.nombre)}${s.fundador ? '<span class="estrella" title="Socio fundador">★</span>' : ''}</b><small>${esc(s.correo)}${s.telefono ? ` · ${esc(s.telefono)}` : ''}</small></span>
       <span class="c">${esc(c?.n || s.comuna)}<small>${esc(NOMBRE_REGION[r] || '')}</small></span>
       <span class="a">${s.actividad ? esc(ACT[s.actividad]) + (s.actividad_detalle ? ` <small>· ${esc(s.actividad_detalle)}</small>` : '') : '<small>—</small>'}</span>
       <span class="e">${s.solicitud ? `<span class="estado ${s.respondido ? 'ok' : 'pe'} dat" title="${s.respondido ? 'Respondió los datos pedidos el ' + fecha(s.respondido) : 'Se le pidieron datos el ' + fecha(s.solicitud.fecha)}">${s.respondido ? 'datos ✓' : 'datos…'}</span>` : ''}${s.numero ? `<span class="estado ok">n.º ${s.numero}</span>` : `<span class="estado pe">pendiente${s.recordatorios ? `<span class="rec" title="${s.recordatorios} recordatorio(s), último ${fecha(s.recordado)}">· ✉${s.recordatorios}</span>` : ''}</span>`}</span>
@@ -183,7 +183,7 @@ function abrirFicha(s) {
   $('#ficha-av').style.setProperty('--c', COLOR_REGION[r] || '#cbb8ff');
   $('#ficha-titulo').textContent = nuevo ? 'Agregar persona' : s.nombre;
   $('#ficha-sub').textContent = nuevo ? 'Queda confirmada con su número de socio' : (s.numero ? `Socio n.º ${s.numero}` : 'Inscripción pendiente de confirmar');
-  f.nombre.value = s?.nombre || ''; f.correo.value = s?.correo || '';
+  f.nombre.value = s?.nombre || ''; f.correo.value = s?.correo || ''; f.telefono.value = s?.telefono || '';
   const c = s && COMUNAS.get(s.comuna); f.comuna_txt.value = c ? c.label : '';
   f.actividad.value = s?.actividad || ''; f.actividad_detalle.value = s?.actividad_detalle || '';
   const comp = String(s?.compromiso || 0);
@@ -193,7 +193,7 @@ function abrirFicha(s) {
     ...(s.numero ? [] : [['Recordatorios', s.recordatorios ? `${s.recordatorios} · último ${fecha(s.recordado)}` : 'ninguno']]),
     ['Personas que invitó', s.invitados || 0], ...(s.suspendido ? [['Chat', 'suspendido por moderación']] : [])].map(([a, b]) => `<dt>${a}</dt><dd>${esc(b)}</dd>`).join('');
   $('#ficha-meta').hidden = nuevo;
-  const extra = s ? { ...(s.telefono ? { telefono: s.telefono } : {}), ...(s.extra || {}) } : {};
+  const extra = s ? { ...(s.extra || {}) } : {};   // el teléfono se edita arriba
   const filasExtra = Object.entries(extra).filter(([k]) => CAMPOS[k]).map(([k, v]) => `<dt>${esc(CAMPOS[k][0])}</dt><dd>${esc(v)}</dd>`).join('');
   const sol = s?.solicitud;
   $('#ficha-extra').innerHTML = !s || (!filasExtra && !sol) ? '' : `<div class="datos-extra"><h4>Datos adicionales</h4>${sol ? `<p style="margin:0 0 8px;font-size:12.5px;color:var(--niebla)">Pedidos el ${fecha(sol.fecha)}${sol.por ? ' por ' + esc(sol.por) : ''} · ${s.respondido ? 'respondió el ' + fecha(s.respondido) : 'aún no responde'}</p>` : ''}${filasExtra ? `<dl>${filasExtra}</dl>` : ''}</div>`;
@@ -220,7 +220,7 @@ $('#form-ficha').addEventListener('submit', e => {
   const cut = PORLABEL.get(sinTilde(f.comuna_txt.value.trim()));
   if (!cut) { $('#ficha-err').textContent = 'Elige la comuna desde la lista que aparece al escribir.'; f.comuna_txt.focus(); return; }
   const datos = { nombre: f.nombre.value, correo: f.correo.value, comuna: cut, actividad: f.actividad.value, actividad_detalle: f.actividad_detalle.value,
-                  compromiso: Number(f.compromiso.value), fundador: f.fundador.checked ? 1 : 0, notas: f.notas.value };
+                  compromiso: Number(f.compromiso.value), fundador: f.fundador.checked ? 1 : 0, notas: f.notas.value, telefono: f.telefono.value };
   if (actual) ejecutar($('#b-guardar'), { accion: 'guardar', id: actual.id, ...datos }, () => 'Cambios guardados');
   else ejecutar($('#b-guardar'), { accion: 'agregar', ...datos }, d => `Agregada como socio n.º ${d.numero}`);
 });

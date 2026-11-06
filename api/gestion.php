@@ -32,7 +32,9 @@ function campos(array $d): array {
     if ($comuna < 1101 || $comuna > 16305) error('Elige una comuna de la lista.', 422);
     $comp = monto_compromiso($d['compromiso'] ?? 0); if ($comp === null) error('El compromiso mínimo es de $1.000 al mes.', 422);
     $act = actividad_valida($d['actividad'] ?? '');
-    return ['nombre' => $nombre, 'correo' => $correo, 'comuna' => $comuna, 'fundador' => !empty($d['fundador']) ? 1 : 0,
+    $tel = preg_replace('/\s+/', ' ', trim((string)($d['telefono'] ?? '')));
+    if ($tel !== '' && !preg_match('/^\+?[\d\s()\-]{8,20}$/', $tel)) error('Revisa el teléfono: usa solo números, por ejemplo +56 9 1234 5678.', 422);
+    return ['telefono' => $tel ?: null, 'nombre' => $nombre, 'correo' => $correo, 'comuna' => $comuna, 'fundador' => !empty($d['fundador']) ? 1 : 0,
             'compromiso' => $comp ?: null, 'actividad' => $act, 'actividad_detalle' => $act ? (limpiar_texto((string)($d['actividad_detalle'] ?? ''), 80) ?: null) : null,
             'notas' => limpiar_texto((string)($d['notas'] ?? ''), 600) ?: null];
 }
@@ -77,9 +79,9 @@ switch ($accion) {
         if ($s['numero'] && (int)$s['region'] !== $region) $puesto = siguiente_puesto($region);
         try {
             $db->prepare('UPDATE socios SET nombre=?, correo=?, comuna=?, region=?, puesto=?, fundador=?, compromiso=?, compromiso_fecha = CASE WHEN ? IS NOT compromiso THEN ? ELSE compromiso_fecha END,
-                          actividad=?, actividad_detalle=?, notas=? WHERE id=?')
+                          actividad=?, actividad_detalle=?, notas=?, telefono=? WHERE id=?')
                ->execute([$c['nombre'], $c['correo'], $c['comuna'], $s['numero'] ? $region : null, $puesto, $c['fundador'], $c['compromiso'], $c['compromiso'], ahora(),
-                          $c['actividad'], $c['actividad_detalle'], $c['notas'], $s['id']]);
+                          $c['actividad'], $c['actividad_detalle'], $c['notas'], $c['telefono'], $s['id']]);
         } catch (PDOException $e) { correo_repetido($e); }
         anotar('editar socio', ($s['numero'] ? 'n.º ' . $s['numero'] : 'pendiente') . ' · ' . $c['nombre']); break;
     case 'agregar':
@@ -88,10 +90,10 @@ switch ($accion) {
         $db->exec('BEGIN IMMEDIATE');
         try {
             $n = (int)$db->query('SELECT COALESCE(MAX(numero), 0) + 1 FROM socios')->fetchColumn();
-            $db->prepare('INSERT INTO socios (nombre, correo, comuna, fundador, token, codigo, creado, confirmado, numero, region, puesto, compromiso, compromiso_fecha, actividad, actividad_detalle, notas)
-                          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+            $db->prepare('INSERT INTO socios (nombre, correo, comuna, fundador, token, codigo, creado, confirmado, numero, region, puesto, compromiso, compromiso_fecha, actividad, actividad_detalle, notas, telefono)
+                          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
                ->execute([$c['nombre'], $c['correo'], $c['comuna'], $c['fundador'], aleatorio(24), codigo_invitacion(), ahora(), ahora(), $n, $region, siguiente_puesto($region),
-                          $c['compromiso'], $c['compromiso'] ? ahora() : null, $c['actividad'], $c['actividad_detalle'], $c['notas']]);
+                          $c['compromiso'], $c['compromiso'] ? ahora() : null, $c['actividad'], $c['actividad_detalle'], $c['notas'], $c['telefono']]);
             $db->exec('COMMIT');
         } catch (PDOException $e) { $db->exec('ROLLBACK'); correo_repetido($e); }
         $resp['numero'] = $n;
