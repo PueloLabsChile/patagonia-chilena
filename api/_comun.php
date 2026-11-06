@@ -29,7 +29,7 @@ function migrar(PDO $db): void {
         numero INTEGER UNIQUE, creado TEXT NOT NULL, confirmado TEXT, ip TEXT, envios INTEGER NOT NULL DEFAULT 0, ultimo_envio TEXT)');
     $cols = array_column($db->query('PRAGMA table_info(socios)')->fetchAll(), 'name');
     foreach (['apodo TEXT', 'region INTEGER', 'puesto INTEGER', 'acreditado TEXT', 'visto INTEGER', 'palabra INTEGER',
-              'suspendido INTEGER NOT NULL DEFAULT 0', 'ultimo_mensaje INTEGER', 'ultimo_aplauso INTEGER', 'compromiso INTEGER', 'compromiso_fecha TEXT', 'actividad TEXT', 'actividad_detalle TEXT'] as $c) {
+              'suspendido INTEGER NOT NULL DEFAULT 0', 'ultimo_mensaje INTEGER', 'ultimo_aplauso INTEGER', 'compromiso INTEGER', 'compromiso_fecha TEXT', 'actividad TEXT', 'actividad_detalle TEXT', 'notas TEXT'] as $c) {
         if (!in_array(explode(' ', $c)[0], $cols, true)) $db->exec("ALTER TABLE socios ADD COLUMN $c");
     }
     $db->exec('CREATE UNIQUE INDEX IF NOT EXISTS u_apodo ON socios(apodo COLLATE NOCASE) WHERE apodo IS NOT NULL');
@@ -50,6 +50,7 @@ function migrar(PDO $db): void {
     $db->exec('CREATE TABLE IF NOT EXISTS votos (votacion_id INTEGER, socio_id INTEGER, opcion INTEGER, creado INTEGER, PRIMARY KEY (votacion_id, socio_id))');
     $db->exec('CREATE TABLE IF NOT EXISTS moderadores (id INTEGER PRIMARY KEY, nombre TEXT NOT NULL, token TEXT NOT NULL UNIQUE, correo TEXT, creado TEXT)');
     $db->exec('CREATE TABLE IF NOT EXISTS bitacora (id INTEGER PRIMARY KEY, moderador TEXT, accion TEXT, detalle TEXT, creado INTEGER)');
+    $db->exec('CREATE TABLE IF NOT EXISTS gestores (id INTEGER PRIMARY KEY, nombre TEXT NOT NULL, token TEXT NOT NULL UNIQUE, creado TEXT, visto TEXT)');
     // administrador: el único que ve la lista de socios con nombre y correo (por defecto, Gonzalo)
     if (!in_array('admin', array_column($db->query('PRAGMA table_info(moderadores)')->fetchAll(), 'name'), true)) {
         $db->exec('ALTER TABLE moderadores ADD COLUMN admin INTEGER NOT NULL DEFAULT 0');

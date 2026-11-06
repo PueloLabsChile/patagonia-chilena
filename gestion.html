@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Gestión de socios · Patagonia Chilena</title>
+<link rel="icon" href="assets/img/icono.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
+<link href="assets/css/gestion.css?v=1793981683" rel="stylesheet">
+</head>
+<body>
+<div class="cielo" aria-hidden="true"><i class="au au1"></i><i class="au au2"></i><i class="au au3"></i></div>
+
+<header class="cab">
+  <a class="marca" href="./" target="_blank" rel="noopener"><img src="assets/img/icono.svg" alt=""><span>Patagonia <em>Chilena</em></span></a>
+  <span class="sello">Gestión interna</span>
+  <div class="quien" id="quien" hidden><span id="quien-nombre"></span><b id="quien-ini"></b></div>
+</header>
+
+<main class="gestion" id="app" hidden>
+  <section class="intro">
+    <div>
+      <p class="ante">★ Registro de la cooperativa</p>
+      <h1>Socios <em>fundadores</em></h1>
+      <p class="bajada" id="actualizado">Cargando…</p>
+    </div>
+    <div class="intro-acc">
+      <button class="btn btn-sec" id="b-csv" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v3h16v-3"/></svg>Descargar Excel</button>
+      <button class="btn btn-pri" id="b-agregar" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Agregar persona</button>
+    </div>
+  </section>
+
+  <section class="kpis" id="kpis" aria-label="Resumen"></section>
+
+  <section class="tablero">
+    <div class="vidrio mapa-caja">
+      <div class="mapa-cab">
+        <h2>Dónde están</h2>
+        <div class="seg seg-chico" role="tablist" aria-label="Vista del mapa">
+          <button role="tab" aria-selected="true" data-vista="comunas">Comunas</button>
+          <button role="tab" aria-selected="false" data-vista="regiones">Regiones</button>
+        </div>
+      </div>
+      <div id="mapa" class="mapa" role="region" aria-label="Mapa de Chile con los socios por comuna"></div>
+      <div class="mapa-ley" id="mapa-ley"></div>
+      <ol class="top" id="top" aria-label="Comunas con más socios"></ol>
+    </div>
+
+    <div class="vidrio lista-caja">
+      <div class="herr">
+        <label class="buscar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="q" type="search" placeholder="Buscar nombre, correo, comuna, oficio…" aria-label="Buscar"></label>
+        <div class="seg" role="tablist" aria-label="Estado">
+          <button role="tab" aria-selected="true" data-estado="todos">Todos</button>
+          <button role="tab" aria-selected="false" data-estado="confirmados">Confirmados</button>
+          <button role="tab" aria-selected="false" data-estado="pendientes">Pendientes</button>
+        </div>
+        <select id="f-act" aria-label="Filtrar por actividad"><option value="">Toda actividad</option></select>
+        <select id="orden" aria-label="Ordenar">
+          <option value="numero">Por número</option><option value="reciente">Más recientes</option>
+          <option value="nombre">Por nombre</option><option value="comuna">Por comuna</option>
+        </select>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="filas-cab" aria-hidden="true"><span></span><span>Persona</span><span>Comuna</span><span>Actividad</span><span>Estado</span><span>Aporte</span></div>
+      <div class="filas" id="filas" role="list"></div>
+      <p class="pie-lista" id="pie-lista"></p>
+    </div>
+  </section>
+</main>
+
+<div class="bloqueo" id="bloqueo" hidden><div class="vidrio"><h1>Enlace no válido</h1><p id="bloqueo-txt">Pide un enlace nuevo a la administración.</p></div></div>
+
+<!-- ficha lateral -->
+<div class="velo" id="velo" hidden></div>
+<aside class="ficha" id="ficha" aria-hidden="true" aria-labelledby="ficha-titulo">
+  <form id="form-ficha" novalidate>
+    <div class="ficha-cab">
+      <div class="ficha-id"><b class="avatar grande" id="ficha-av"></b><div><h2 id="ficha-titulo">Persona</h2><p id="ficha-sub"></p></div></div>
+      <button class="cerrar" type="button" id="cerrar" aria-label="Cerrar">×</button>
+    </div>
+    <div class="ficha-cuerpo">
+      <div class="campo"><label for="c-nombre">Nombre completo</label><input id="c-nombre" name="nombre" maxlength="80" required></div>
+      <div class="campo"><label for="c-correo">Correo</label><input id="c-correo" name="correo" type="email" maxlength="120" required></div>
+      <div class="campo"><label for="c-comuna">Comuna</label><input id="c-comuna" name="comuna_txt" list="lista-comunas" autocomplete="off" required placeholder="Escribe y elige de la lista"></div>
+      <datalist id="lista-comunas"></datalist>
+      <div class="dos">
+        <div class="campo"><label for="c-actividad">Actividad</label><select id="c-actividad" name="actividad"><option value="">Sin indicar</option></select></div>
+        <div class="campo"><label for="c-detalle">¿Cuál?</label><input id="c-detalle" name="actividad_detalle" maxlength="80" placeholder="Ej.: carpintero, abogada"></div>
+      </div>
+      <div class="dos">
+        <div class="campo"><label for="c-compromiso">Compromiso mensual</label>
+          <select id="c-compromiso" name="compromiso"><option value="0">Sin compromiso</option><option value="1000">$1.000</option><option value="2000">$2.000</option><option value="5000">$5.000</option><option value="10000">$10.000</option></select></div>
+        <label class="interruptor"><input type="checkbox" name="fundador" id="c-fundador"><span></span>Socio fundador</label>
+      </div>
+      <div class="campo"><label for="c-notas">Notas internas <small>(solo las ve el equipo)</small></label><textarea id="c-notas" name="notas" rows="3" maxlength="600" placeholder="Ej.: llamó por teléfono, quiere ayudar en comunicaciones"></textarea></div>
+      <dl class="meta" id="ficha-meta"></dl>
+      <p class="aviso-err" id="ficha-err" role="alert"></p>
+    </div>
+    <div class="ficha-pie">
+      <button class="btn btn-peligro" type="button" id="b-eliminar">Eliminar</button>
+      <button class="btn btn-sec" type="button" id="b-confirmar" hidden>Confirmar a mano</button>
+      <button class="btn btn-pri" type="submit" id="b-guardar">Guardar cambios</button>
+    </div>
+  </form>
+</aside>
+
+<div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+<script type="module" src="assets/js/gestion.js?v=1793981683"></script>
+</body>
+</html>
