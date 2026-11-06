@@ -53,6 +53,12 @@ function migrar(PDO $db): void {
     $db->exec('CREATE TABLE IF NOT EXISTS gestores (id INTEGER PRIMARY KEY, nombre TEXT NOT NULL, token TEXT NOT NULL UNIQUE, creado TEXT, visto TEXT)');
     if (!in_array('correo', array_column($db->query('PRAGMA table_info(gestores)')->fetchAll(), 'name'), true)) $db->exec('ALTER TABLE gestores ADD COLUMN correo TEXT');
     $db->exec('CREATE TABLE IF NOT EXISTS accesos (ip TEXT, tipo TEXT, creado INTEGER)');
+    // galería de fotos de terreno del Observatorio (aportes abiertos, licencia CC BY 4.0)
+    $db->exec('CREATE TABLE IF NOT EXISTS fotos (
+        id INTEGER PRIMARY KEY, archivo TEXT NOT NULL, w INTEGER, h INTEGER, lat REAL NOT NULL, lon REAL NOT NULL, rumbo REAL, altitud REAL,
+        tomada TEXT, titulo TEXT, descripcion TEXT, autor TEXT NOT NULL, tema TEXT, origen TEXT, licencia TEXT NOT NULL DEFAULT \'CC BY 4.0\',
+        creado TEXT NOT NULL, ip TEXT, token TEXT NOT NULL, reportes INTEGER NOT NULL DEFAULT 0, oculta INTEGER NOT NULL DEFAULT 0)');
+    $db->exec('CREATE TABLE IF NOT EXISTS fotos_reportes (foto_id INTEGER, ip TEXT, motivo TEXT, creado TEXT, PRIMARY KEY (foto_id, ip))');
     // administrador: el único que ve la lista de socios con nombre y correo (por defecto, Gonzalo)
     if (!in_array('admin', array_column($db->query('PRAGMA table_info(moderadores)')->fetchAll(), 'name'), true)) {
         $db->exec('ALTER TABLE moderadores ADD COLUMN admin INTEGER NOT NULL DEFAULT 0');

@@ -2,7 +2,7 @@
 #   python dev/actualizacion.py  →  dist/actualizacion.zip
 import pathlib, time, zipfile
 R = pathlib.Path(__file__).resolve().parent.parent
-INCLUIR = ['index.html', 'asamblea.html', 'moderacion.html', 'privacidad.html', 'gestion.html', 'completar.html', '.htaccess', 'assets', 'datos', 'api', 'observatorio']
+INCLUIR = ['index.html', 'asamblea.html', 'moderacion.html', 'privacidad.html', 'gestion.html', 'completar.html', '.htaccess', 'fotos/.htaccess', 'assets', 'datos', 'api', 'observatorio']
 EXCLUIR = {'api/config.php', 'api/config.ejemplo.php'}
 dest = R / 'dist' / 'actualizacion.zip'; dest.parent.mkdir(exist_ok=True)
 n = 0

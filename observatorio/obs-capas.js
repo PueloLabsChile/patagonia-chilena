@@ -21,6 +21,7 @@ export const GRUPOS = [
   { id: 'vegetacion', nombre: 'Vegetación' },
   { id: 'actividad', nombre: 'Actividad humana' },
   { id: 'vivo', nombre: 'Monitoreo en vivo' },
+  { id: 'aportes', nombre: 'Aportes ciudadanos' },
 ];
 
 const MBN = { fuente: 'Ministerio de Bienes Nacionales', enlace: 'https://geoportal.cl/mbn/index' };
@@ -97,6 +98,12 @@ export const CAPAS = [
     fuente: 'NASA FIRMS · VIIRS (NOAA-20, NOAA-21, Suomi-NPP)', enlace: 'https://firms.modaps.eosdis.nasa.gov', fecha: 'se actualiza cada 3 horas',
     descr: 'Anomalías térmicas detectadas por satélite (incendios, quemas). Resolución 375 m.',
     titulo: p => 'Foco de calor · ' + p.fecha, campos: { fecha: 'Fecha', hora_utc: 'Hora (UTC)', satelite: 'Satélite', confianza: 'Confianza', frp_mw: 'Potencia radiativa (MW)', brillo_k: 'Brillo (K)', dia_noche: 'Detección' } },
+
+  // ---------- aportes ciudadanos
+  { id: 'fotos', grupo: 'aportes', nombre: 'Fotos de terreno', archivo: '../api/fotos.php?geojson=1', tipo: 'punto', color: '#b8392c', vivo: true,
+    fuente: 'Galería de terreno del Observatorio · aportes con licencia CC BY 4.0', enlace: 'galeria.html', fecha: 'se actualiza con cada aporte',
+    descr: 'Fotos tomadas en terreno por investigadores y vecinos, ubicadas con GPS, recorrido o a mano. Ábrelas en la galería para verlas en grande.',
+    titulo: p => p.titulo, campos: { autor: 'Foto de', tomada: 'Tomada', tema: 'Tema', rumbo: 'Mira hacia (°)', licencia: 'Licencia', galeria: 'En la galería' } },
 ];
 
 /** Presets de «Qué ver»: capas que se encienden juntas. */
