@@ -1,6 +1,7 @@
 <?php
 // Patagonia Chilena · utilidades comunes de la API (PHP 8.1+ con pdo_sqlite)
 declare(strict_types=1);
+ini_set('serialize_precision', '-1');   // JSON con decimales cortos (-45.5712, no -45.57119999999999)
 
 $CFG = require __DIR__ . '/config.php';
 
